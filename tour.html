@@ -745,6 +745,46 @@
     .btn-nav:active {
       transform: scale(0.98);
     }
+
+    /* Hint */
+    .btn-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 0.75rem;
+      padding: 8px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px dashed rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s var(--ease-out);
+    }
+
+    .btn-hint:hover {
+      color: var(--text-secondary);
+      border-color: rgba(255, 255, 255, 0.2);
+      background: var(--surface);
+    }
+
+    .btn-hint:active {
+      transform: scale(0.97);
+    }
+
+    .hint-text {
+      margin-top: 0.75rem;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      color: var(--accent);
+      background: var(--accent-glow);
+      border: 1px solid rgba(245, 158, 11, 0.15);
+      border-radius: var(--radius);
+      line-height: 1.5;
+      animation: fadeInUp 0.3s var(--ease-out);
+    }
   </style>
 </head>
 <body>
@@ -814,6 +854,8 @@
       <div id="weg-kategorie-badge" class="kategorie-badge"></div>
       <div id="weg-aufgabe-typ" class="aufgabe-typ"></div>
       <p class="aufgabe-text" id="weg-aufgabe-text"></p>
+      <button class="btn-hint" id="btn-hint" onclick="useHint()">Hinweis anzeigen (-5 Pkt.)</button>
+      <p class="hint-text" id="hint-text" style="display:none;"></p>
     </div>
 
     <div class="punkte-small">
@@ -908,6 +950,7 @@ const RANKINGS = [
 const STATION_COUNT = 5;
 const PUNKTE_STATION_ERREICHT = 20;
 const PUNKTE_AKTION = 15;
+const HINT_COST = 5;
 
 // Kategorie-Labels
 const KATEGORIE_LABELS = {
@@ -1164,6 +1207,24 @@ function showWegaufgabe() {
   const punkte = PUNKTE_STATION_ERREICHT + station.aufgabe.punkte;
   document.getElementById('weg-punkte-wert').textContent = punkte;
 
+  // Hint
+  var btnHint = document.getElementById('btn-hint');
+  var hintText = document.getElementById('hint-text');
+  if (station.aufgabe.hint) {
+    if (station.hintUsed) {
+      btnHint.style.display = 'none';
+      hintText.textContent = station.aufgabe.hint;
+      hintText.style.display = 'block';
+      document.getElementById('weg-punkte-wert').textContent = punkte - HINT_COST;
+    } else {
+      btnHint.style.display = 'inline-flex';
+      hintText.style.display = 'none';
+    }
+  } else {
+    btnHint.style.display = 'none';
+    hintText.style.display = 'none';
+  }
+
   // GPS + Navigation
   stopGPS();
   var btnNav = document.getElementById('btn-nav');
@@ -1239,7 +1300,11 @@ function showErgebnis() {
 
     const details = document.createElement('p');
     const parts = [];
-    if (station.aufgabeErledigt) parts.push('Aufgabe: ' + station.aufgabe.punkte + ' Pkt.');
+    if (station.aufgabeErledigt) {
+      var ap = station.aufgabe.punkte - (station.hintUsed ? HINT_COST : 0);
+      parts.push('Aufgabe: ' + Math.max(0, ap) + ' Pkt.');
+    }
+    if (station.hintUsed && !station.aufgabeErledigt) parts.push('Hint genutzt');
     if (station.aktionErledigt) parts.push('Aktion: ' + station.aktion.bonuspunkte + ' Pkt.');
     parts.push('Station: ' + PUNKTE_STATION_ERREICHT + ' Pkt.');
     details.textContent = parts.join(' \u00B7 ');
@@ -1250,7 +1315,7 @@ function showErgebnis() {
     const punkte = document.createElement('div');
     punkte.className = 'station-item-punkte';
     let stationPunkte = PUNKTE_STATION_ERREICHT;
-    if (station.aufgabeErledigt) stationPunkte += station.aufgabe.punkte;
+    if (station.aufgabeErledigt) stationPunkte += Math.max(0, station.aufgabe.punkte - (station.hintUsed ? HINT_COST : 0));
     if (station.aktionErledigt) stationPunkte += station.aktion.bonuspunkte;
     punkte.textContent = stationPunkte;
 
@@ -1270,16 +1335,33 @@ function startTour() {
   tour.stationen.forEach(function(s) {
     s.aufgabeErledigt = false;
     s.aktionErledigt = false;
+    s.hintUsed = false;
   });
 
   saveTour();
   showWegaufgabe();
 }
 
+function useHint() {
+  var station = tour.stationen[tour.currentIdx];
+  if (!station.aufgabe.hint || station.hintUsed) return;
+  station.hintUsed = true;
+  saveTour();
+
+  document.getElementById('btn-hint').style.display = 'none';
+  var hintText = document.getElementById('hint-text');
+  hintText.textContent = station.aufgabe.hint;
+  hintText.style.display = 'block';
+
+  var punkte = PUNKTE_STATION_ERREICHT + station.aufgabe.punkte - HINT_COST;
+  document.getElementById('weg-punkte-wert').textContent = punkte;
+}
+
 function wegErledigt() {
   const station = tour.stationen[tour.currentIdx];
   station.aufgabeErledigt = true;
-  tour.punkte += station.aufgabe.punkte + PUNKTE_STATION_ERREICHT;
+  var aufgabePunkte = Math.max(0, station.aufgabe.punkte - (station.hintUsed ? HINT_COST : 0));
+  tour.punkte += aufgabePunkte + PUNKTE_STATION_ERREICHT;
   saveTour();
   showSpaeti();
 }
