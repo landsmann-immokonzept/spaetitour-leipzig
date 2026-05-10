@@ -1,0 +1,3597 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0d0b0a">
+  <meta name="description" content="Die Leipziger Spaetitour - 5 Stationen, jede Tour anders. Leipzig entdecken mit Freunden.">
+  <title>Die Leipziger Spaetitour</title>
+  <!-- Inline SVG favicon (kein externer Request) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127866;</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230d0b0a' width='100' height='100' rx='20'/><text y='.9em' font-size='80' x='10'>&#127866;</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0b0a;
+      --surface: #161311;
+      --surface-raised: #1c1917;
+      --border: rgba(255,255,255,0.06);
+      --border-accent: rgba(251,191,36,0.15);
+
+      --text: #fafaf9;
+      --text-sec: #a8a29e;
+      --text-dim: #57534e;
+
+      --amber: #fbbf24;
+      --amber-glow: rgba(251,191,36,0.08);
+      --amber-strong: rgba(251,191,36,0.2);
+      --green: #4ade80;
+      --green-dim: rgba(74,222,128,0.12);
+      --red: #fb7185;
+
+      /* Mechanic colors */
+      --mech-matze: #c4b5fd;
+      --mech-just-one: #67e8f9;
+      --mech-activity: #fca5a5;
+      --mech-wer-bin-ich: #fdba74;
+      --mech-challenge: #fbbf24;
+      --mech-ranking: #86efac;
+      --mech-stadt: #a5b4fc;
+
+      --font-display: 'Syne', -apple-system, 'Helvetica Neue', sans-serif;
+      --font-body: 'Outfit', -apple-system, 'Helvetica Neue', sans-serif;
+
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-full: 100px;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html { height: 100%; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+
+    /* === Grain overlay === */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* === Screens === */
+    .screen {
+      display: none;
+      min-height: 100dvh;
+      flex-direction: column;
+    }
+    .screen.active { display: flex; }
+
+    .screen-inner {
+      flex: 1;
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+      padding: 0 20px;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* === Watermark === */
+    .watermark {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-25deg);
+      font-family: var(--font-display);
+      font-size: 5rem;
+      font-weight: 800;
+      color: rgba(255,255,255,0.015);
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 0;
+      user-select: none;
+    }
+
+    /* === Animations === */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(10px) scale(0.9); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .anim-slide { animation: slideUp 0.5s var(--ease) both; }
+    .anim-slide-d1 { animation: slideUp 0.5s var(--ease) 0.05s both; }
+    .anim-slide-d2 { animation: slideUp 0.5s var(--ease) 0.1s both; }
+    .anim-slide-d3 { animation: slideUp 0.5s var(--ease) 0.15s both; }
+    .anim-slide-d4 { animation: slideUp 0.5s var(--ease) 0.2s both; }
+    .anim-slide-d5 { animation: slideUp 0.5s var(--ease) 0.25s both; }
+    .anim-fade { animation: fadeIn 0.6s var(--ease) both; }
+
+    /* =============================================
+       START SCREEN
+       ============================================= */
+    #screen-start .screen-inner {
+      justify-content: center;
+      padding-top: 60px;
+      padding-bottom: 40px;
+    }
+
+    .start-badge {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--amber);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .start-title {
+      font-family: var(--font-display);
+      font-size: 2.8rem;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .start-title .accent { color: var(--amber); }
+
+    .start-sub {
+      text-align: center;
+      color: var(--text-sec);
+      font-size: 1rem;
+      font-weight: 300;
+      max-width: 300px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    /* How it works - minimal */
+    .how-it-works {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 32px;
+    }
+    .how-step {
+      flex: 1;
+      background: var(--surface);
+      padding: 16px 12px;
+      text-align: center;
+      position: relative;
+    }
+    .how-step:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+    .how-step:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+    .how-step .num {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--amber);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .how-step .label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-sec);
+      letter-spacing: 0.02em;
+    }
+
+    /* Category dots */
+    .cat-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .cat-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--text-dim);
+    }
+    .cat-tag .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    /* Start button */
+    .btn-start {
+      display: block;
+      width: 100%;
+      padding: 20px;
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      text-align: center;
+      background: var(--amber);
+      color: var(--bg);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform 0.2s var(--ease), box-shadow 0.2s;
+      box-shadow: 0 0 40px rgba(251,191,36,0.12);
+      letter-spacing: -0.01em;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-start:active {
+      transform: scale(0.97);
+      box-shadow: 0 0 20px rgba(251,191,36,0.08);
+    }
+
+    .start-footer {
+      margin-top: auto;
+      padding-top: 32px;
+      text-align: center;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+
+    /* =============================================
+       MODE SELECT SCREEN
+       ============================================= */
+    #screen-mode .screen-inner {
+      padding-top: 40px;
+      padding-bottom: 32px;
+    }
+
+    .mode-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .mode-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .mode-header p {
+      color: var(--text-sec);
+      font-size: 0.9rem;
+      font-weight: 300;
+      margin-top: 6px;
+    }
+
+    .mode-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .mode-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      cursor: pointer;
+      transition: all 0.2s var(--ease);
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+      overflow: hidden;
+    }
+    .mode-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 3px;
+      background: var(--amber);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .mode-card:active {
+      transform: scale(0.98);
+      background: var(--surface-raised);
+    }
+    .mode-card:active::before { opacity: 1; }
+
+    .mode-card .mode-name {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 3px;
+    }
+    .mode-card .mode-desc {
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: var(--text-sec);
+    }
+    .mode-card .mode-players {
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      margin-top: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    /* =============================================
+       ROUTE OVERVIEW (after start, before station 1)
+       ============================================= */
+    #screen-route .screen-inner {
+      padding-top: 32px;
+      padding-bottom: 32px;
+    }
+
+    .route-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .route-header .eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 8px;
+    }
+    .route-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    /* Vertical route visualization */
+    .route-list {
+      position: relative;
+      padding-left: 36px;
+      margin-bottom: 28px;
+    }
+    /* Vertical line */
+    .route-list::before {
+      content: '';
+      position: absolute;
+      left: 13px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: repeating-linear-gradient(
+        to bottom,
+        var(--text-dim) 0px,
+        var(--text-dim) 4px,
+        transparent 4px,
+        transparent 8px
+      );
+    }
+
+    .route-stop {
+      position: relative;
+      padding: 14px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .route-stop .dot-wrap {
+      position: absolute;
+      left: -36px;
+      top: 16px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .route-stop .dot-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface-raised);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-sec);
+      z-index: 1;
+    }
+
+    .route-stop-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .route-stop-name {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+      letter-spacing: -0.01em;
+    }
+    .route-stop-meta {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+    .route-stop-walk {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      position: absolute;
+      left: -36px;
+      bottom: -4px;
+      width: 28px;
+      text-align: center;
+    }
+
+    .route-stop-badge {
+      flex-shrink: 0;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .route-stop-badge.spaeti {
+      background: var(--amber-glow);
+      color: var(--amber);
+      border: 1px solid var(--amber-strong);
+    }
+    .route-stop-badge.attraktion {
+      background: rgba(196,181,253,0.08);
+      color: var(--mech-matze);
+      border: 1px solid rgba(196,181,253,0.15);
+    }
+
+    .btn-go {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-align: center;
+      background: var(--amber);
+      color: var(--bg);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform 0.2s var(--ease);
+      -webkit-tap-highlight-color: transparent;
+      letter-spacing: -0.01em;
+    }
+    .btn-go:active { transform: scale(0.97); }
+
+    /* =============================================
+       WEGAUFGABE SCREEN (walking + task)
+       ============================================= */
+    #screen-wegaufgabe .screen-inner {
+      padding-top: 20px;
+      padding-bottom: 28px;
+    }
+
+    /* Top bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .top-bar-left {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--amber);
+    }
+    .top-bar-right .icon { font-size: 0.7rem; }
+
+    /* Progress bar */
+    .progress-bar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 28px;
+    }
+    .progress-seg {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--border);
+      transition: background 0.5s var(--ease), box-shadow 0.5s;
+    }
+    .progress-seg.done {
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green-dim);
+    }
+    .progress-seg.current {
+      background: var(--amber);
+      box-shadow: 0 0 8px var(--amber-glow);
+    }
+
+    /* Destination card */
+    .dest-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .dest-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--amber), transparent);
+      opacity: 0.25;
+    }
+
+    .dest-eyebrow {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 6px;
+    }
+    .dest-name {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 4px;
+    }
+    .dest-address {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .dest-meta-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .dest-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 500;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      color: var(--text-sec);
+    }
+    .dest-chip .emoji { font-size: 0.8rem; }
+
+    .dest-chip.arrived {
+      background: var(--green-dim);
+      border-color: rgba(74,222,128,0.2);
+      color: var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    /* Nav button */
+    .btn-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      background: var(--surface);
+      color: var(--text-sec);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-nav:active { transform: scale(0.98); background: var(--surface-raised); }
+
+    /* Task card */
+    .task-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .task-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .task-category {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .task-category.matze {
+      background: rgba(196,181,253,0.1);
+      color: var(--mech-matze);
+      border: 1px solid rgba(196,181,253,0.15);
+    }
+    .task-category.just-one {
+      background: rgba(103,232,249,0.08);
+      color: var(--mech-just-one);
+      border: 1px solid rgba(103,232,249,0.12);
+    }
+    .task-category.activity {
+      background: rgba(252,165,165,0.1);
+      color: var(--mech-activity);
+      border: 1px solid rgba(252,165,165,0.15);
+    }
+    .task-category.wer-bin-ich {
+      background: rgba(253,186,116,0.1);
+      color: var(--mech-wer-bin-ich);
+      border: 1px solid rgba(253,186,116,0.15);
+    }
+    .task-category.challenge {
+      background: rgba(251,191,36,0.1);
+      color: var(--mech-challenge);
+      border: 1px solid rgba(251,191,36,0.15);
+    }
+    .task-category.ranking {
+      background: rgba(134,239,172,0.08);
+      color: var(--mech-ranking);
+      border: 1px solid rgba(134,239,172,0.12);
+    }
+    .task-category.stadt {
+      background: rgba(165,180,252,0.1);
+      color: var(--mech-stadt);
+      border: 1px solid rgba(165,180,252,0.15);
+    }
+
+    .task-points {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--amber);
+    }
+
+    .task-type {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .task-text {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      font-weight: 300;
+      color: var(--text);
+    }
+
+    /* Hint */
+    .hint-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 14px;
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      background: transparent;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hint-trigger:active { background: var(--surface); }
+
+    .hint-box {
+      margin-top: 12px;
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      font-weight: 400;
+      color: var(--amber);
+      background: var(--amber-glow);
+      border: 1px solid var(--amber-strong);
+      border-radius: var(--radius-sm);
+      line-height: 1.5;
+      animation: scaleIn 0.3s var(--ease);
+    }
+
+    /* Timer display */
+    .timer-display {
+      text-align: center;
+      margin: 16px 0;
+    }
+    .timer-value {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--amber);
+      line-height: 1;
+      transition: color 0.3s;
+    }
+    .timer-value.urgent { color: var(--red); }
+    .timer-label {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .btn-timer {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      background: var(--surface);
+      color: var(--text-sec);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      margin-top: 8px;
+      transition: transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-timer:active { transform: scale(0.98); }
+
+    /* Drink rule */
+    .drink-rule {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: rgba(251,113,133,0.08);
+      border: 1px solid rgba(251,113,133,0.15);
+      border-radius: var(--radius-sm);
+      margin-top: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--red);
+    }
+
+    /* Team split */
+    .team-split {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--amber-glow);
+      border: 1px solid var(--amber-strong);
+      border-radius: var(--radius-sm);
+      margin-bottom: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--amber);
+    }
+
+    /* Action buttons */
+    .action-row {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 8px;
+    }
+    .btn-done {
+      flex: 3;
+      padding: 18px;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      background: var(--amber);
+      color: var(--bg);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      letter-spacing: -0.01em;
+    }
+    .btn-done:active { transform: scale(0.97); }
+
+    .btn-skip {
+      flex: 1;
+      padding: 18px 12px;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      background: var(--surface);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-skip:active { transform: scale(0.97); }
+
+    /* =============================================
+       SPAETI / STATION SCREEN
+       ============================================= */
+    #screen-spaeti .screen-inner {
+      padding-top: 20px;
+      padding-bottom: 28px;
+    }
+
+    .station-hero {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .station-hero .arrived-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid rgba(74,222,128,0.2);
+      margin-bottom: 12px;
+    }
+    .station-hero h2 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .station-hero .addr {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    /* Aktion card */
+    .aktion-card {
+      background: var(--surface);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .aktion-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--amber), transparent);
+      opacity: 0.3;
+    }
+    .aktion-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 10px;
+    }
+    .aktion-name {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+    .aktion-desc {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--text-sec);
+      line-height: 1.6;
+    }
+    .aktion-bonus {
+      margin-top: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: var(--amber-glow);
+      color: var(--amber);
+      border: 1px solid var(--amber-strong);
+    }
+
+    /* Score display */
+    .score-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+    }
+    .score-bar .label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .score-bar .value {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--amber);
+    }
+
+    .btn-aktion {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      background: var(--amber);
+      color: var(--bg);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      margin-bottom: 10px;
+    }
+    .btn-aktion:active { transform: scale(0.97); }
+
+    .btn-weiter {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      background: var(--surface);
+      color: var(--text-sec);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-weiter:active { transform: scale(0.97); }
+
+    /* =============================================
+       ERGEBNIS SCREEN
+       ============================================= */
+    #screen-ergebnis .screen-inner {
+      padding-top: 48px;
+      padding-bottom: 40px;
+    }
+
+    .ergebnis-hero {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .ergebnis-hero .done-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+    .ergebnis-hero h1 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .score-hero {
+      background: linear-gradient(135deg, var(--amber) 0%, #d97706 100%);
+      border-radius: var(--radius);
+      padding: 32px;
+      text-align: center;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(251,191,36,0.12);
+    }
+    .score-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .score-hero .label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.4);
+      margin-bottom: 4px;
+    }
+    .score-hero .value {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--bg);
+      line-height: 1;
+      animation: countUp 0.6s var(--ease) both;
+    }
+
+    .rank-label {
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--amber);
+      margin-bottom: 28px;
+      letter-spacing: -0.01em;
+    }
+
+    .results-list {
+      margin-bottom: 28px;
+    }
+    .result-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .result-item:last-child { border-bottom: none; }
+    .result-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      flex-shrink: 0;
+    }
+    .result-info { flex: 1; min-width: 0; }
+    .result-info h4 {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 2px;
+    }
+    .result-info p {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+    .result-pts {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--amber);
+      flex-shrink: 0;
+    }
+
+    .btn-replay {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-replay:active { transform: scale(0.97); }
+
+    /* Generic footer */
+    .foot {
+      text-align: center;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      padding: 16px 0;
+      letter-spacing: 0.04em;
+      margin-top: auto;
+    }
+
+    /* Utility */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div class="watermark" id="watermark"></div>
+
+<!-- ================================================
+     SCREEN: START
+     ================================================ -->
+<div id="screen-start" class="screen active">
+  <div class="screen-inner">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+      <div class="start-badge anim-slide">Leipzig &middot; Nacht &middot; Abenteuer</div>
+      <h1 class="start-title anim-slide-d1">Die Leipziger<br><span class="accent">Spaetitour</span></h1>
+      <p class="start-sub anim-slide-d2">5 Stationen, jede Tour anders. Handy rumgeben, gemeinsam loesen, Leipzig entdecken.</p>
+
+      <div class="how-it-works anim-slide-d3">
+        <div class="how-step"><div class="num">1</div><div class="label">Starten</div></div>
+        <div class="how-step"><div class="num">2</div><div class="label">Hinlaufen</div></div>
+        <div class="how-step"><div class="num">3</div><div class="label">Aufgabe</div></div>
+        <div class="how-step"><div class="num">4</div><div class="label">Punkte!</div></div>
+      </div>
+
+      <div class="cat-row anim-slide-d4">
+        <span class="cat-tag"><span class="dot" style="background:var(--mech-matze)"></span>Hotel Matze</span>
+        <span class="cat-tag"><span class="dot" style="background:var(--mech-just-one)"></span>Just One</span>
+        <span class="cat-tag"><span class="dot" style="background:var(--mech-activity)"></span>Activity</span>
+        <span class="cat-tag"><span class="dot" style="background:var(--mech-challenge)"></span>Challenge</span>
+        <span class="cat-tag"><span class="dot" style="background:var(--mech-stadt)"></span>Stadtmission</span>
+      </div>
+
+      <button class="btn-start anim-slide-d5" onclick="startTour()">Los geht's</button>
+    </div>
+
+    <div class="start-footer tour-label"></div>
+  </div>
+</div>
+
+<!-- ================================================
+     SCREEN: MODE SELECT
+     ================================================ -->
+<div id="screen-mode" class="screen">
+  <div class="screen-inner">
+    <div class="mode-header">
+      <h1>Wie wollt ihr spielen?</h1>
+      <p>Waehlt euren Modus fuer den Abend</p>
+    </div>
+
+    <div class="mode-grid">
+      <div class="mode-card" onclick="selectMode('freunde')">
+        <div class="mode-name">Freunde</div>
+        <div class="mode-desc">Tiefgruendig, lustig, unvergesslich</div>
+        <div class="mode-players">Ab 3 Spieler</div>
+      </div>
+      <div class="mode-card" onclick="selectMode('date')">
+        <div class="mode-name">Date</div>
+        <div class="mode-desc">Von Smalltalk zu echten Gespraechen</div>
+        <div class="mode-players">Fuer 2</div>
+      </div>
+      <div class="mode-card" onclick="selectMode('trinkspiel')">
+        <div class="mode-name">Trinkspiel</div>
+        <div class="mode-desc">Trinken mit Niveau. Oder ohne.</div>
+        <div class="mode-players">Ab 3 Spieler</div>
+      </div>
+      <div class="mode-card" onclick="selectMode('team-duell')">
+        <div class="mode-name">Team-Duell</div>
+        <div class="mode-desc">Teilt euch. Tretet an. Gewinnt.</div>
+        <div class="mode-players">Ab 4 Spieler</div>
+      </div>
+    </div>
+
+    <div class="foot tour-label"></div>
+  </div>
+</div>
+
+<!-- ================================================
+     SCREEN: ROUTE OVERVIEW
+     ================================================ -->
+<div id="screen-route" class="screen">
+  <div class="screen-inner">
+    <div class="route-header">
+      <div class="eyebrow">Eure Route</div>
+      <h1>5 Stationen quer durch Leipzig</h1>
+    </div>
+
+    <div class="route-list" id="route-list"></div>
+
+    <button class="btn-go" onclick="showWegaufgabe()">Erste Station ansteuern</button>
+
+    <div class="foot tour-label"></div>
+  </div>
+</div>
+
+<!-- ================================================
+     SCREEN: WEGAUFGABE
+     ================================================ -->
+<div id="screen-wegaufgabe" class="screen">
+  <div class="screen-inner">
+    <div class="top-bar">
+      <div class="top-bar-left" id="weg-station-label"></div>
+      <div class="top-bar-right"><span class="icon">&#9733;</span> <span id="weg-score">0</span></div>
+    </div>
+
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <div class="dest-card anim-slide">
+      <div class="dest-eyebrow" id="dest-eyebrow"></div>
+      <div class="dest-name" id="dest-name"></div>
+      <div class="dest-address" id="dest-address"></div>
+      <div class="dest-meta-row">
+        <div class="dest-chip" id="dest-walk"><span class="emoji">&#128694;</span> <span id="dest-walk-text"></span></div>
+        <div class="dest-chip hidden" id="dest-gps"><span id="dest-gps-text"></span></div>
+      </div>
+    </div>
+
+    <button class="btn-nav hidden" id="btn-nav" onclick="openNavigation()">&#128204; Route in Google Maps</button>
+
+    <div class="task-card anim-slide-d1">
+      <div class="task-header">
+        <div class="task-category" id="task-category"></div>
+        <div class="task-points" id="task-points"></div>
+      </div>
+      <div class="task-type" id="task-type"></div>
+      <div class="task-text" id="task-text"></div>
+      <button class="hint-trigger hidden" id="hint-trigger" onclick="useHint()">&#128161; Hinweis (-5 Pkt.)</button>
+      <div class="hint-box hidden" id="hint-box"></div>
+      <div class="team-split hidden" id="team-split"></div>
+      <div class="timer-display hidden" id="timer-display">
+        <div class="timer-value" id="timer-value">30</div>
+        <div class="timer-label">Sekunden</div>
+        <button class="btn-timer" id="btn-timer" onclick="startTimer()">Timer starten</button>
+      </div>
+      <div class="drink-rule hidden" id="drink-rule"></div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-done" onclick="wegErledigt()">Erledigt!</button>
+      <button class="btn-skip" onclick="wegSkip()">Skip</button>
+    </div>
+
+    <div class="foot tour-label"></div>
+  </div>
+</div>
+
+<!-- ================================================
+     SCREEN: SPAETI / STATION
+     ================================================ -->
+<div id="screen-spaeti" class="screen">
+  <div class="screen-inner">
+    <div class="top-bar">
+      <div class="top-bar-left" id="spaeti-station-label"></div>
+      <div class="top-bar-right"><span class="icon">&#9733;</span> <span id="spaeti-score">0</span></div>
+    </div>
+
+    <div class="progress-bar" id="progress-bar-spaeti"></div>
+
+    <div class="station-hero anim-slide">
+      <div class="arrived-badge">&#10003; Angekommen</div>
+      <h2 id="spaeti-name"></h2>
+      <div class="addr" id="spaeti-address"></div>
+    </div>
+
+    <div class="aktion-card anim-slide-d1">
+      <div class="aktion-label" id="aktion-label">Bonus-Aktion vor Ort</div>
+      <div class="aktion-name" id="aktion-name"></div>
+      <div class="aktion-desc" id="aktion-desc"></div>
+      <div class="aktion-bonus" id="aktion-bonus"></div>
+    </div>
+
+    <div class="score-bar anim-slide-d2">
+      <span class="label">Punkte bisher</span>
+      <span class="value" id="spaeti-punkte-value">0</span>
+    </div>
+
+    <button class="btn-aktion" id="btn-aktion" onclick="spaetiAktion()">Aktion mitgemacht!</button>
+    <button class="btn-weiter" id="btn-weiter" onclick="spaetiWeiter()">Weiter</button>
+
+    <div class="foot tour-label"></div>
+  </div>
+</div>
+
+<!-- ================================================
+     SCREEN: ERGEBNIS
+     ================================================ -->
+<div id="screen-ergebnis" class="screen">
+  <div class="screen-inner">
+    <div class="ergebnis-hero anim-slide">
+      <div class="done-label">Tour beendet</div>
+      <h1>Was fuer ein Abend!</h1>
+    </div>
+
+    <div class="score-hero anim-slide-d1">
+      <div class="label">Gesamtpunkte</div>
+      <div class="value" id="ergebnis-punkte">0</div>
+    </div>
+
+    <div class="rank-label anim-slide-d2" id="ergebnis-ranking"></div>
+
+    <div class="results-list anim-slide-d3" id="results-list"></div>
+
+    <button class="btn-replay anim-slide-d4" onclick="neueTour()">Nochmal spielen</button>
+
+    <div class="foot tour-label"></div>
+  </div>
+</div>
+
+<script>
+// === DATA ===
+const SPAETIS = [
+  {
+    "id": "suedvorstadt_01",
+    "name": "Spaeti Suedvorstadt",
+    "typ": "spaeti",
+    "adresse": "Karl-Liebknecht-Str. 42, 04275 Leipzig",
+    "viertel": "Suedvorstadt",
+    "lat": 51.3275,
+    "lng": 12.3737,
+    "aktion": {
+      "name": "Dosenwerfen",
+      "beschreibung": "3 Wuerfe mit dem Tennisball. Jede getroffene Dose = 5 Bonuspunkte.",
+      "bonuspunkte": 15
+    },
+    "oeffnungszeiten": "Mo-Sa 8-24 Uhr",
+    "gehzeit_min": {
+      "suedvorstadt_02": 6,
+      "connewitz_01": 12,
+      "connewitz_02": 15,
+      "plagwitz_01": 20,
+      "reudnitz_01": 18,
+      "voelkerschlacht": 25,
+      "baumwollspinnerei": 30,
+      "maedler_passage": 15,
+      "clara_zetkin_park": 15
+    }
+  },
+  {
+    "id": "suedvorstadt_02",
+    "name": "Trinkhalle Sued",
+    "typ": "spaeti",
+    "adresse": "Kochstr. 10, 04275 Leipzig",
+    "viertel": "Suedvorstadt",
+    "lat": 51.3242,
+    "lng": 12.3730,
+    "aktion": {
+      "name": "Kronkorken-Zielwerfen",
+      "beschreibung": "Werft 5 Kronkorken in den Eimer. Ab 3 Treffern gibt's Bonuspunkte.",
+      "bonuspunkte": 10
+    },
+    "oeffnungszeiten": "Mo-So 10-1 Uhr",
+    "gehzeit_min": {
+      "suedvorstadt_01": 6,
+      "connewitz_01": 8,
+      "connewitz_02": 10,
+      "plagwitz_01": 22,
+      "reudnitz_01": 15,
+      "voelkerschlacht": 22,
+      "baumwollspinnerei": 28,
+      "maedler_passage": 12,
+      "clara_zetkin_park": 18
+    }
+  },
+  {
+    "id": "connewitz_01",
+    "name": "Nachtladen Connewitz",
+    "typ": "spaeti",
+    "adresse": "Bornaische Str. 18, 04277 Leipzig",
+    "viertel": "Connewitz",
+    "lat": 51.3168,
+    "lng": 12.3810,
+    "aktion": {
+      "name": "Tombola",
+      "beschreibung": "Zieht ein Los. Niete = nix, Treffer = Bonuspunkte fuer die Gruppe.",
+      "bonuspunkte": 20
+    },
+    "oeffnungszeiten": "Mo-So 9-2 Uhr",
+    "gehzeit_min": {
+      "suedvorstadt_01": 12,
+      "suedvorstadt_02": 8,
+      "connewitz_02": 5,
+      "plagwitz_01": 25,
+      "reudnitz_01": 20,
+      "voelkerschlacht": 18,
+      "baumwollspinnerei": 35,
+      "maedler_passage": 20,
+      "clara_zetkin_park": 22
+    }
+  },
+  {
+    "id": "connewitz_02",
+    "name": "Eckspaeti Connewitz",
+    "typ": "spaeti",
+    "adresse": "Meusdorfer Str. 5, 04277 Leipzig",
+    "viertel": "Connewitz",
+    "lat": 51.3122,
+    "lng": 12.3838,
+    "aktion": {
+      "name": "Schaetzfrage",
+      "beschreibung": "Wie viele Biersorten haben wir? Die Gruppe schaetzt. Innerhalb von +/-3 = Bonuspunkte.",
+      "bonuspunkte": 10
+    },
+    "oeffnungszeiten": "Mo-Sa 11-23 Uhr",
+    "gehzeit_min": {
+      "suedvorstadt_01": 15,
+      "suedvorstadt_02": 10,
+      "connewitz_01": 5,
+      "plagwitz_01": 28,
+      "reudnitz_01": 22,
+      "voelkerschlacht": 20,
+      "baumwollspinnerei": 38,
+      "maedler_passage": 22,
+      "clara_zetkin_park": 25
+    }
+  },
+  {
+    "id": "plagwitz_01",
+    "name": "Spaetshop Plagwitz",
+    "typ": "spaeti",
+    "adresse": "Karl-Heine-Str. 78, 04229 Leipzig",
+    "viertel": "Plagwitz",
+    "lat": 51.3348,
+    "lng": 12.3372,
+    "aktion": {
+      "name": "Wuerfelspiel",
+      "beschreibung": "Jeder wuerfelt einmal. Die Summe der Gruppe: ab 20 = Bonuspunkte.",
+      "bonuspunkte": 15
+    },
+    "oeffnungszeiten": "Mo-Sa 9-24 Uhr",
+    "gehzeit_min": {
+      "suedvorstadt_01": 20,
+      "suedvorstadt_02": 22,
+      "connewitz_01": 25,
+      "connewitz_02": 28,
+      "reudnitz_01": 30,
+      "voelkerschlacht": 45,
+      "baumwollspinnerei": 8,
+      "maedler_passage": 25,
+      "clara_zetkin_park": 15
+    }
+  },
+  {
+    "id": "reudnitz_01",
+    "name": "Kiosk Reudnitz",
+    "typ": "spaeti",
+    "adresse": "Dresdner Str. 55, 04317 Leipzig",
+    "viertel": "Reudnitz",
+    "lat": 51.3350,
+    "lng": 12.4020,
+    "aktion": {
+      "name": "Lose ziehen",
+      "beschreibung": "Zieht 3 Lose aus der Box. Jedes 'Gewonnen'-Los = 5 Bonuspunkte.",
+      "bonuspunkte": 15
+    },
+    "oeffnungszeiten": "Mo-Sa 8-23 Uhr",
+    "gehzeit_min": {
+      "suedvorstadt_01": 18,
+      "suedvorstadt_02": 15,
+      "connewitz_01": 20,
+      "connewitz_02": 22,
+      "plagwitz_01": 30,
+      "voelkerschlacht": 30,
+      "baumwollspinnerei": 40,
+      "maedler_passage": 20,
+      "clara_zetkin_park": 25
+    }
+  },
+  {
+    "id": "voelkerschlacht",
+    "name": "Voelkerschlachtdenkmal",
+    "typ": "attraktion",
+    "adresse": "Str. des 18. Oktober 100, 04299 Leipzig",
+    "viertel": "Suedost",
+    "lat": 51.3125,
+    "lng": 12.4131,
+    "aktion": {
+      "name": "Napoleon-Foto",
+      "beschreibung": "Macht ein Gruppenfoto mit der dramatischsten Pose die ihr hinbekommt. Mindestens eine Person muss Napoleon darstellen.",
+      "bonuspunkte": 15
+    },
+    "oeffnungszeiten": "Aussenbereich immer zugaenglich",
+    "gehzeit_min": {
+      "suedvorstadt_01": 25,
+      "suedvorstadt_02": 22,
+      "connewitz_01": 18,
+      "connewitz_02": 20,
+      "plagwitz_01": 45,
+      "reudnitz_01": 30,
+      "baumwollspinnerei": 50,
+      "maedler_passage": 30,
+      "clara_zetkin_park": 35
+    }
+  },
+  {
+    "id": "baumwollspinnerei",
+    "name": "Baumwollspinnerei",
+    "typ": "attraktion",
+    "adresse": "Spinnereistr. 7, 04179 Leipzig",
+    "viertel": "Plagwitz",
+    "lat": 51.3338,
+    "lng": 12.3203,
+    "aktion": {
+      "name": "Spontan-Auktion",
+      "beschreibung": "Findet draussen ein Kunstwerk, Graffiti oder Skulptur. Eine Person stellt es der Gruppe in 30 Sekunden als Auktionator vor. Startgebot: 1 Million!",
+      "bonuspunkte": 15
+    },
+    "oeffnungszeiten": "Gelaende immer zugaenglich",
+    "gehzeit_min": {
+      "suedvorstadt_01": 30,
+      "suedvorstadt_02": 28,
+      "connewitz_01": 35,
+      "connewitz_02": 38,
+      "plagwitz_01": 8,
+      "reudnitz_01": 40,
+      "voelkerschlacht": 50,
+      "maedler_passage": 25,
+      "clara_zetkin_park": 15
+    }
+  },
+  {
+    "id": "maedler_passage",
+    "name": "Maedler-Passage",
+    "typ": "attraktion",
+    "adresse": "Grimmaische Str. 2-4, 04109 Leipzig",
+    "viertel": "Zentrum",
+    "lat": 51.3402,
+    "lng": 12.3748,
+    "aktion": {
+      "name": "Faust-Challenge",
+      "beschreibung": "Wer kann ein echtes Zitat aus Goethes Faust aufsagen? Alternativ: Erfindet ein Zitat das so echt klingt dass die Gruppe es glaubt.",
+      "bonuspunkte": 15
+    },
+    "oeffnungszeiten": "Passage immer zugaenglich",
+    "gehzeit_min": {
+      "suedvorstadt_01": 15,
+      "suedvorstadt_02": 12,
+      "connewitz_01": 20,
+      "connewitz_02": 22,
+      "plagwitz_01": 25,
+      "reudnitz_01": 20,
+      "voelkerschlacht": 30,
+      "baumwollspinnerei": 25,
+      "clara_zetkin_park": 12
+    }
+  },
+  {
+    "id": "clara_zetkin_park",
+    "name": "Clara-Zetkin-Park",
+    "typ": "attraktion",
+    "adresse": "Anton-Bruckner-Allee, 04107 Leipzig",
+    "viertel": "Zentrum-West",
+    "lat": 51.3330,
+    "lng": 12.3548,
+    "aktion": {
+      "name": "Baum-Umarmung",
+      "beschreibung": "Findet den dicksten Baum in der Naehe und umarmt ihn als ganze Gruppe. Foto als Beweis! Bonuspunkte wenn alle gleichzeitig den Stamm beruehren.",
+      "bonuspunkte": 10
+    },
+    "oeffnungszeiten": "Immer zugaenglich",
+    "gehzeit_min": {
+      "suedvorstadt_01": 15,
+      "suedvorstadt_02": 18,
+      "connewitz_01": 22,
+      "connewitz_02": 25,
+      "plagwitz_01": 15,
+      "reudnitz_01": 25,
+      "voelkerschlacht": 35,
+      "baumwollspinnerei": 15,
+      "maedler_passage": 12
+    }
+  }
+];
+const AUFGABEN = [
+  {
+    "id": "matze_freunde_01",
+    "text": "Jeder erzaehlt: Was ist eine Eigenschaft an dir die die meisten Leute nicht kennen?",
+    "mechanik": "matze",
+    "modi": ["freunde", "date"],
+    "slots": [3, 4],
+    "punkte": 15,
+    "hint": "Denkt an Hobbys, Gewohnheiten oder Talente die ihr selten zeigt.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_freunde_02",
+    "text": "Reihum: Wann hast du zuletzt so gelacht dass dir die Traenen kamen?",
+    "mechanik": "matze",
+    "modi": ["freunde"],
+    "slots": [1, 2],
+    "punkte": 10,
+    "hint": "Denkt an peinliche Situationen oder Insider-Witze.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_freunde_03",
+    "text": "Jeder sagt: Welchen Rat wuerdest du deinem 16-jaehrigen Ich geben?",
+    "mechanik": "matze",
+    "modi": ["freunde"],
+    "slots": [3, 4],
+    "punkte": 15,
+    "hint": "Was hast du spaeter gelernt das du damals gern gewusst haettest?",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_freunde_04",
+    "text": "Jeder beantwortet: Worauf bist du richtig stolz auch wenn es sich klein anfuehlt?",
+    "mechanik": "matze",
+    "modi": ["freunde"],
+    "slots": [2, 3],
+    "punkte": 10,
+    "hint": "Es muss nichts Grosses sein - kleine Erfolge zaehlen.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_freunde_05",
+    "text": "Fragerunde: Jeder darf einer Person aus der Gruppe EINE persoenliche Frage stellen. Ehrlich antworten.",
+    "mechanik": "matze",
+    "modi": ["freunde"],
+    "slots": [4, 5],
+    "punkte": 20,
+    "hint": "Stellt Fragen die ihr euch sonst nie trauen wuerdet.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "justone_freunde_01",
+    "text": "JUST ONE: Bestimmt einen Rater. Die anderen denken sich ein Tier aus. Jeder gibt EIN Wort als Hinweis. Gleiche Woerter fallen weg! Dann wird geraten.",
+    "mechanik": "just-one",
+    "modi": ["freunde", "trinkspiel"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Denkt an ungewoehnliche Merkmale statt an das Offensichtliche.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "justone_freunde_02",
+    "text": "JUST ONE: Gesucht: eure beste gemeinsame Erinnerung. Jeder gibt EIN Hinweiswort. Doppelte raus!",
+    "mechanik": "just-one",
+    "modi": ["freunde"],
+    "slots": [2, 3],
+    "punkte": 15,
+    "hint": "Seid spezifisch - 'Urlaub' denken alle.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "justone_freunde_03",
+    "text": "JUST ONE: Der Juengste raet. Gesucht: ein Ort in Leipzig. EIN Hinweiswort pro Person. Doppelte raus!",
+    "mechanik": "just-one",
+    "modi": ["freunde", "trinkspiel"],
+    "slots": [1, 2, 3],
+    "punkte": 20,
+    "hint": "Gebt einen Hinweis der spezifisch fuer diesen Ort ist.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "activity_freunde_01",
+    "text": "PANTOMIME: Stellt nacheinander euren Beruf pantomimisch dar. Wer wird am schnellsten erraten?",
+    "mechanik": "activity",
+    "modi": ["freunde", "team-duell"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Zeigt typische Handbewegungen eures Jobs.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "activity_freunde_02",
+    "text": "ERKLAEREN: Erklaert das Wort 'Heimat' ohne die Woerter Haus, Zuhause, Familie und Stadt.",
+    "mechanik": "activity",
+    "modi": ["freunde", "date"],
+    "slots": [2, 3],
+    "punkte": 20,
+    "hint": "Beschreibt das Gefuehl statt den Ort.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": ["Haus", "Zuhause", "Familie", "Stadt"],
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "activity_freunde_03",
+    "text": "KETTENPANTOMIME: Erster denkt sich eine Taetigkeit aus und zeigt sie dem Zweiten. Der gibt sie weiter ohne das Original zu kennen. Was kommt am Ende raus?",
+    "mechanik": "activity",
+    "modi": ["freunde"],
+    "slots": [1, 2],
+    "punkte": 20,
+    "hint": "Waehlt einfache klare Bewegungen fuer den Start.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "activity_freunde_04",
+    "text": "ERKLAEREN: Erklaert 'Freundschaft' ohne Freund, zusammen, gern und helfen.",
+    "mechanik": "activity",
+    "modi": ["freunde"],
+    "slots": [3, 4],
+    "punkte": 20,
+    "hint": "Verwendet eine Metapher oder ein konkretes Beispiel.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": ["Freund", "zusammen", "gern", "helfen"],
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "werbinich_freunde_01",
+    "text": "WER BIN ICH: Jeder fluester dem Nachbarn eine beruehmte Person ins Ohr. 10 Ja/Nein-Fragen zum Raten!",
+    "mechanik": "wer-bin-ich",
+    "modi": ["freunde", "trinkspiel"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Fragt zuerst ob die Person noch lebt.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "werbinich_freunde_02",
+    "text": "WER BIN ICH: Einer denkt sich ein Tier. Die Gruppe hat 15 Ja/Nein-Fragen. Schafft ihr es?",
+    "mechanik": "wer-bin-ich",
+    "modi": ["freunde"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Fangt mit Lebensraum und Groesse an.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_freunde_01",
+    "text": "Zaehlt gemeinsam 20 Dinge auf die man im Spaeti kaufen kann. Ihr habt 30 Sekunden!",
+    "mechanik": "challenge",
+    "modi": ["freunde", "trinkspiel"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Denkt an Getraenke, Snacks, Tabak, Zeitungen.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": 30,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_freunde_02",
+    "text": "Jeder sagt EIN Wort das beschreibt wie er oder sie sich genau jetzt gerade fuehlt. Keine Wiederholungen!",
+    "mechanik": "challenge",
+    "modi": ["freunde", "date"],
+    "slots": [2, 3],
+    "punkte": 10,
+    "hint": "Seid ehrlich - es gibt keine falschen Gefuehle.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "ranking_freunde_01",
+    "text": "Sortiert euch in eine Reihe: Wer ist am spontansten? Diskutiert und einigt euch!",
+    "mechanik": "ranking",
+    "modi": ["freunde"],
+    "slots": [1, 2],
+    "punkte": 10,
+    "hint": "Denkt an konkrete Situationen wo jemand spontan war.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "ranking_freunde_02",
+    "text": "Einigt euch auf EINE Sache: Was macht eine gute Freundschaft wirklich aus?",
+    "mechanik": "ranking",
+    "modi": ["freunde"],
+    "slots": [3, 4],
+    "punkte": 15,
+    "hint": "Denkt an Situationen in denen Freundschaft wirklich wichtig war.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_freunde_06",
+    "text": "Reihum: Was ist die schoenste Erinnerung die du mit jemandem aus dieser Gruppe hast?",
+    "mechanik": "matze",
+    "modi": ["freunde"],
+    "slots": [4, 5],
+    "punkte": 10,
+    "hint": "Denkt an Reisen, Feiern oder spontane Momente.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_freunde_07",
+    "text": "Was macht ihr als naechstes zusammen? Plant spontan etwas Konkretes mit Datum!",
+    "mechanik": "matze",
+    "modi": ["freunde"],
+    "slots": [5],
+    "punkte": 10,
+    "hint": "Schlagt etwas vor das ihr diese Woche noch machen koennt.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_date_01",
+    "text": "Was ist dir seit unserem letzten Treffen im Kopf geblieben?",
+    "mechanik": "matze",
+    "modi": ["date"],
+    "slots": [1],
+    "punkte": 10,
+    "hint": "Sei ehrlich - auch Kleinigkeiten zaehlen.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_date_02",
+    "text": "Erzaehlt euch die lustigste oder absurdeste Sache die euch diese Woche passiert ist.",
+    "mechanik": "matze",
+    "modi": ["date"],
+    "slots": [1],
+    "punkte": 10,
+    "hint": "Je alltaeglicher desto lustiger oft.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_date_03",
+    "text": "Wie gehst du mit Stress um? Was machst du wenn alles zu viel wird?",
+    "mechanik": "matze",
+    "modi": ["date"],
+    "slots": [2],
+    "punkte": 10,
+    "hint": "Sport, Rueckzug, Reden, Kochen - es gibt keine falsche Antwort.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_date_04",
+    "text": "Bist du eher Planer oder spontan? Woran merkt man das bei dir?",
+    "mechanik": "matze",
+    "modi": ["date"],
+    "slots": [2],
+    "punkte": 10,
+    "hint": "Denkt an konkrete Alltagssituationen.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_date_05",
+    "text": "Was nervt dich im Alltag wirklich? Und was ist dein guilty pleasure danach?",
+    "mechanik": "matze",
+    "modi": ["date"],
+    "slots": [2, 3],
+    "punkte": 10,
+    "hint": "Pendeln, Meetings, Haushalt - jeder hat was.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_date_06",
+    "text": "Was findest du attraktiv an Menschen - nicht nur optisch?",
+    "mechanik": "matze",
+    "modi": ["date"],
+    "slots": [3],
+    "punkte": 15,
+    "hint": "Denkt an Eigenschaften, Verhaltensweisen, Energie.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_date_07",
+    "text": "Was ist fuer dich ein richtig gutes Date? Beschreib den perfekten Abend.",
+    "mechanik": "matze",
+    "modi": ["date"],
+    "slots": [3],
+    "punkte": 15,
+    "hint": "Es muss nicht teuer sein - was zaehlt wirklich?",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_date_08",
+    "text": "Worin bist du nicht so gut? Was wuerdest du gern besser koennen?",
+    "mechanik": "matze",
+    "modi": ["date"],
+    "slots": [4],
+    "punkte": 15,
+    "hint": "Schwaechen zeigen ist mutig. Sei ehrlich.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_date_09",
+    "text": "Was hast du in den letzten Jahren ueber dich gelernt?",
+    "mechanik": "matze",
+    "modi": ["date", "freunde"],
+    "slots": [4],
+    "punkte": 15,
+    "hint": "Denk an eine Situation die dich veraendert hat.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_date_10",
+    "text": "Was suchst du aktuell wirklich? Im Leben, nicht nur beim Dating.",
+    "mechanik": "matze",
+    "modi": ["date"],
+    "slots": [4],
+    "punkte": 20,
+    "hint": "Ruhe, Abenteuer, Verbindung, Klarheit - alles ist erlaubt.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_date_11",
+    "text": "Was sollten wir unbedingt noch zusammen machen? Spontane Ideen!",
+    "mechanik": "matze",
+    "modi": ["date"],
+    "slots": [5],
+    "punkte": 10,
+    "hint": "Denkt gross - Tagesausflug, Kochen, Konzert?",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_date_12",
+    "text": "Worauf haettest du gerade noch Lust? Heute Abend ist noch nicht vorbei.",
+    "mechanik": "matze",
+    "modi": ["date"],
+    "slots": [5],
+    "punkte": 10,
+    "hint": "Essen, Spaziergang, noch eine Bar, Nachtspaziergang?",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "ranking_date_01",
+    "text": "Top 3 Dinge die ein gutes Date ausmachen. Einigt euch!",
+    "mechanik": "ranking",
+    "modi": ["date"],
+    "slots": [2, 3],
+    "punkte": 15,
+    "hint": "Essen, Gespraech, Ort, Ueberraschung, Chemie?",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "ranking_date_02",
+    "text": "Was sind eure Top 3 Dealbreaker? Gibt es Ueberschneidungen?",
+    "mechanik": "ranking",
+    "modi": ["date"],
+    "slots": [3, 4],
+    "punkte": 15,
+    "hint": "Seid ehrlich - es gibt keine falschen Antworten.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "ranking_date_03",
+    "text": "Plant spontan euer naechstes Date: Was, Wo, Wann? Einigt euch auf EINEN konkreten Plan.",
+    "mechanik": "ranking",
+    "modi": ["date"],
+    "slots": [5],
+    "punkte": 15,
+    "hint": "Macht es konkret - Tag und Uhrzeit festlegen.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "ranking_date_04",
+    "text": "3 Songs die zu eurem heutigen Abend passen wuerden. Einigt euch auf eine Playlist.",
+    "mechanik": "ranking",
+    "modi": ["date"],
+    "slots": [2, 3],
+    "punkte": 10,
+    "hint": "Denkt an die Stimmung gerade - nicht an euren Lieblingsgenre.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "activity_date_01",
+    "text": "ERKLAEREN: Erklaert 'Liebe' ohne Herz, Gefuehl, Partner, Beziehung und gern.",
+    "mechanik": "activity",
+    "modi": ["date", "freunde"],
+    "slots": [3, 4],
+    "punkte": 20,
+    "hint": "Beschreibt was man tut statt was man fuehlt.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": ["Herz", "Gefuehl", "Partner", "Beziehung", "gern"],
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "activity_date_02",
+    "text": "ERKLAEREN: Erklaert 'Glueck' ohne Freude, gut, positiv, Zufall und Lachen.",
+    "mechanik": "activity",
+    "modi": ["date"],
+    "slots": [3, 4],
+    "punkte": 20,
+    "hint": "Denkt an einen konkreten Moment statt an das abstrakte Wort.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": ["Freude", "gut", "positiv", "Zufall", "Lachen"],
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "justone_date_01",
+    "text": "JUST ONE: Einer raet. Gesucht: etwas das man am Gegenueber mag. EIN Wort, Doppelte raus!",
+    "mechanik": "just-one",
+    "modi": ["date"],
+    "slots": [3, 4],
+    "punkte": 15,
+    "hint": "Seid spezifisch - 'nett' denken alle.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_date_01",
+    "text": "30 Sekunden: Zaehlt abwechselnd Dinge auf die ihr aneinander moeget. Ohne Pause!",
+    "mechanik": "challenge",
+    "modi": ["date"],
+    "slots": [4, 5],
+    "punkte": 15,
+    "hint": "Kleine Dinge zaehlen - Lachen, Gestik, Wortwahl.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": 30,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_trink_01",
+    "text": "Zaehlt reihum Zahlen hoch. Bei jeder Zahl die eine 7 enthaelt oder durch 7 teilbar ist: TRINKEN statt Zahl sagen. Wer es falsch macht trinkt doppelt.",
+    "mechanik": "challenge",
+    "modi": ["trinkspiel"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "7, 14, 17, 21, 27, 28, 35, 37...",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Fehler = trinken",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_trink_02",
+    "text": "Ich hab noch nie: Reihum sagt jeder etwas das er noch nie gemacht hat. Wer es DOCH gemacht hat trinkt.",
+    "mechanik": "challenge",
+    "modi": ["trinkspiel"],
+    "slots": [1, 2, 3],
+    "punkte": 10,
+    "hint": "Fangt harmlos an und steigert euch.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Wer es gemacht hat trinkt",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_trink_03",
+    "text": "Wuerde-ich-nie: Einer sagt etwas Absurdes. Wer sich vorstellen kann es zu tun trinkt NICHT. Wer es nie tun wuerde trinkt.",
+    "mechanik": "challenge",
+    "modi": ["trinkspiel"],
+    "slots": [2, 3],
+    "punkte": 10,
+    "hint": "Denkt an peinliche, mutige oder verrueckte Dinge.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Wer es nie tun wuerde trinkt",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_trink_04",
+    "text": "Busfahrer: Rot oder Schwarz? Ratet die Farbe eures naechsten Getaenks (hell oder dunkel). Falsch = trinken.",
+    "mechanik": "challenge",
+    "modi": ["trinkspiel"],
+    "slots": [1],
+    "punkte": 10,
+    "hint": "Schaut euch das Regal an bevor ihr bestellt.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Falsch geraten = trinken",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_trink_05",
+    "text": "Reihum: Jeder sagt eine Marke. Wer keine mehr weiss oder zu lange braucht trinkt. Kategorie: Biermarken!",
+    "mechanik": "challenge",
+    "modi": ["trinkspiel"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Denkt international - nicht nur deutsch.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Keine Antwort = trinken",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "justone_trink_01",
+    "text": "JUST ONE: Rater bestimmen. Gesucht: ein Getraenk. Doppelte Woerter = beide trinken! Dann wird geraten.",
+    "mechanik": "just-one",
+    "modi": ["trinkspiel"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Seid spezifisch - 'kalt' denkt jeder.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Doppelte Hinweise = beide trinken",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "justone_trink_02",
+    "text": "JUST ONE: Gesucht: etwas das man auf einer Party braucht. Doppelte = trinken. Nicht erraten = alle trinken.",
+    "mechanik": "just-one",
+    "modi": ["trinkspiel"],
+    "slots": [2, 3],
+    "punkte": 15,
+    "hint": "Denkt an Konkretes statt Kategorien.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Doppelte trinken, nicht erraten = alle trinken",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "justone_trink_03",
+    "text": "JUST ONE: Gesucht: etwas typisch Deutsches. Doppelte trinken. Falsches Raten = Rater trinkt doppelt.",
+    "mechanik": "just-one",
+    "modi": ["trinkspiel"],
+    "slots": [2, 3],
+    "punkte": 15,
+    "hint": "Geht ueber Bier und Bratwurst hinaus.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Doppelte trinken, falsch = Rater trinkt doppelt",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "activity_trink_01",
+    "text": "PANTOMIME: Stellt ein Getraenk pantomimisch dar. Die Gruppe hat 3 Versuche. Nicht erraten = Darsteller trinkt.",
+    "mechanik": "activity",
+    "modi": ["trinkspiel"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Zeigt wie man es zubereitet oder trinkt.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Nicht erraten = Darsteller trinkt",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "activity_trink_02",
+    "text": "ERKLAEREN: Erklaert 'Kater' ohne trinken, Alkohol, Kopfschmerz, morgens und Party. Versagt ihr trinkt ihr.",
+    "mechanik": "activity",
+    "modi": ["trinkspiel"],
+    "slots": [2, 3],
+    "punkte": 20,
+    "hint": "Beschreibt den Zustand ohne die Ursache.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": ["trinken", "Alkohol", "Kopfschmerz", "morgens", "Party"],
+      "trink_regel": "Tabu-Wort benutzt = trinken",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "activity_trink_03",
+    "text": "PANTOMIME: Stellt nacheinander euer peinlichstes Erlebnis pantomimisch dar. Gruppe raet. Nicht erraten = alle trinken.",
+    "mechanik": "activity",
+    "modi": ["trinkspiel"],
+    "slots": [2, 3],
+    "punkte": 15,
+    "hint": "Uebertreibt ruhig.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Nicht erraten = alle trinken",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "activity_trink_04",
+    "text": "GERAEUSCHERATEN: Macht abwechselnd ein Geraeusch. Wer es nicht erraten kann trinkt. 5 Runden!",
+    "mechanik": "activity",
+    "modi": ["trinkspiel"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Tiere und Maschinen sind am leichtesten.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Nicht erraten = trinken",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "werbinich_trink_01",
+    "text": "WER BIN ICH: Einer bekommt eine beruehmte Person. 10 Ja/Nein-Fragen. Jede Nein-Antwort = Rater trinkt.",
+    "mechanik": "wer-bin-ich",
+    "modi": ["trinkspiel"],
+    "slots": [2, 3],
+    "punkte": 15,
+    "hint": "Stellt kluge Fragen - jedes Nein kostet.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Jedes Nein = Rater trinkt",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "werbinich_trink_02",
+    "text": "WER BIN ICH: Einer denkt sich etwas das man im Spaeti kaufen kann. Gruppe raet mit Ja/Nein. Ab Frage 8 trinkt der Rater pro Frage.",
+    "mechanik": "wer-bin-ich",
+    "modi": ["trinkspiel"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Fangt mit Kategorie an: Getraenk? Snack? Tabak?",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Ab Frage 8: Rater trinkt pro Frage",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "ranking_trink_01",
+    "text": "Wer in der Gruppe hat am meisten Bier getrunken in seinem Leben? Sortiert euch. Platz 1 trinkt.",
+    "mechanik": "ranking",
+    "modi": ["trinkspiel"],
+    "slots": [1, 2],
+    "punkte": 10,
+    "hint": "Seid ehrlich - die Gruppe darf challengen.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Platz 1 trinkt",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "ranking_trink_02",
+    "text": "Diskutiert: Was ist das beste Mischgetraenk? Wer am Ende ueberstimmt wird trinkt.",
+    "mechanik": "ranking",
+    "modi": ["trinkspiel"],
+    "slots": [2, 3],
+    "punkte": 10,
+    "hint": "Argumentiert gut - die Minderheit verliert.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Minderheit trinkt",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_trink_01",
+    "text": "Beichte: Jeder gesteht das Peinlichste das er je betrunken gemacht hat. Gruppe stimmt ab wer gewinnt. Verlierer trinkt.",
+    "mechanik": "matze",
+    "modi": ["trinkspiel"],
+    "slots": [3, 4],
+    "punkte": 15,
+    "hint": "Je peinlicher desto besser. Ehrlichkeit gewinnt.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Verlierer der Abstimmung trinkt",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_trink_06",
+    "text": "Thumbmaster: Einer ist Thumbmaster. Wann immer der Thumbmaster den Daumen auf den Tisch legt muessen alle es nachmachen. Letzter trinkt. Gilt bis zur naechsten Station!",
+    "mechanik": "challenge",
+    "modi": ["trinkspiel"],
+    "slots": [1, 2, 3, 4, 5],
+    "punkte": 10,
+    "hint": "Seid unauffaellig - das ist der Trick.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Letzter trinkt",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_trink_07",
+    "text": "Kategorien-Sprint: Einer nennt eine Kategorie (z.B. Automarken). Reihum in 3 Sekunden antworten. Wer nicht kann trinkt.",
+    "mechanik": "challenge",
+    "modi": ["trinkspiel"],
+    "slots": [1, 2, 3],
+    "punkte": 15,
+    "hint": "Waehlt keine zu schwere Kategorie.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": 3,
+      "tabu_woerter": null,
+      "trink_regel": "Keine Antwort in 3 Sek = trinken",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_trink_08",
+    "text": "Zwei Wahrheiten eine Luege: Jeder erzaehlt 3 Dinge ueber sich. Gruppe raet was die Luege ist. Falsch geraten = trinken.",
+    "mechanik": "challenge",
+    "modi": ["trinkspiel"],
+    "slots": [2, 3, 4],
+    "punkte": 15,
+    "hint": "Macht die Wahrheiten unglaubwuerdig und die Luege glaubwuerdig.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Falsch geraten = trinken",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_team_01",
+    "text": "TEAM-DUELL: Teilt euch in 2 Teams. Jedes Team zaehlt abwechselnd Laender auf. Wer zuerst stockt verliert. Verlierer bestimmt wer die naechste Runde aussucht.",
+    "mechanik": "challenge",
+    "modi": ["team-duell"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Fangt mit den grossen Kontinenten an.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "links-rechts"
+    }
+  },
+  {
+    "id": "challenge_team_02",
+    "text": "TEAM-DUELL: Teilt euch in 2 Teams. 60 Sekunden: Welches Team zaehlt mehr Dinge auf die gelb sind?",
+    "mechanik": "challenge",
+    "modi": ["team-duell"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Natur, Essen, Marken, Alltagsgegenstaende.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": 60,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "challenge_team_03",
+    "text": "TEAM-DUELL: Teilt euch! Welches Team kann laenger einen Zungenbrecher fehlerfrei aufsagen? 'Fischers Fritz fischt frische Fische.'",
+    "mechanik": "challenge",
+    "modi": ["team-duell"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Langsam anfangen und dann schneller werden.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "challenge_team_04",
+    "text": "TEAM-DUELL: Teilt euch! 30 Sekunden pro Team: Wer zaehlt mehr Leipziger Sehenswuerdigkeiten auf?",
+    "mechanik": "challenge",
+    "modi": ["team-duell"],
+    "slots": [2, 3],
+    "punkte": 20,
+    "hint": "Kirchen, Parks, Museen, Denkmaeler, Passagen.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": 30,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "challenge_team_05",
+    "text": "TEAM-DUELL: Schlag-den-Star-Schaetzen: Wie viele Schritte sind es bis zur naechsten Strassenlaterne? Teams schaetzen. Naeher dran gewinnt.",
+    "mechanik": "challenge",
+    "modi": ["team-duell"],
+    "slots": [1, 2, 3],
+    "punkte": 15,
+    "hint": "Zaehlt leise mit waehrend ihr hinlauft.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "activity_team_01",
+    "text": "TEAM-DUELL: Teilt euch! Team A stellt einen Film pantomimisch dar. Team B hat 3 Versuche. Dann tauschen. Schnelleres Team gewinnt.",
+    "mechanik": "activity",
+    "modi": ["team-duell"],
+    "slots": [1, 2],
+    "punkte": 20,
+    "hint": "Waehlt einen bekannten Film mit klaren Szenen.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "activity_team_02",
+    "text": "TEAM-DUELL: Erklaer-Battle! Gleicher Begriff, Teams erklaeren gleichzeitig ihrem Rater. Wer zuerst erraten wird gewinnt. Begriff: 'Baumwollspinnerei'",
+    "mechanik": "activity",
+    "modi": ["team-duell"],
+    "slots": [2, 3],
+    "punkte": 20,
+    "hint": "Beschreibt den Ort, nicht das Wort.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "activity_team_03",
+    "text": "TEAM-DUELL: Geraeuscheraten! Teams machen abwechselnd Geraeusche. Gegnerteam raet. Mehr Treffer gewinnt. 4 Runden pro Team.",
+    "mechanik": "activity",
+    "modi": ["team-duell"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Einfache Geraeusche bringen sichere Punkte.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "activity_team_04",
+    "text": "TEAM-DUELL: Gemeinsame Geschichte! Team A beginnt einen Satz, Team B muss fortsetzen. Abwechselnd. Wer den Faden verliert verliert.",
+    "mechanik": "activity",
+    "modi": ["team-duell"],
+    "slots": [2, 3],
+    "punkte": 15,
+    "hint": "Baut Fallen ein die das andere Team in Sackgassen fuehren.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "justone_team_01",
+    "text": "TEAM-DUELL: Just One Battle! Gleicher Suchbegriff fuer beide Teams. Welcher Rater erratet zuerst? Gesucht: ein Tier.",
+    "mechanik": "just-one",
+    "modi": ["team-duell"],
+    "slots": [1, 2],
+    "punkte": 20,
+    "hint": "Gebt einzigartige Hinweise - Doppelte fallen weg!",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "justone_team_02",
+    "text": "TEAM-DUELL: Just One Battle! Gleicher Suchbegriff. Welches Team schafft es? Gesucht: ein Beruf.",
+    "mechanik": "just-one",
+    "modi": ["team-duell"],
+    "slots": [2, 3],
+    "punkte": 20,
+    "hint": "Beschreibt typische Taetigkeiten statt den Jobtitel.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "justone_team_03",
+    "text": "TEAM-DUELL: Just One Battle! Gesucht: etwas das man im Spaeti kaufen kann. Welcher Rater ist schneller?",
+    "mechanik": "just-one",
+    "modi": ["team-duell"],
+    "slots": [2, 3],
+    "punkte": 20,
+    "hint": "Seid konkret statt allgemein.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "werbinich_team_01",
+    "text": "TEAM-DUELL: Wer bin ich Battle! Beide Teams bekommen gleichzeitig eine Person. Wer sie mit weniger Fragen erratet gewinnt.",
+    "mechanik": "wer-bin-ich",
+    "modi": ["team-duell"],
+    "slots": [2, 3],
+    "punkte": 15,
+    "hint": "Strategisch fragen - jede Frage zaehlt.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "werbinich_team_02",
+    "text": "TEAM-DUELL: Ein Spieler aus jedem Team bekommt das gleiche Tier. Beide Teams raten gleichzeitig. Schnelleres Team gewinnt.",
+    "mechanik": "wer-bin-ich",
+    "modi": ["team-duell"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Fragt nach Lebensraum und Groesse zuerst.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "ranking_team_01",
+    "text": "TEAM-DUELL: Schaetzfrage! Wie hoch ist das Voelkerschlachtdenkmal? Teams schaetzen. Naeher dran gewinnt. (91 Meter)",
+    "mechanik": "ranking",
+    "modi": ["team-duell"],
+    "slots": [2, 3],
+    "punkte": 15,
+    "hint": "Denkt an bekannte Gebaeude als Vergleich.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "ranking_team_02",
+    "text": "TEAM-DUELL: Jedes Team einigt sich: Was ist die beste Pizza-Sorte? Dann argumentiert ihr vor der Gruppe. Applaus-Abstimmung!",
+    "mechanik": "ranking",
+    "modi": ["team-duell"],
+    "slots": [1, 2],
+    "punkte": 10,
+    "hint": "Ueberzeugt die Unentschiedenen mit Leidenschaft.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "ranking_team_03",
+    "text": "TEAM-DUELL: Geheimes Ranking! Beide Teams sortieren die gleiche Liste (5 beste Doener-Zutaten). Mehr Uebereinstimmung mit der Gesamtgruppe gewinnt.",
+    "mechanik": "ranking",
+    "modi": ["team-duell"],
+    "slots": [3, 4],
+    "punkte": 15,
+    "hint": "Denkt mainstream - nicht nach eurem Geschmack.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "matze_team_01",
+    "text": "TEAM-DUELL: Pitch Battle! Jedes Team hat 60 Sekunden: Ueberzeugt die anderen warum EUER Lieblingsviertel in Leipzig das beste ist.",
+    "mechanik": "matze",
+    "modi": ["team-duell"],
+    "slots": [3, 4],
+    "punkte": 15,
+    "hint": "Restaurants, Bars, Parks, Vibe - alles zaehlt.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": 60,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "challenge_team_06",
+    "text": "TEAM-DUELL: Finale! Stein-Schere-Papier Best-of-5 zwischen den Team-Captains. Verlierer-Team muss ein Gruppenfoto in einer peinlichen Pose machen.",
+    "mechanik": "challenge",
+    "modi": ["team-duell"],
+    "slots": [5],
+    "punkte": 20,
+    "hint": "Waehlt euren besten Spieler als Captain.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "challenge_team_07",
+    "text": "TEAM-DUELL: Sync-Challenge! Beide Teams muessen gleichzeitig das gleiche Wort sagen (Kategorie: Frucht). 3 Versuche pro Team. Mehr Treffer gewinnt.",
+    "mechanik": "challenge",
+    "modi": ["team-duell"],
+    "slots": [3, 4],
+    "punkte": 20,
+    "hint": "Denkt an das Naheliegendste - genau wie euer Partner.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "stadt_01",
+    "text": "Findet ein Graffiti und erfindet gemeinsam die Geschichte dahinter: Wer hat es gemacht und warum?",
+    "mechanik": "stadt",
+    "modi": ["freunde", "date", "trinkspiel", "team-duell"],
+    "slots": [1, 2, 3],
+    "punkte": 15,
+    "hint": "Gebt dem Kuenstler einen Namen und eine Motivation.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "stadt_02",
+    "text": "Sucht den schoensten Hinterhof auf dem Weg. Kurz reinschauen und Gruppenfoto!",
+    "mechanik": "stadt",
+    "modi": ["freunde", "date", "trinkspiel", "team-duell"],
+    "slots": [1, 2],
+    "punkte": 15,
+    "hint": "Achtet auf offene Hauseingaenge - viele Altbauten haben Durchgaenge.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "stadt_03",
+    "text": "Fragt einen Passanten: Was ist das Beste an diesem Viertel?",
+    "mechanik": "stadt",
+    "modi": ["freunde", "date", "trinkspiel", "team-duell"],
+    "slots": [2, 3, 4],
+    "punkte": 20,
+    "hint": "Seid freundlich und erklaert dass ihr auf Spaetitour seid.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "stadt_04",
+    "text": "Findet das kreativste Klingelschild und denkt euch die Person dahinter aus.",
+    "mechanik": "stadt",
+    "modi": ["freunde", "date", "trinkspiel", "team-duell"],
+    "slots": [1, 2, 3],
+    "punkte": 10,
+    "hint": "Altbauten haben oft die besten Schilder.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "stadt_05",
+    "text": "Macht ein Gruppenfoto vor dem schoensten Altbau auf dem Weg. Begruendet eure Wahl!",
+    "mechanik": "stadt",
+    "modi": ["freunde", "date", "trinkspiel", "team-duell"],
+    "slots": [2, 3, 4],
+    "punkte": 15,
+    "hint": "Achtet auf Stuck, Erker oder besondere Tueren.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "stadt_06",
+    "text": "Schaetzt das Baujahr des aeltesten Gebaeudes auf dem Weg. Wer am naechsten liegt gewinnt.",
+    "mechanik": "stadt",
+    "modi": ["freunde", "date", "trinkspiel", "team-duell"],
+    "slots": [1, 2, 3],
+    "punkte": 15,
+    "hint": "Gruenderzeit ist ca. 1870-1910, Jugendstil ca. 1900-1920.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "stadt_07",
+    "text": "Fragt jemanden auf der Strasse nach einer Restaurant-Empfehlung fuer nach der Tour.",
+    "mechanik": "stadt",
+    "modi": ["freunde", "date", "trinkspiel", "team-duell"],
+    "slots": [4, 5],
+    "punkte": 20,
+    "hint": "Fragt jemanden der aussieht als wuerde er hier wohnen.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "stadt_08",
+    "text": "Zaehlt alle Katzen die ihr seht: echt, als Aufkleber oder als Graffiti. Ziel: mindestens 3!",
+    "mechanik": "stadt",
+    "modi": ["freunde", "date", "trinkspiel", "team-duell"],
+    "slots": [1, 2, 3, 4, 5],
+    "punkte": 10,
+    "hint": "Schaut auf Fensterbaenke, Aufkleber an Laternen und Muelltonnen.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "stadt_09",
+    "text": "Findet auf dem Weg etwas das ihr noch nie in Leipzig gesehen habt.",
+    "mechanik": "stadt",
+    "modi": ["freunde", "date", "trinkspiel", "team-duell"],
+    "slots": [2, 3, 4],
+    "punkte": 15,
+    "hint": "Schaut nach oben - an Dachfassaden und Balkonen.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "stadt_10",
+    "text": "Wenn ihr eine Strasse in Leipzig benennen koenntet - wie wuerde sie heissen? Einigt euch.",
+    "mechanik": "stadt",
+    "modi": ["freunde", "date", "trinkspiel", "team-duell"],
+    "slots": [3, 4, 5],
+    "punkte": 10,
+    "hint": "Benennt sie nach etwas das ihr heute Abend erlebt habt.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  }
+];
+
+const TOUR_LABEL = 'VORSCHAU';
+
+// === CONSTANTS ===
+const STATION_COUNT = 5;
+const PTS_STATION = 20;
+const PTS_HINT = 5;
+const RANKINGS = [
+  { min: 0, max: 100, label: 'Anfaenger-Nachtschwaermer' },
+  { min: 101, max: 175, label: 'Spaeti-Kenner' },
+  { min: 176, max: 999, label: 'Leipzig-Legende' }
+];
+const MECH_LABELS = {
+  'matze':'Hotel Matze', 'just-one':'Just One', 'activity':'Activity',
+  'wer-bin-ich':'Wer bin ich', 'challenge':'Challenge', 'ranking':'Ranking', 'stadt':'Stadtmission'
+};
+const TYP_LABELS = { spaeti:'Spaeti', attraktion:'Sehenswuerdigkeit' };
+const TEAM_LABELS = {
+  'links-rechts': 'Teilt euch: Wer links laeuft vs. wer rechts laeuft',
+  'frei-waehlen': 'Teilt euch frei in 2 gleich grosse Teams',
+  'juengere-aeltere': 'Teilt euch: Juengere Haelfte vs. aeltere Haelfte'
+};
+const GPS_THRESHOLD = 40;
+const STORAGE_KEY = 'spaetitour_state';
+
+// === STATE ===
+let tour = null;
+let gpsWatchId = null;
+
+// === UTILS ===
+function shuffle(a) {
+  const b = [...a];
+  for (let i = b.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [b[i], b[j]] = [b[j], b[i]];
+  }
+  return b;
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371000, toR = d => d * Math.PI / 180;
+  const dLat = toR(lat2 - lat1), dLon = toR(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toR(lat1)) * Math.cos(toR(lat2)) * Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// === TOUR CREATION ===
+function createTour(spaetis, aufgaben, count, modus) {
+  const selected = shuffle(spaetis).slice(0, count);
+  // Optimize route (nearest neighbor)
+  const route = [selected[0]];
+  const rem = selected.slice(1);
+  while (rem.length) {
+    const cur = route[route.length - 1];
+    let best = 0, bestT = Infinity;
+    for (let i = 0; i < rem.length; i++) {
+      const t = (cur.gehzeit_min && cur.gehzeit_min[rem[i].id]) || 99;
+      if (t < bestT) { bestT = t; best = i; }
+    }
+    route.push(rem[best]);
+    rem.splice(best, 1);
+  }
+
+  // Filter tasks by mode
+  const pool = shuffle(aufgaben.filter(a => a.modi.includes(modus)));
+
+  // Slot-based assignment with mechanic variety
+  const tasks = [];
+  let lastMech = null;
+  for (let slot = 1; slot <= count; slot++) {
+    // Prefer different mechanic than previous
+    let candidates = pool.filter(a => a.slots.includes(slot) && a.mechanik !== lastMech && !tasks.includes(a));
+    // Fallback: allow same mechanic
+    if (candidates.length === 0) candidates = pool.filter(a => a.slots.includes(slot) && !tasks.includes(a));
+    // Fallback: expand to neighboring slots
+    if (candidates.length === 0) candidates = pool.filter(a => (a.slots.includes(slot-1) || a.slots.includes(slot+1)) && !tasks.includes(a));
+    // Last resort: any remaining task
+    if (candidates.length === 0) candidates = pool.filter(a => !tasks.includes(a));
+
+    const chosen = candidates.length > 0 ? candidates[0] : null;
+    if (!chosen) { tasks.push({ id:'fallback', text:'Erzaehlt euch gegenseitig etwas das niemand ueber euch weiss.', mechanik:'matze', modi:['freunde','date','trinkspiel','team-duell'], slots:[1,2,3,4,5], punkte:10, hint:'Seid ehrlich!', meta:{min_spieler:2,timer_sek:null,tabu_woerter:null,trink_regel:null,team_modus:null} }); lastMech='matze'; continue; }
+    tasks.push(chosen);
+    lastMech = chosen.mechanik;
+  }
+
+  const stationen = route.map((s, i) => {
+    const gehzeit = i > 0 ? ((route[i-1].gehzeit_min && route[i-1].gehzeit_min[s.id]) || 15) : 0;
+    return { ...s, aufgabe: tasks[i], gehzeit, aufgabeErledigt: false, aktionErledigt: false, hintUsed: false };
+  });
+
+  return { stationen, currentIdx: 0, punkte: 0, modus };
+}
+
+// === PERSISTENCE ===
+function saveTour() { if (tour) localStorage.setItem(STORAGE_KEY, JSON.stringify(tour)); }
+function loadTour() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e) { return null; } }
+function clearTour() { localStorage.removeItem(STORAGE_KEY); }
+
+// === SCREEN MANAGEMENT ===
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function renderProgress(containerId) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  for (let i = 0; i < tour.stationen.length; i++) {
+    const seg = document.createElement('div');
+    seg.className = 'progress-seg';
+    if (i < tour.currentIdx) seg.classList.add('done');
+    else if (i === tour.currentIdx) seg.classList.add('current');
+    el.appendChild(seg);
+  }
+}
+
+function parseAufgabe(text) {
+  const m = text.match(/^([A-ZÄÖÜ][A-ZÄÖÜ \-]+):\s*/);
+  return m ? { typ: m[1], text: text.slice(m[0].length) } : { typ: null, text };
+}
+
+// === GPS ===
+function startGPS() {
+  if (!navigator.geolocation || !tour) return;
+  const s = tour.stationen[tour.currentIdx];
+  if (!s.lat || !s.lng) return;
+
+  const gpsEl = document.getElementById('dest-gps');
+  const gpsText = document.getElementById('dest-gps-text');
+  gpsEl.classList.remove('hidden', 'arrived');
+  gpsText.textContent = 'GPS wird gesucht\u2026';
+
+  gpsWatchId = navigator.geolocation.watchPosition(
+    pos => {
+      const d = haversine(pos.coords.latitude, pos.coords.longitude, s.lat, s.lng);
+      if (d < GPS_THRESHOLD) {
+        gpsEl.classList.add('arrived');
+        gpsText.textContent = 'Ihr seid da!';
+      } else {
+        gpsEl.classList.remove('arrived');
+        gpsText.textContent = d < 1000 ? Math.round(d) + ' m' : (d/1000).toFixed(1) + ' km';
+      }
+    },
+    () => { gpsText.textContent = 'Kein GPS'; },
+    { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
+  );
+}
+
+function stopGPS() {
+  if (gpsWatchId !== null) { navigator.geolocation.clearWatch(gpsWatchId); gpsWatchId = null; }
+  const gpsEl = document.getElementById('dest-gps');
+  if (gpsEl) gpsEl.classList.add('hidden');
+}
+
+function openNavigation() {
+  if (!tour) return;
+  const s = tour.stationen[tour.currentIdx];
+  if (s.lat && s.lng) window.open('https://www.google.com/maps/dir/?api=1&destination='+s.lat+','+s.lng+'&travelmode=walking','_blank');
+}
+
+// === ROUTE OVERVIEW ===
+function showRoute() {
+  const list = document.getElementById('route-list');
+  list.innerHTML = '';
+  tour.stationen.forEach((s, i) => {
+    const stop = document.createElement('div');
+    stop.className = 'route-stop';
+    stop.style.animationDelay = (i * 0.06) + 's';
+
+    const typ = s.typ || 'spaeti';
+    const walkText = i > 0 ? s.gehzeit + ' Min.' : '';
+
+    const dotWrap = document.createElement('div'); dotWrap.className = 'dot-wrap';
+    const dotNum = document.createElement('div'); dotNum.className = 'dot-num'; dotNum.textContent = i+1;
+    dotWrap.appendChild(dotNum);
+    const info = document.createElement('div'); info.className = 'route-stop-info';
+    const nameEl = document.createElement('div'); nameEl.className = 'route-stop-name'; nameEl.textContent = s.name;
+    const metaEl = document.createElement('div'); metaEl.className = 'route-stop-meta'; metaEl.textContent = s.adresse + (walkText ? ' \u00B7 ' + walkText + ' Fussweg' : '');
+    info.appendChild(nameEl); info.appendChild(metaEl);
+    const badge = document.createElement('div'); badge.className = 'route-stop-badge ' + typ; badge.textContent = TYP_LABELS[typ] || typ;
+    stop.appendChild(dotWrap); stop.appendChild(info); stop.appendChild(badge);
+
+    list.appendChild(stop);
+  });
+  showScreen('screen-route');
+}
+
+// === WEGAUFGABE ===
+function showWegaufgabe() {
+  stopTimer();
+  const s = tour.stationen[tour.currentIdx];
+
+  document.getElementById('weg-station-label').textContent = 'Station ' + (tour.currentIdx+1) + '/' + tour.stationen.length;
+  document.getElementById('weg-score').textContent = tour.punkte;
+  renderProgress('progress-bar');
+
+  // Destination
+  const typ = s.typ || 'spaeti';
+  document.getElementById('dest-eyebrow').textContent = (TYP_LABELS[typ] || typ) + ' \u00B7 Station ' + (tour.currentIdx+1);
+  document.getElementById('dest-name').textContent = s.name;
+  document.getElementById('dest-address').textContent = s.adresse;
+
+  const walkEl = document.getElementById('dest-walk');
+  const walkText = document.getElementById('dest-walk-text');
+  if (s.gehzeit && tour.currentIdx > 0) {
+    walkEl.classList.remove('hidden');
+    walkText.textContent = s.gehzeit + ' Min.';
+  } else if (tour.currentIdx === 0) {
+    walkEl.classList.remove('hidden');
+    walkText.textContent = 'Startpunkt';
+  } else {
+    walkEl.classList.add('hidden');
+  }
+
+  // Nav button
+  const navBtn = document.getElementById('btn-nav');
+  if (s.lat && s.lng) { navBtn.classList.remove('hidden'); } else { navBtn.classList.add('hidden'); }
+
+  // Task - mechanic badge
+  const mech = s.aufgabe.mechanik;
+  const catEl = document.getElementById('task-category');
+  catEl.className = 'task-category ' + mech;
+  catEl.textContent = MECH_LABELS[mech] || mech;
+
+  const maxPts = PTS_STATION + s.aufgabe.punkte - (s.hintUsed ? PTS_HINT : 0);
+  document.getElementById('task-points').textContent = maxPts + ' Pkt.';
+
+  const parsed = parseAufgabe(s.aufgabe.text);
+  const typeEl = document.getElementById('task-type');
+  if (parsed.typ) {
+    typeEl.textContent = parsed.typ;
+    typeEl.style.color = 'var(--mech-' + mech + ')';
+    typeEl.classList.remove('hidden');
+  } else {
+    typeEl.classList.add('hidden');
+  }
+  document.getElementById('task-text').textContent = parsed.text;
+
+  // Team split
+  const teamEl = document.getElementById('team-split');
+  if (s.aufgabe.meta && s.aufgabe.meta.team_modus) {
+    teamEl.textContent = TEAM_LABELS[s.aufgabe.meta.team_modus] || 'Teilt euch in 2 gleich grosse Teams';
+    teamEl.classList.remove('hidden');
+  } else {
+    teamEl.classList.add('hidden');
+  }
+
+  // Timer
+  const timerDisplay = document.getElementById('timer-display');
+  const timerBtn = document.getElementById('btn-timer');
+  if (s.aufgabe.meta && s.aufgabe.meta.timer_sek) {
+    document.getElementById('timer-value').textContent = s.aufgabe.meta.timer_sek;
+    document.getElementById('timer-value').classList.remove('urgent');
+    timerBtn.textContent = 'Timer starten';
+    timerBtn.disabled = false;
+    timerDisplay.classList.remove('hidden');
+  } else {
+    timerDisplay.classList.add('hidden');
+  }
+
+  // Drink rule
+  const drinkEl = document.getElementById('drink-rule');
+  if (s.aufgabe.meta && s.aufgabe.meta.trink_regel) {
+    drinkEl.textContent = '\uD83C\uDF7A ' + s.aufgabe.meta.trink_regel;
+    drinkEl.classList.remove('hidden');
+  } else {
+    drinkEl.classList.add('hidden');
+  }
+
+  // Hint
+  const hintTrigger = document.getElementById('hint-trigger');
+  const hintBox = document.getElementById('hint-box');
+  if (s.aufgabe.hint) {
+    if (s.hintUsed) {
+      hintTrigger.classList.add('hidden');
+      hintBox.textContent = s.aufgabe.hint;
+      hintBox.classList.remove('hidden');
+    } else {
+      hintTrigger.classList.remove('hidden');
+      hintBox.classList.add('hidden');
+    }
+  } else {
+    hintTrigger.classList.add('hidden');
+    hintBox.classList.add('hidden');
+  }
+
+  // GPS
+  stopGPS();
+  startGPS();
+
+  showScreen('screen-wegaufgabe');
+}
+
+// === SPAETI ===
+function showSpaeti() {
+  stopTimer();
+  stopGPS();
+  const s = tour.stationen[tour.currentIdx];
+
+  document.getElementById('spaeti-station-label').textContent = 'Station ' + (tour.currentIdx+1) + '/' + tour.stationen.length;
+  document.getElementById('spaeti-score').textContent = tour.punkte;
+  renderProgress('progress-bar-spaeti');
+
+  document.getElementById('spaeti-name').textContent = s.name;
+  document.getElementById('spaeti-address').textContent = s.adresse;
+
+  const typ = s.typ || 'spaeti';
+  document.getElementById('aktion-label').textContent = typ === 'attraktion' ? 'Challenge vor Ort' : 'Bonus-Aktion vor Ort';
+  document.getElementById('aktion-name').textContent = s.aktion.name;
+  document.getElementById('aktion-desc').textContent = s.aktion.beschreibung;
+  document.getElementById('aktion-bonus').textContent = '+' + s.aktion.bonuspunkte + ' Punkte';
+
+  document.getElementById('spaeti-punkte-value').textContent = tour.punkte;
+  document.getElementById('btn-aktion').style.display = s.aktionErledigt ? 'none' : 'block';
+  document.getElementById('btn-weiter').textContent = (tour.currentIdx === tour.stationen.length - 1) ? 'Tour beenden' : 'Weiter zur naechsten Station';
+
+  showScreen('screen-spaeti');
+}
+
+// === ERGEBNIS ===
+function showErgebnis() {
+  document.getElementById('ergebnis-punkte').textContent = tour.punkte;
+
+  const rank = RANKINGS.find(r => tour.punkte >= r.min && tour.punkte <= r.max);
+  document.getElementById('ergebnis-ranking').textContent = rank ? rank.label : 'Spaeti-Legende';
+
+  const list = document.getElementById('results-list');
+  list.innerHTML = '';
+  tour.stationen.forEach((s, i) => {
+    const item = document.createElement('div');
+    item.className = 'result-item';
+
+    let pts = PTS_STATION;
+    const details = [];
+    if (s.aufgabeErledigt) {
+      const ap = Math.max(0, s.aufgabe.punkte - (s.hintUsed ? PTS_HINT : 0));
+      pts += ap;
+      details.push('Aufgabe ' + ap);
+    }
+    if (s.aktionErledigt) {
+      pts += s.aktion.bonuspunkte;
+      details.push('Aktion ' + s.aktion.bonuspunkte);
+    }
+    details.push('Station ' + PTS_STATION);
+
+    const numEl = document.createElement('div'); numEl.className = 'result-num'; numEl.textContent = i+1;
+    const infoEl = document.createElement('div'); infoEl.className = 'result-info';
+    const h4 = document.createElement('h4'); h4.textContent = s.name;
+    const p = document.createElement('p'); p.textContent = details.join(' \u00B7 ');
+    infoEl.appendChild(h4); infoEl.appendChild(p);
+    const ptsEl = document.createElement('div'); ptsEl.className = 'result-pts'; ptsEl.textContent = pts;
+    item.appendChild(numEl); item.appendChild(infoEl); item.appendChild(ptsEl);
+
+    list.appendChild(item);
+  });
+
+  showScreen('screen-ergebnis');
+}
+
+// === ACTIONS ===
+function startTour() {
+  showScreen('screen-mode');
+}
+
+function selectMode(modus) {
+  tour = createTour(SPAETIS, AUFGABEN, STATION_COUNT, modus);
+  saveTour();
+  showRoute();
+}
+
+function useHint() {
+  const s = tour.stationen[tour.currentIdx];
+  if (!s.aufgabe.hint || s.hintUsed) return;
+  s.hintUsed = true;
+  saveTour();
+
+  document.getElementById('hint-trigger').classList.add('hidden');
+  const hintBox = document.getElementById('hint-box');
+  hintBox.textContent = s.aufgabe.hint;
+  hintBox.classList.remove('hidden');
+
+  const maxPts = PTS_STATION + s.aufgabe.punkte - PTS_HINT;
+  document.getElementById('task-points').textContent = maxPts + ' Pkt.';
+}
+
+function wegErledigt() {
+  const s = tour.stationen[tour.currentIdx];
+  s.aufgabeErledigt = true;
+  tour.punkte += Math.max(0, s.aufgabe.punkte - (s.hintUsed ? PTS_HINT : 0)) + PTS_STATION;
+  saveTour();
+  showSpaeti();
+}
+
+function wegSkip() {
+  tour.stationen[tour.currentIdx].aufgabeErledigt = false;
+  tour.punkte += PTS_STATION;
+  saveTour();
+  showSpaeti();
+}
+
+function spaetiAktion() {
+  const s = tour.stationen[tour.currentIdx];
+  if (!s.aktionErledigt) {
+    s.aktionErledigt = true;
+    tour.punkte += s.aktion.bonuspunkte;
+    saveTour();
+    document.getElementById('spaeti-punkte-value').textContent = tour.punkte;
+    document.getElementById('spaeti-score').textContent = tour.punkte;
+    document.getElementById('btn-aktion').style.display = 'none';
+  }
+}
+
+function spaetiWeiter() {
+  tour.currentIdx++;
+  if (tour.currentIdx >= tour.stationen.length) {
+    clearTour();
+    showErgebnis();
+  } else {
+    saveTour();
+    showWegaufgabe();
+  }
+}
+
+function neueTour() {
+  clearTour();
+  tour = null;
+  stopTimer();
+  showScreen('screen-start');
+}
+
+// === TIMER ===
+let timerInterval = null;
+
+function startTimer() {
+  const s = tour.stationen[tour.currentIdx];
+  if (!s.aufgabe.meta || !s.aufgabe.meta.timer_sek) return;
+
+  let remaining = s.aufgabe.meta.timer_sek;
+  const valueEl = document.getElementById('timer-value');
+  const btn = document.getElementById('btn-timer');
+  btn.textContent = 'Laeuft...';
+  btn.disabled = true;
+
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(function() {
+    remaining--;
+    valueEl.textContent = remaining;
+    if (remaining <= 5) valueEl.classList.add('urgent');
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      valueEl.textContent = '0';
+      btn.textContent = 'Nochmal';
+      btn.disabled = false;
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function isValidTour(t) {
+  return t && Array.isArray(t.stationen) && t.stationen.length > 0
+    && typeof t.currentIdx === 'number' && t.currentIdx >= 0 && t.currentIdx < t.stationen.length
+    && typeof t.punkte === 'number'
+    && t.stationen.every(s => s.name && s.adresse && s.aufgabe && s.aktion);
+}
+
+// === INIT ===
+(function() {
+  // Labels setzen
+  document.getElementById('watermark').textContent = TOUR_LABEL;
+  document.querySelectorAll('.tour-label').forEach(el => { el.textContent = 'Tour von ' + TOUR_LABEL; });
+  const saved = loadTour();
+  if (saved && isValidTour(saved)) {
+    // Resume-Dialog
+    const stationName = saved.stationen[saved.currentIdx].name;
+    const resumeOverlay = document.createElement('div');
+    resumeOverlay.style.cssText = 'position:fixed;inset:0;background:rgba(13,11,10,0.95);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;';
+    const box = document.createElement('div');
+    box.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 24px;max-width:360px;width:100%;text-align:center;';
+    box.innerHTML = '<div style="font-family:var(--font-display);font-size:1.3rem;font-weight:800;margin-bottom:8px;">Tour fortsetzen?</div>' +
+      '<div style="color:var(--text-sec);font-size:0.9rem;margin-bottom:24px;">Station ' + (saved.currentIdx+1) + '/' + saved.stationen.length + ' \u00B7 ' + stationName + '<br>' + saved.punkte + ' Punkte</div>';
+    const btnResume = document.createElement('button');
+    btnResume.textContent = 'Weiterspielen';
+    btnResume.style.cssText = 'display:block;width:100%;padding:16px;font-family:var(--font-display);font-size:1rem;font-weight:700;background:var(--amber);color:var(--bg);border:none;border-radius:12px;cursor:pointer;margin-bottom:10px;';
+    btnResume.onclick = function() {
+      tour = saved;
+      resumeOverlay.remove();
+      const s = tour.stationen[tour.currentIdx];
+      if (s.aufgabe && !s.aufgabeErledigt) showWegaufgabe();
+      else showSpaeti();
+    };
+    const btnNew = document.createElement('button');
+    btnNew.textContent = 'Neue Tour starten';
+    btnNew.style.cssText = 'display:block;width:100%;padding:14px;font-family:var(--font-body);font-size:0.9rem;font-weight:500;background:var(--surface);color:var(--text-sec);border:1px solid var(--border);border-radius:12px;cursor:pointer;';
+    btnNew.onclick = function() { clearTour(); resumeOverlay.remove(); };
+    box.appendChild(btnResume);
+    box.appendChild(btnNew);
+    resumeOverlay.appendChild(box);
+    document.body.appendChild(resumeOverlay);
+  } else if (saved) {
+    clearTour();
+  }
+})();
+</script>
+
+</body>
+</html>
