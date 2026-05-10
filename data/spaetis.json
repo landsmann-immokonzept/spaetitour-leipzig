@@ -1,0 +1,242 @@
+[
+  {
+    "id": "suedvorstadt_01",
+    "name": "Spaeti Suedvorstadt",
+    "typ": "spaeti",
+    "adresse": "Karl-Liebknecht-Str. 42, 04275 Leipzig",
+    "viertel": "Suedvorstadt",
+    "aktion": {
+      "name": "Dosenwerfen",
+      "beschreibung": "3 Wuerfe mit dem Tennisball. Jede getroffene Dose = 5 Bonuspunkte.",
+      "bonuspunkte": 15
+    },
+    "oeffnungszeiten": "Mo-Sa 8-24 Uhr",
+    "gehzeit_min": {
+      "suedvorstadt_02": 6,
+      "connewitz_01": 12,
+      "connewitz_02": 15,
+      "plagwitz_01": 20,
+      "reudnitz_01": 18,
+      "voelkerschlacht": 25,
+      "baumwollspinnerei": 30,
+      "maedler_passage": 15,
+      "clara_zetkin_park": 15
+    }
+  },
+  {
+    "id": "suedvorstadt_02",
+    "name": "Trinkhalle Sued",
+    "typ": "spaeti",
+    "adresse": "Kochstr. 10, 04275 Leipzig",
+    "viertel": "Suedvorstadt",
+    "aktion": {
+      "name": "Kronkorken-Zielwerfen",
+      "beschreibung": "Werft 5 Kronkorken in den Eimer. Ab 3 Treffern gibt's Bonuspunkte.",
+      "bonuspunkte": 10
+    },
+    "oeffnungszeiten": "Mo-So 10-1 Uhr",
+    "gehzeit_min": {
+      "suedvorstadt_01": 6,
+      "connewitz_01": 8,
+      "connewitz_02": 10,
+      "plagwitz_01": 22,
+      "reudnitz_01": 15,
+      "voelkerschlacht": 22,
+      "baumwollspinnerei": 28,
+      "maedler_passage": 12,
+      "clara_zetkin_park": 18
+    }
+  },
+  {
+    "id": "connewitz_01",
+    "name": "Nachtladen Connewitz",
+    "typ": "spaeti",
+    "adresse": "Bornaische Str. 18, 04277 Leipzig",
+    "viertel": "Connewitz",
+    "aktion": {
+      "name": "Tombola",
+      "beschreibung": "Zieht ein Los. Niete = nix, Treffer = Bonuspunkte fuer die Gruppe.",
+      "bonuspunkte": 20
+    },
+    "oeffnungszeiten": "Mo-So 9-2 Uhr",
+    "gehzeit_min": {
+      "suedvorstadt_01": 12,
+      "suedvorstadt_02": 8,
+      "connewitz_02": 5,
+      "plagwitz_01": 25,
+      "reudnitz_01": 20,
+      "voelkerschlacht": 18,
+      "baumwollspinnerei": 35,
+      "maedler_passage": 20,
+      "clara_zetkin_park": 22
+    }
+  },
+  {
+    "id": "connewitz_02",
+    "name": "Eckspaeti Connewitz",
+    "typ": "spaeti",
+    "adresse": "Meusdorfer Str. 5, 04277 Leipzig",
+    "viertel": "Connewitz",
+    "aktion": {
+      "name": "Schaetzfrage",
+      "beschreibung": "Wie viele Biersorten haben wir? Die Gruppe schaetzt. Innerhalb von +/-3 = Bonuspunkte.",
+      "bonuspunkte": 10
+    },
+    "oeffnungszeiten": "Mo-Sa 11-23 Uhr",
+    "gehzeit_min": {
+      "suedvorstadt_01": 15,
+      "suedvorstadt_02": 10,
+      "connewitz_01": 5,
+      "plagwitz_01": 28,
+      "reudnitz_01": 22,
+      "voelkerschlacht": 20,
+      "baumwollspinnerei": 38,
+      "maedler_passage": 22,
+      "clara_zetkin_park": 25
+    }
+  },
+  {
+    "id": "plagwitz_01",
+    "name": "Spaetshop Plagwitz",
+    "typ": "spaeti",
+    "adresse": "Karl-Heine-Str. 78, 04229 Leipzig",
+    "viertel": "Plagwitz",
+    "aktion": {
+      "name": "Wuerfelspiel",
+      "beschreibung": "Jeder wuerfelt einmal. Die Summe der Gruppe: ab 20 = Bonuspunkte.",
+      "bonuspunkte": 15
+    },
+    "oeffnungszeiten": "Mo-Sa 9-24 Uhr",
+    "gehzeit_min": {
+      "suedvorstadt_01": 20,
+      "suedvorstadt_02": 22,
+      "connewitz_01": 25,
+      "connewitz_02": 28,
+      "reudnitz_01": 30,
+      "voelkerschlacht": 45,
+      "baumwollspinnerei": 8,
+      "maedler_passage": 25,
+      "clara_zetkin_park": 15
+    }
+  },
+  {
+    "id": "reudnitz_01",
+    "name": "Kiosk Reudnitz",
+    "typ": "spaeti",
+    "adresse": "Dresdner Str. 55, 04317 Leipzig",
+    "viertel": "Reudnitz",
+    "aktion": {
+      "name": "Lose ziehen",
+      "beschreibung": "Zieht 3 Lose aus der Box. Jedes 'Gewonnen'-Los = 5 Bonuspunkte.",
+      "bonuspunkte": 15
+    },
+    "oeffnungszeiten": "Mo-Sa 8-23 Uhr",
+    "gehzeit_min": {
+      "suedvorstadt_01": 18,
+      "suedvorstadt_02": 15,
+      "connewitz_01": 20,
+      "connewitz_02": 22,
+      "plagwitz_01": 30,
+      "voelkerschlacht": 30,
+      "baumwollspinnerei": 40,
+      "maedler_passage": 20,
+      "clara_zetkin_park": 25
+    }
+  },
+  {
+    "id": "voelkerschlacht",
+    "name": "Voelkerschlachtdenkmal",
+    "typ": "attraktion",
+    "adresse": "Str. des 18. Oktober 100, 04299 Leipzig",
+    "viertel": "Suedost",
+    "aktion": {
+      "name": "Napoleon-Foto",
+      "beschreibung": "Macht ein Gruppenfoto mit der dramatischsten Pose die ihr hinbekommt. Mindestens eine Person muss Napoleon darstellen.",
+      "bonuspunkte": 15
+    },
+    "oeffnungszeiten": "Aussenbereich immer zugaenglich",
+    "gehzeit_min": {
+      "suedvorstadt_01": 25,
+      "suedvorstadt_02": 22,
+      "connewitz_01": 18,
+      "connewitz_02": 20,
+      "plagwitz_01": 45,
+      "reudnitz_01": 30,
+      "baumwollspinnerei": 50,
+      "maedler_passage": 30,
+      "clara_zetkin_park": 35
+    }
+  },
+  {
+    "id": "baumwollspinnerei",
+    "name": "Baumwollspinnerei",
+    "typ": "attraktion",
+    "adresse": "Spinnereistr. 7, 04179 Leipzig",
+    "viertel": "Plagwitz",
+    "aktion": {
+      "name": "Spontan-Auktion",
+      "beschreibung": "Findet draussen ein Kunstwerk, Graffiti oder Skulptur. Eine Person stellt es der Gruppe in 30 Sekunden als Auktionator vor. Startgebot: 1 Million!",
+      "bonuspunkte": 15
+    },
+    "oeffnungszeiten": "Gelaende immer zugaenglich",
+    "gehzeit_min": {
+      "suedvorstadt_01": 30,
+      "suedvorstadt_02": 28,
+      "connewitz_01": 35,
+      "connewitz_02": 38,
+      "plagwitz_01": 8,
+      "reudnitz_01": 40,
+      "voelkerschlacht": 50,
+      "maedler_passage": 25,
+      "clara_zetkin_park": 15
+    }
+  },
+  {
+    "id": "maedler_passage",
+    "name": "Maedler-Passage",
+    "typ": "attraktion",
+    "adresse": "Grimmaische Str. 2-4, 04109 Leipzig",
+    "viertel": "Zentrum",
+    "aktion": {
+      "name": "Faust-Challenge",
+      "beschreibung": "Wer kann ein echtes Zitat aus Goethes Faust aufsagen? Alternativ: Erfindet ein Zitat das so echt klingt dass die Gruppe es glaubt.",
+      "bonuspunkte": 15
+    },
+    "oeffnungszeiten": "Passage immer zugaenglich",
+    "gehzeit_min": {
+      "suedvorstadt_01": 15,
+      "suedvorstadt_02": 12,
+      "connewitz_01": 20,
+      "connewitz_02": 22,
+      "plagwitz_01": 25,
+      "reudnitz_01": 20,
+      "voelkerschlacht": 30,
+      "baumwollspinnerei": 25,
+      "clara_zetkin_park": 12
+    }
+  },
+  {
+    "id": "clara_zetkin_park",
+    "name": "Clara-Zetkin-Park",
+    "typ": "attraktion",
+    "adresse": "Anton-Bruckner-Allee, 04107 Leipzig",
+    "viertel": "Zentrum-West",
+    "aktion": {
+      "name": "Baum-Umarmung",
+      "beschreibung": "Findet den dicksten Baum in der Naehe und umarmt ihn als ganze Gruppe. Foto als Beweis! Bonuspunkte wenn alle gleichzeitig den Stamm beruehren.",
+      "bonuspunkte": 10
+    },
+    "oeffnungszeiten": "Immer zugaenglich",
+    "gehzeit_min": {
+      "suedvorstadt_01": 15,
+      "suedvorstadt_02": 18,
+      "connewitz_01": 22,
+      "connewitz_02": 25,
+      "plagwitz_01": 15,
+      "reudnitz_01": 25,
+      "voelkerschlacht": 35,
+      "baumwollspinnerei": 15,
+      "maedler_passage": 12
+    }
+  }
+]

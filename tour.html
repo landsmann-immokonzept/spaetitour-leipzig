@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Die Leipziger Spaetitour</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,700;0,9..40,800;1,9..40,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Colors */
+      --bg: #0a0a0a;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --surface-hover: rgba(255, 255, 255, 0.07);
+      --text: #f5f5f5;
+      --text-secondary: #b3b3b3;
+      --text-muted: #777;
+      --accent: #f59e0b;
+      --accent-glow: rgba(245, 158, 11, 0.15);
+      --accent-hover: #fbbf24;
+      --success: #10b981;
+      --success-dim: rgba(16, 185, 129, 0.15);
+
+      /* Category colors */
+      --cat-gespraech: #a78bfa;
+      --cat-wortspiel: #60a5fa;
+      --cat-action: #f87171;
+      --cat-leipzig: #34d399;
+
+      /* Glassmorphism */
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 24px 64px rgba(0, 0, 0, 0.2);
+      --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+      /* Easing */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      /* Spacing & Radius */
+      --radius: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 50px;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Subtle background texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(245, 158, 11, 0.03) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 80%, rgba(167, 139, 250, 0.02) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100dvh;
+      padding: 24px 20px;
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Wasserzeichen */
+    .screen::after {
+      content: '__KAEUFER_NAME__';
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 4rem;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.02);
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 0;
+      user-select: none;
+    }
+
+    .content {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Typography */
+    h1, h2, h3, .station-name, .ranking-label {
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 1rem;
+      box-shadow: var(--glass-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      box-shadow: var(--glass-inset);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+    }
+
+    .card p {
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    .card ul {
+      margin-left: 1.25rem;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .card ul li {
+      margin-bottom: 0.5rem;
+    }
+
+    .card ul li::marker {
+      color: var(--accent);
+    }
+
+    /* Buttons */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.3s var(--ease-out);
+      margin-bottom: 0.75rem;
+      position: relative;
+      letter-spacing: -0.01em;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0a0a0a;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0) scale(0.98);
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--surface-border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .btn-skip {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 14px;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+    }
+
+    .btn-skip:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      color: var(--text-secondary);
+    }
+
+    .btn-skip:active {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      position: relative;
+      z-index: 1;
+      letter-spacing: 0.02em;
+    }
+
+    /* Progress */
+    .progress-container {
+      margin-bottom: 2rem;
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .progress-dot {
+      height: 3px;
+      flex: 1;
+      max-width: 48px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      transition: all 0.5s var(--ease-out);
+    }
+
+    .progress-dot.done {
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success-dim);
+    }
+
+    .progress-dot.current {
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    .progress-label {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* Station Header */
+    .station-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .station-number {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .station-name {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .station-meta {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .station-meta .separator {
+      width: 3px;
+      height: 3px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Category Badge */
+    .kategorie-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .kategorie-badge.gespraech {
+      background: rgba(167, 139, 250, 0.12);
+      color: var(--cat-gespraech);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+    }
+
+    .kategorie-badge.wortspiel {
+      background: rgba(96, 165, 250, 0.12);
+      color: var(--cat-wortspiel);
+      border: 1px solid rgba(96, 165, 250, 0.2);
+    }
+
+    .kategorie-badge.action {
+      background: rgba(248, 113, 113, 0.12);
+      color: var(--cat-action);
+      border: 1px solid rgba(248, 113, 113, 0.2);
+    }
+
+    .kategorie-badge.leipzig {
+      background: rgba(52, 211, 153, 0.12);
+      color: var(--cat-leipzig);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+    }
+
+    /* Task type label (JUST ONE, PANTOMIME, etc.) */
+    .aufgabe-typ {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .aufgabe-text {
+      font-size: 1.1rem;
+      line-height: 1.65;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    /* Points */
+    .punkte-display {
+      background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      text-align: center;
+      margin-bottom: 1rem;
+      box-shadow: 0 8px 32px rgba(245, 158, 11, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .punkte-display::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .punkte-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.5);
+      margin-bottom: 0.25rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .punkte-wert {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      color: #0a0a0a;
+      line-height: 1;
+    }
+
+    .punkte-small {
+      background: var(--glass-bg);
+      border: 1px solid var(--accent-glow);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 1rem;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .punkte-small .punkte-label {
+      color: var(--text-muted);
+    }
+
+    .punkte-small .punkte-wert {
+      font-size: 1.5rem;
+      color: var(--accent);
+    }
+
+    /* Aktion Card */
+    .aktion-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--accent-glow);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .aktion-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.3;
+    }
+
+    .aktion-card h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .aktion-card p {
+      color: var(--text);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .aktion-card .aktion-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Ergebnis */
+    .ranking-label {
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 2rem;
+      letter-spacing: -0.01em;
+    }
+
+    .station-list {
+      margin-bottom: 2rem;
+    }
+
+    .station-item {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s var(--ease-out);
+    }
+
+    .station-item:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .station-item-info h4 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+      letter-spacing: -0.01em;
+    }
+
+    .station-item-info p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .station-item-punkte {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    /* Address */
+    .address {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Start Screen Enhancements */
+    .start-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 40vh;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .start-hero h1 {
+      font-size: 2.5rem;
+      line-height: 1.1;
+    }
+
+    .start-hero h1 span {
+      color: var(--accent);
+    }
+
+    .start-hero .subtitle {
+      max-width: 320px;
+    }
+
+    /* Feature pills on start screen */
+    .feature-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .feature-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .feature-pill .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Screen transitions */
+    .screen.active .content {
+      animation: fadeInUp 0.4s var(--ease-out);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Station type badge */
+    .station-typ-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .station-typ-badge.spaeti {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .station-typ-badge.attraktion {
+      background: rgba(139, 92, 246, 0.1);
+      color: #a78bfa;
+      border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    /* Section label with line */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .section-label::before {
+      content: '';
+      width: 16px;
+      height: 1px;
+      background: var(--text-muted);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Screen 1: Start -->
+<div id="screen-start" class="screen active">
+  <div class="content">
+    <div class="start-hero">
+      <h1>Die Leipziger<br><span>Spaetitour</span></h1>
+      <p class="subtitle">Spaetis, Sehenswuerdigkeiten, jede Menge Aufgaben &ndash; ein unvergesslicher Abend.</p>
+    </div>
+
+    <div class="card">
+      <h2>So geht's</h2>
+      <ul>
+        <li>Besucht 5 zufaellige Stationen quer durch Leipzig</li>
+        <li>Spaetis, Voelkerschlachtdenkmal, Baumwollspinnerei &amp; mehr</li>
+        <li>Loest unterwegs Aufgaben die euch zusammenbringen</li>
+        <li>Jede Tour ist anders &ndash; auch beim 5. Mal</li>
+      </ul>
+    </div>
+
+    <div class="feature-pills">
+      <span class="feature-pill"><span class="dot" style="background:var(--cat-gespraech)"></span>Tiefgruendige Fragen</span>
+      <span class="feature-pill"><span class="dot" style="background:var(--cat-wortspiel)"></span>Wortspiele</span>
+      <span class="feature-pill"><span class="dot" style="background:var(--cat-action)"></span>Pantomime &amp; Co</span>
+      <span class="feature-pill"><span class="dot" style="background:var(--cat-leipzig)"></span>Leipzig erkunden</span>
+    </div>
+
+    <div style="margin-top:2rem;">
+      <button class="btn btn-primary" onclick="startTour()">Tour starten</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    Tour von __KAEUFER_NAME__
+  </div>
+</div>
+
+<!-- Screen 2: Wegaufgabe -->
+<div id="screen-wegaufgabe" class="screen">
+  <div class="content">
+    <div class="progress-container">
+      <div id="progress-weg" class="progress-dots"></div>
+      <div class="progress-label" id="progress-label-weg"></div>
+    </div>
+
+    <div class="station-header">
+      <div class="station-number" id="weg-station-number"></div>
+      <div id="weg-typ-badge" class="station-typ-badge"></div>
+      <div class="station-name" id="weg-station-name"></div>
+      <div class="station-meta">
+        <span id="weg-gehzeit"></span>
+        <span class="separator" id="weg-separator"></span>
+        <span id="weg-address"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Aufgabe unterwegs</div>
+      <div id="weg-kategorie-badge" class="kategorie-badge"></div>
+      <div id="weg-aufgabe-typ" class="aufgabe-typ"></div>
+      <p class="aufgabe-text" id="weg-aufgabe-text"></p>
+    </div>
+
+    <div class="punkte-small">
+      <div class="punkte-label">Moegliche Punkte</div>
+      <div class="punkte-wert" id="weg-punkte-wert"></div>
+    </div>
+
+    <button class="btn btn-primary" onclick="wegErledigt()">Erledigt!</button>
+    <button class="btn btn-skip" onclick="wegSkip()">Ueberspringen</button>
+  </div>
+
+  <div class="footer">
+    Tour von __KAEUFER_NAME__
+  </div>
+</div>
+
+<!-- Screen 3: Spaeti -->
+<div id="screen-spaeti" class="screen">
+  <div class="content">
+    <div class="progress-container">
+      <div id="progress-spaeti" class="progress-dots"></div>
+      <div class="progress-label" id="progress-label-spaeti"></div>
+    </div>
+
+    <div class="station-header">
+      <div class="station-number" id="spaeti-station-number"></div>
+      <div id="spaeti-typ-badge" class="station-typ-badge"></div>
+      <div class="station-name" id="spaeti-name"></div>
+      <div class="address" id="spaeti-address"></div>
+    </div>
+
+    <div class="aktion-card">
+      <h3 id="spaeti-aktion-label">Bonus-Aktion vor Ort</h3>
+      <div class="aktion-name" id="spaeti-aktion-name"></div>
+      <p id="spaeti-aktion-text"></p>
+    </div>
+
+    <div class="punkte-small">
+      <div class="punkte-label">Aktuelle Punkte</div>
+      <div class="punkte-wert" id="spaeti-punkte-aktuell"></div>
+    </div>
+
+    <button class="btn btn-primary" onclick="spaetiAktion()" id="btn-aktion">Aktion mitgemacht!</button>
+    <button class="btn btn-secondary" onclick="spaetiWeiter()" id="btn-weiter">Weiter</button>
+  </div>
+
+  <div class="footer">
+    Tour von __KAEUFER_NAME__
+  </div>
+</div>
+
+<!-- Screen 4: Ergebnis -->
+<div id="screen-ergebnis" class="screen">
+  <div class="content">
+    <h1 style="margin-bottom: 2rem;">Tour beendet!</h1>
+
+    <div class="punkte-display">
+      <div class="punkte-label">Gesamtpunkte</div>
+      <div class="punkte-wert" id="ergebnis-punkte"></div>
+    </div>
+
+    <div class="ranking-label" id="ergebnis-ranking"></div>
+
+    <div class="section-label">Eure Stationen</div>
+    <div class="station-list" id="station-list"></div>
+
+    <button class="btn btn-primary" onclick="neueTour()">Nochmal spielen</button>
+  </div>
+
+  <div class="footer">
+    Tour von __KAEUFER_NAME__
+  </div>
+</div>
+
+<script>
+// Daten-Platzhalter (werden vom Build-Script ersetzt)
+const SPAETIS = __SPAETIS_DATA__;
+const AUFGABEN = __AUFGABEN_DATA__;
+
+// Wasserzeichen-Referenzen
+const _k = '__KAEUFER_NAME__';
+const _wz = () => _k;
+
+// Rankings
+const RANKINGS = [
+  { min: 0, max: 100, label: 'Anfaenger-Nachtschwaermer' },
+  { min: 101, max: 175, label: 'Spaeti-Kenner' },
+  { min: 176, max: 999, label: 'Leipzig-Legende' }
+];
+
+// Konstanten
+const STATION_COUNT = 5;
+const PUNKTE_STATION_ERREICHT = 20;
+const PUNKTE_AKTION = 15;
+
+// Kategorie-Labels
+const KATEGORIE_LABELS = {
+  gespraech: 'Gespraech',
+  wortspiel: 'Wortspiel',
+  action: 'Action',
+  leipzig: 'Leipzig'
+};
+
+// Station-Typ Labels
+const STATION_TYP_LABELS = {
+  spaeti: 'Spaeti',
+  attraktion: 'Sehenswuerdigkeit'
+};
+
+// Tour-Logik
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function selectSpaetis(spaetis, count) {
+  return shuffle(spaetis).slice(0, Math.min(count, spaetis.length));
+}
+
+function optimizeRoute(stationen) {
+  if (stationen.length <= 1) return stationen;
+
+  // Zufaelligen Startpunkt waehlen
+  const startIdx = Math.floor(Math.random() * stationen.length);
+  const result = [stationen[startIdx]];
+  const remaining = [...stationen];
+  remaining.splice(startIdx, 1);
+
+  // Nearest-Neighbor anhand der Gehzeit-Matrix
+  while (remaining.length > 0) {
+    const current = result[result.length - 1];
+    let nearestIdx = 0;
+    let minTime = Infinity;
+
+    for (let i = 0; i < remaining.length; i++) {
+      const time = current.gehzeit_min && current.gehzeit_min[remaining[i].id];
+      if (time && time < minTime) {
+        minTime = time;
+        nearestIdx = i;
+      }
+    }
+
+    result.push(remaining[nearestIdx]);
+    remaining.splice(nearestIdx, 1);
+  }
+
+  return result;
+}
+
+function assignAufgaben(spaetis, aufgaben) {
+  const shuffledAufgaben = shuffle(aufgaben);
+  return spaetis.map((spaeti, idx) => ({
+    ...spaeti,
+    aufgabe: shuffledAufgaben[idx]
+  }));
+}
+
+function createTour(spaetis, aufgaben, count) {
+  const selected = selectSpaetis(spaetis, count);
+  const optimized = optimizeRoute(selected);
+  const stationen = assignAufgaben(optimized, aufgaben);
+
+  // Gehzeiten aus der Matrix uebernehmen
+  for (let i = 1; i < stationen.length; i++) {
+    const prev = stationen[i - 1];
+    const curr = stationen[i];
+    curr.gehzeit = (prev.gehzeit_min && prev.gehzeit_min[curr.id]) || 15;
+  }
+
+  return { stationen };
+}
+
+// Game State
+let tour = null;
+const STORAGE_KEY = 'spaetitour_state';
+
+function saveTour() {
+  if (tour) localStorage.setItem(STORAGE_KEY, JSON.stringify(tour));
+}
+
+function loadTour() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try { return JSON.parse(saved); }
+    catch (e) { console.error('Fehler beim Laden:', e); }
+  }
+  return null;
+}
+
+function clearTour() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+// Screen-Management
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function renderProgress(containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+
+  for (let i = 0; i < tour.stationen.length; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'progress-dot';
+    if (i < tour.currentIdx) dot.classList.add('done');
+    else if (i === tour.currentIdx) dot.classList.add('current');
+    container.appendChild(dot);
+  }
+}
+
+// Aufgabentext parsen: Prefix (JUST ONE, PANTOMIME etc.) extrahieren
+function parseAufgabe(text) {
+  const prefixMatch = text.match(/^([A-ZÄÖÜ][A-ZÄÖÜ ]+):\s*/);
+  if (prefixMatch) {
+    return {
+      typ: prefixMatch[1],
+      text: text.slice(prefixMatch[0].length)
+    };
+  }
+  return { typ: null, text: text };
+}
+
+// Wegaufgabe anzeigen
+function showWegaufgabe() {
+  const station = tour.stationen[tour.currentIdx];
+
+  renderProgress('progress-weg');
+  document.getElementById('progress-label-weg').textContent =
+    'Station ' + (tour.currentIdx + 1) + ' von ' + tour.stationen.length;
+
+  document.getElementById('weg-station-number').textContent =
+    'Station ' + (tour.currentIdx + 1);
+
+  // Station-Typ Badge
+  const wegTypBadge = document.getElementById('weg-typ-badge');
+  const wegTyp = station.typ || 'spaeti';
+  wegTypBadge.className = 'station-typ-badge ' + wegTyp;
+  wegTypBadge.textContent = STATION_TYP_LABELS[wegTyp] || wegTyp;
+
+  document.getElementById('weg-station-name').textContent = station.name;
+  document.getElementById('weg-address').textContent = station.adresse;
+
+  // Gehzeit
+  const gehzeitEl = document.getElementById('weg-gehzeit');
+  const sepEl = document.getElementById('weg-separator');
+  if (station.gehzeit) {
+    gehzeitEl.textContent = station.gehzeit + ' Min. Fussweg';
+    gehzeitEl.style.display = 'inline';
+    sepEl.style.display = 'inline-block';
+  } else {
+    gehzeitEl.style.display = 'none';
+    sepEl.style.display = 'none';
+  }
+
+  // Kategorie-Badge
+  const badge = document.getElementById('weg-kategorie-badge');
+  const kat = station.aufgabe.kategorie;
+  badge.className = 'kategorie-badge ' + kat;
+  badge.textContent = KATEGORIE_LABELS[kat] || kat;
+
+  // Aufgabentext mit optionalem Typ-Prefix
+  const parsed = parseAufgabe(station.aufgabe.text);
+  const typEl = document.getElementById('weg-aufgabe-typ');
+  if (parsed.typ) {
+    typEl.textContent = parsed.typ;
+    typEl.style.display = 'block';
+    typEl.style.color = 'var(--cat-' + kat + ')';
+  } else {
+    typEl.style.display = 'none';
+  }
+  document.getElementById('weg-aufgabe-text').textContent = parsed.text;
+
+  const punkte = PUNKTE_STATION_ERREICHT + station.aufgabe.punkte;
+  document.getElementById('weg-punkte-wert').textContent = punkte;
+
+  showScreen('screen-wegaufgabe');
+}
+
+// Spaeti anzeigen
+function showSpaeti() {
+  const station = tour.stationen[tour.currentIdx];
+
+  renderProgress('progress-spaeti');
+  document.getElementById('progress-label-spaeti').textContent =
+    'Station ' + (tour.currentIdx + 1) + ' von ' + tour.stationen.length;
+
+  document.getElementById('spaeti-station-number').textContent =
+    'Station ' + (tour.currentIdx + 1);
+
+  // Station-Typ Badge
+  const spaetiTypBadge = document.getElementById('spaeti-typ-badge');
+  const spaetiTyp = station.typ || 'spaeti';
+  spaetiTypBadge.className = 'station-typ-badge ' + spaetiTyp;
+  spaetiTypBadge.textContent = STATION_TYP_LABELS[spaetiTyp] || spaetiTyp;
+
+  // Aktion-Label je nach Typ
+  const aktionLabel = document.getElementById('spaeti-aktion-label');
+  aktionLabel.textContent = spaetiTyp === 'attraktion' ? 'Challenge vor Ort' : 'Bonus-Aktion vor Ort';
+
+  document.getElementById('spaeti-name').textContent = station.name;
+  document.getElementById('spaeti-address').textContent = station.adresse;
+  document.getElementById('spaeti-aktion-name').textContent = station.aktion.name;
+  document.getElementById('spaeti-aktion-text').textContent = station.aktion.beschreibung;
+  document.getElementById('spaeti-punkte-aktuell').textContent = tour.punkte;
+
+  // Aktion-Button
+  const btnAktion = document.getElementById('btn-aktion');
+  btnAktion.style.display = station.aktionErledigt ? 'none' : 'block';
+
+  // Weiter-Button Text
+  const btnWeiter = document.getElementById('btn-weiter');
+  btnWeiter.textContent = (tour.currentIdx === tour.stationen.length - 1) ? 'Tour beenden' : 'Weiter';
+
+  showScreen('screen-spaeti');
+}
+
+// Ergebnis anzeigen
+function showErgebnis() {
+  document.getElementById('ergebnis-punkte').textContent = tour.punkte;
+
+  const ranking = RANKINGS.find(r => tour.punkte >= r.min && tour.punkte <= r.max);
+  document.getElementById('ergebnis-ranking').textContent =
+    ranking ? ranking.label : 'Spaeti-Legende';
+
+  const listEl = document.getElementById('station-list');
+  listEl.innerHTML = '';
+
+  tour.stationen.forEach(function(station) {
+    const item = document.createElement('div');
+    item.className = 'station-item';
+
+    const info = document.createElement('div');
+    info.className = 'station-item-info';
+
+    const name = document.createElement('h4');
+    name.textContent = station.name;
+
+    const details = document.createElement('p');
+    const parts = [];
+    if (station.aufgabeErledigt) parts.push('Aufgabe: ' + station.aufgabe.punkte + ' Pkt.');
+    if (station.aktionErledigt) parts.push('Aktion: ' + station.aktion.bonuspunkte + ' Pkt.');
+    parts.push('Station: ' + PUNKTE_STATION_ERREICHT + ' Pkt.');
+    details.textContent = parts.join(' \u00B7 ');
+
+    info.appendChild(name);
+    info.appendChild(details);
+
+    const punkte = document.createElement('div');
+    punkte.className = 'station-item-punkte';
+    let stationPunkte = PUNKTE_STATION_ERREICHT;
+    if (station.aufgabeErledigt) stationPunkte += station.aufgabe.punkte;
+    if (station.aktionErledigt) stationPunkte += station.aktion.bonuspunkte;
+    punkte.textContent = stationPunkte;
+
+    item.appendChild(info);
+    item.appendChild(punkte);
+    listEl.appendChild(item);
+  });
+
+  showScreen('screen-ergebnis');
+}
+
+// Actions
+function startTour() {
+  tour = createTour(SPAETIS, AUFGABEN, STATION_COUNT);
+  tour.currentIdx = 0;
+  tour.punkte = 0;
+  tour.stationen.forEach(function(s) {
+    s.aufgabeErledigt = false;
+    s.aktionErledigt = false;
+  });
+
+  saveTour();
+  showWegaufgabe();
+}
+
+function wegErledigt() {
+  const station = tour.stationen[tour.currentIdx];
+  station.aufgabeErledigt = true;
+  tour.punkte += station.aufgabe.punkte + PUNKTE_STATION_ERREICHT;
+  saveTour();
+  showSpaeti();
+}
+
+function wegSkip() {
+  tour.stationen[tour.currentIdx].aufgabeErledigt = false;
+  tour.punkte += PUNKTE_STATION_ERREICHT;
+  saveTour();
+  showSpaeti();
+}
+
+function spaetiAktion() {
+  const station = tour.stationen[tour.currentIdx];
+  if (!station.aktionErledigt) {
+    station.aktionErledigt = true;
+    tour.punkte += station.aktion.bonuspunkte;
+    saveTour();
+    document.getElementById('spaeti-punkte-aktuell').textContent = tour.punkte;
+    document.getElementById('btn-aktion').style.display = 'none';
+  }
+}
+
+function spaetiWeiter() {
+  tour.currentIdx++;
+  if (tour.currentIdx >= tour.stationen.length) {
+    clearTour();
+    showErgebnis();
+  } else {
+    saveTour();
+    showWegaufgabe();
+  }
+}
+
+function neueTour() {
+  clearTour();
+  showScreen('screen-start');
+}
+
+// Init: Tour fortsetzen falls vorhanden
+(function() {
+  const saved = loadTour();
+  if (saved) {
+    tour = saved;
+    const station = tour.stationen[tour.currentIdx];
+    if (station.aufgabe && !station.aufgabeErledigt) {
+      showWegaufgabe();
+    } else {
+      showSpaeti();
+    }
+  }
+})();
+</script>
+
+</body>
+</html>

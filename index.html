@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Leipziger Spätitour — Der beste Abend ohne Plan</title>
+<meta name="description" content="Der beste Abend in Leipzig — ohne irgendetwas zu planen. 5 Stationen, 54 Aufgaben, jede Tour anders. 10 € für die ganze Gruppe.">
+<meta property="og:title" content="Die Leipziger Spätitour">
+<meta property="og:description" content="Der beste Abend in Leipzig — ohne irgendetwas zu planen. 10 € für die ganze Gruppe.">
+<meta property="og:image" content="assets/gruppe-augustusplatz.jpg">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f2ed;
+    --text: #111;
+    --text-sec: #4a4a4a;
+    --text-muted: #8a8a8a;
+    --warm: #e8e0d4;
+    --accent: #d4602a;
+    --amber: #e8960c;
+    --serif: 'Libre Baskerville', Georgia, serif;
+    --sans: 'Instrument Sans', -apple-system, sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px clamp(32px, 5vw, 72px);
+    background: var(--bg);
+    position: relative;
+    z-index: 2;
+  }
+  .hero-tag {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+  .hero-left h1 {
+    font-family: var(--serif);
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  .hero-left h1 em { font-style: italic; }
+  .hero-deck {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-sec);
+    max-width: 420px;
+    margin-bottom: 32px;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    background: var(--text);
+    color: var(--bg);
+    padding: 16px 36px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+    letter-spacing: 0.2px;
+  }
+  .hero-cta:hover { background: #333; }
+  .hero-cta .arrow { font-size: 18px; transition: transform 0.2s; }
+  .hero-cta:hover .arrow { transform: translateX(3px); }
+  .hero-badges {
+    display: flex;
+    gap: 18px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .hero-badge {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .hero-badge::before {
+    content: '\2713';
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+    background: #1a1a1a;
+  }
+  .hero-photo-main {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.9) contrast(1.05);
+  }
+  .hero-photo-float {
+    position: absolute;
+    border: 3px solid var(--bg);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .hero-photo-float img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .float-1 {
+    bottom: 40px; left: -30px;
+    width: 180px; height: 140px;
+    transform: rotate(-3deg);
+  }
+  .float-2 {
+    top: 60px; right: 24px;
+    width: 150px; height: 150px;
+    transform: rotate(2deg);
+  }
+
+  /* ===== TICKER ===== */
+  .ticker {
+    background: var(--text);
+    overflow: hidden;
+    padding: 14px 0;
+    white-space: nowrap;
+  }
+  .ticker-track {
+    display: inline-flex;
+    animation: scroll 25s linear infinite;
+  }
+  .ticker-item {
+    font-family: var(--serif);
+    font-size: 14px;
+    font-style: italic;
+    color: rgba(255,255,255,0.4);
+    padding: 0 40px;
+  }
+  .ticker-item .sep {
+    color: var(--accent);
+    margin-left: 40px;
+  }
+  @keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ===== PHOTO STORY ===== */
+  .photo-story {
+    padding: 72px clamp(24px, 5vw, 64px);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .photo-story .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .photo-story h2 {
+    font-family: var(--serif);
+    font-size: clamp(24px, 3.5vw, 36px);
+    font-weight: 400;
+    line-height: 1.25;
+    margin-bottom: 40px;
+    max-width: 600px;
+  }
+  .story-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 240px 240px;
+    gap: 6px;
+  }
+  .story-cell {
+    position: relative;
+    overflow: hidden;
+    border-radius: 2px;
+  }
+  .story-cell img, .story-cell video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+  .story-cell:hover img, .story-cell:hover video { transform: scale(1.03); }
+  .story-cell .overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 40px 14px 12px;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+    font-style: italic;
+  }
+  .sc-tall { grid-row: span 2; }
+
+  /* ===== DIVIDER ===== */
+  .divider {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 0 clamp(24px, 5vw, 64px);
+  }
+
+  /* ===== QUOTE ===== */
+  .quote-section {
+    padding: 56px clamp(24px, 5vw, 64px);
+    max-width: 700px;
+  }
+  .quote-section blockquote {
+    font-family: var(--serif);
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--text);
+    font-style: italic;
+    position: relative;
+    padding-left: 24px;
+    border-left: 3px solid var(--accent);
+  }
+  .quote-section .attr {
+    margin-top: 16px;
+    padding-left: 24px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  /* ===== SECTIONS ===== */
+  section {
+    padding: clamp(48px, 7vw, 72px) clamp(24px, 5vw, 64px);
+    max-width: 900px;
+  }
+  .sec-head { margin-bottom: 36px; }
+  .sec-head .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .sec-head h2 {
+    font-family: var(--serif);
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  /* ===== STEPS ===== */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+  .step {
+    padding: 28px;
+    border: 1px solid #ddd;
+    margin: -0.5px;
+    position: relative;
+  }
+  .step::before {
+    content: attr(data-num);
+    font-family: var(--serif);
+    font-size: 64px;
+    color: rgba(0,0,0,0.04);
+    position: absolute;
+    top: 12px; right: 16px;
+    line-height: 1;
+  }
+  .step h3 {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+  .step p {
+    font-size: 14px;
+    color: var(--text-sec);
+    line-height: 1.6;
+  }
+
+  /* ===== CATEGORIES ===== */
+  .categories {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .category {
+    padding: 28px;
+    border: 1px solid #ddd;
+    margin: -0.5px;
+    transition: background 0.2s;
+  }
+  .category:hover { background: rgba(0,0,0,0.015); }
+  .cat-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .category h3 {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+  .category .ex {
+    font-size: 14px;
+    color: var(--text-sec);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ===== PRICE ===== */
+  .price-section {
+    padding: clamp(48px, 7vw, 72px) clamp(24px, 5vw, 64px);
+    max-width: 900px;
+  }
+  .price-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  .price-num {
+    font-family: var(--serif);
+    font-size: clamp(64px, 12vw, 96px);
+    line-height: 0.85;
+    color: var(--text);
+  }
+  .price-num .eur { font-size: 0.5em; vertical-align: super; }
+  .price-body h3 {
+    font-family: var(--serif);
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-sec);
+    margin-bottom: 12px;
+  }
+  .price-body p {
+    font-size: 15px;
+    color: var(--text-sec);
+    line-height: 1.7;
+    margin-bottom: 24px;
+    max-width: 420px;
+  }
+  .cta-dark {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    background: var(--text);
+    color: var(--bg);
+    padding: 16px 36px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s;
+  }
+  .cta-dark:hover { background: #333; }
+  .price-badges {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .p-badge {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .p-badge::before {
+    content: '\2713';
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ===== FAQ ===== */
+  .faq-list { list-style: none; }
+  .faq-item { border-bottom: 1px solid #ddd; padding: 22px 0; }
+  .faq-item:first-child { border-top: 1px solid #ddd; }
+  .faq-q {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .faq-a {
+    font-size: 14px;
+    color: var(--text-sec);
+    line-height: 1.6;
+    max-width: 580px;
+  }
+
+  /* ===== FINAL CTA ===== */
+  .final-cta {
+    background: var(--text);
+    color: var(--bg);
+    padding: clamp(72px, 12vw, 140px) clamp(24px, 5vw, 64px);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .final-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('assets/gruppe-augustusplatz.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.12;
+    filter: contrast(1.2);
+  }
+  .final-cta > * { position: relative; z-index: 1; }
+  .final-cta h2 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4.5vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .final-cta h2 em { font-style: italic; color: var(--amber); }
+  .final-cta .sub-text {
+    font-size: 15px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 28px;
+  }
+  .cta-light {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    background: var(--bg);
+    color: var(--text);
+    padding: 16px 40px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.2s;
+  }
+  .cta-light:hover { transform: translateY(-1px); }
+  .final-badges {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .f-badge {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .f-badge::before {
+    content: '\2713';
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--text);
+    border-top: 1px solid #222;
+    padding: 20px clamp(24px, 5vw, 64px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer span, footer a { font-size: 12px; color: #444; text-decoration: none; }
+  footer a:hover { color: #777; }
+
+  /* ===== MOBILE ===== */
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { height: 50vh; }
+    .float-1 { bottom: 20px; left: 16px; width: 140px; height: 110px; }
+    .float-2 { top: 20px; right: 16px; width: 120px; height: 120px; }
+    .steps { grid-template-columns: 1fr; }
+    .categories { grid-template-columns: 1fr; }
+    .story-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+    .sc-tall { grid-row: span 1; }
+    .price-grid { grid-template-columns: 1fr; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Leipzig &middot; zu Fu&szlig; &middot; zu sp&auml;t</div>
+    <h1>Der beste Abend<br>in Leipzig &mdash; <em>ohne irgendetwas zu planen.</em></h1>
+    <p class="hero-deck">In 30 Sekunden startklar. Ohne App, ohne Account. Einfach losziehen und Orte entdecken, an denen ihr seit Jahren vorbeilauft.</p>
+    <a href="#" class="hero-cta js-checkout">Tour kaufen &mdash; 10&nbsp;&euro; <span class="arrow">&rarr;</span></a>
+    <div class="hero-badges">
+      <span class="hero-badge">Geld zur&uuml;ck wenn&rsquo;s keinen Spa&szlig; macht</span>
+      <span class="hero-badge">Keine App n&ouml;tig</span>
+      <span class="hero-badge">Link kommt sofort</span>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img class="hero-photo-main" src="assets/abend-selfie.jpg" alt="Gruppe beim Abendessen in Leipzig" loading="eager">
+    <div class="hero-photo-float float-1">
+      <img src="assets/kinder-mercedes.jpg" alt="Unterwegs bei Nacht" loading="lazy">
+    </div>
+    <div class="hero-photo-float float-2">
+      <img src="assets/kiss-me-place.jpg" alt="Vor dem Kiss Me Place" loading="lazy">
+    </div>
+  </div>
+</div>
+
+<!-- ===== TICKER ===== -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="ticker-item">5 Stationen <span class="sep">&middot;</span></span>
+    <span class="ticker-item">54 Aufgaben <span class="sep">&middot;</span></span>
+    <span class="ticker-item">Jede Tour anders <span class="sep">&middot;</span></span>
+    <span class="ticker-item">2&ndash;3 Stunden <span class="sep">&middot;</span></span>
+    <span class="ticker-item">Kein Plan n&ouml;tig <span class="sep">&middot;</span></span>
+    <span class="ticker-item">10&nbsp;&euro; f&uuml;r alle <span class="sep">&middot;</span></span>
+    <span class="ticker-item">5 Stationen <span class="sep">&middot;</span></span>
+    <span class="ticker-item">54 Aufgaben <span class="sep">&middot;</span></span>
+    <span class="ticker-item">Jede Tour anders <span class="sep">&middot;</span></span>
+    <span class="ticker-item">2&ndash;3 Stunden <span class="sep">&middot;</span></span>
+    <span class="ticker-item">Kein Plan n&ouml;tig <span class="sep">&middot;</span></span>
+    <span class="ticker-item">10&nbsp;&euro; f&uuml;r alle <span class="sep">&middot;</span></span>
+  </div>
+</div>
+
+<!-- ===== PHOTO STORY ===== -->
+<div class="photo-story">
+  <div class="eyebrow">Echte Abende. Echte Leute.</div>
+  <h2>Das passiert, wenn ihr euch traut, ohne Plan loszuziehen.</h2>
+  <div class="story-grid">
+    <div class="story-cell sc-tall">
+      <img src="assets/gruppe-augustusplatz.jpg" alt="Gruppe am Augustusplatz" loading="lazy">
+      <div class="overlay">Augustusplatz, nach Station 4</div>
+    </div>
+    <div class="story-cell">
+      <img src="assets/bar-innen.jpg" alt="In der Bar" loading="lazy">
+      <div class="overlay">Station 3 &mdash; endlich drin</div>
+    </div>
+    <div class="story-cell">
+      <video src="assets/unterwegs.mp4" autoplay loop muted playsinline></video>
+      <div class="overlay">Auf dem Weg zu Station 5</div>
+    </div>
+    <div class="story-cell">
+      <img src="assets/weihnachtsmann.jpg" alt="Zufallsbegegnung auf der Stra&szlig;e" loading="lazy">
+      <div class="overlay">Zufallsbegegnung, 23:47 Uhr</div>
+    </div>
+    <div class="story-cell">
+      <img src="assets/jungs-nacht.jpg" alt="Gruppe bei Nacht" loading="lazy">
+      <div class="overlay">Zwischenstopp im Dunkeln</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUOTE ===== -->
+<div class="quote-section">
+  <blockquote>Wir wollten einfach raus. Am Ende haben wir Orte entdeckt, an denen wir seit drei Jahren vorbeilaufen.</blockquote>
+  <div class="attr">&mdash; Gruppe aus Connewitz, nach ihrer dritten Tour</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== HOW IT WORKS ===== -->
+<section>
+  <div class="sec-head">
+    <div class="eyebrow">3 Schritte</div>
+    <h2>In 30 Sekunden startklar &mdash; kaufen, &ouml;ffnen, loslaufen</h2>
+  </div>
+  <div class="steps">
+    <div class="step" data-num="1">
+      <h3>10&nbsp;&euro; zahlen</h3>
+      <p>Einmal f&uuml;r die ganze Gruppe. Egal ob zu zweit oder zu acht. Link kommt sofort per Mail.</p>
+    </div>
+    <div class="step" data-num="2">
+      <h3>Link &ouml;ffnen</h3>
+      <p>Auf einem Handy im Browser. Kein Download, kein Account, kein Passwort.</p>
+    </div>
+    <div class="step" data-num="3">
+      <h3>Leipzig entdecken</h3>
+      <p>Zuf&auml;llige Route, echte Aufgaben, Punkte f&uuml;r alles was ihr euch traut. Jede Tour ist anders.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ===== CATEGORIES ===== -->
+<section>
+  <div class="sec-head">
+    <div class="eyebrow">4 Kategorien &middot; 54 Aufgaben</div>
+    <h2>Aufgaben, die euren Abend unvergesslich machen</h2>
+  </div>
+  <div class="categories">
+    <div class="category">
+      <div class="cat-label">Gespr&auml;ch</div>
+      <h3>Fragen, die h&auml;ngenbleiben</h3>
+      <p class="ex">&laquo;Was ist eine Sache, die du als Kind geliebt hast und die du irgendwann aufgegeben hast?&raquo;</p>
+    </div>
+    <div class="category">
+      <div class="cat-label">Action</div>
+      <h3>Machen statt reden</h3>
+      <p class="ex">&laquo;Erkl&auml;re deiner Gruppe &rsaquo;Heimat&lsaquo; &mdash; ohne die W&ouml;rter Haus, Zuhause oder Familie.&raquo;</p>
+    </div>
+    <div class="category">
+      <div class="cat-label">Wortspiel</div>
+      <h3>Ein Wort. Kein &Uuml;berschneiden.</h3>
+      <p class="ex">Gebt gleichzeitig einen Hinweis &mdash; aber wehe, jemand hat das gleiche Wort.</p>
+    </div>
+    <div class="category">
+      <div class="cat-label">Leipzig</div>
+      <h3>Die Stadt ist das Spielfeld</h3>
+      <p class="ex">&laquo;Fragt einen Passanten: Was ist das Beste an diesem Viertel?&raquo;</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ===== PRICE ===== -->
+<div class="price-section" id="kaufen">
+  <div class="sec-head">
+    <div class="eyebrow">Preis</div>
+    <h2>Weniger als ein Cocktail. Mehr als ein ganzer Abend.</h2>
+  </div>
+  <div class="price-grid">
+    <div class="price-num">10<span class="eur">&euro;</span></div>
+    <div class="price-body">
+      <h3>Einmal zahlen. Ganze Gruppe spielt. Beliebig oft.</h3>
+      <p>Egal ob zu zweit oder zu acht &mdash; ein Kauf, ein Link, alle spielen mit. Jede Tour hat eine andere Route und andere Aufgaben.</p>
+      <a href="#" class="cta-dark js-checkout">Tour kaufen &mdash; 10&nbsp;&euro;</a>
+      <div class="price-badges">
+        <span class="p-badge">Geld zur&uuml;ck wenn&rsquo;s nicht passt</span>
+        <span class="p-badge">Sofort per Mail</span>
+        <span class="p-badge">Keine App n&ouml;tig</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== FAQ ===== -->
+<section>
+  <div class="sec-head">
+    <div class="eyebrow">FAQ</div>
+    <h2>Alles was ihr wissen m&uuml;sst, bevor ihr loslauft</h2>
+  </div>
+  <ul class="faq-list">
+    <li class="faq-item">
+      <div class="faq-q">Wie viele Leute brauchen wir?</div>
+      <div class="faq-a">Mindestens zwei, am besten drei bis sechs. Mehr geht auch &mdash; es gibt keine Obergrenze.</div>
+    </li>
+    <li class="faq-item">
+      <div class="faq-q">Brauche ich eine App?</div>
+      <div class="faq-a">Nein. Die Tour l&auml;uft komplett im Browser. Link &ouml;ffnen, loslegen.</div>
+    </li>
+    <li class="faq-item">
+      <div class="faq-q">Wie lange dauert eine Tour?</div>
+      <div class="faq-a">Ungef&auml;hr zwei bis drei Stunden. Ihr bestimmt das Tempo.</div>
+    </li>
+    <li class="faq-item">
+      <div class="faq-q">Kann ich die Tour nochmal machen?</div>
+      <div class="faq-a">Ja, so oft ihr wollt. Route und Aufgaben werden jedes Mal neu gew&uuml;rfelt.</div>
+    </li>
+    <li class="faq-item">
+      <div class="faq-q">Was passiert bei Regen?</div>
+      <div class="faq-a">Die Stationen sind Sp&auml;tis und Bars &mdash; immer ein Dach &uuml;ber dem Kopf.</div>
+    </li>
+    <li class="faq-item">
+      <div class="faq-q">Was bekomme ich nach dem Kauf?</div>
+      <div class="faq-a">Sofort eine Mail mit eurem pers&ouml;nlichen Tour-Link. Kein Ablaufdatum.</div>
+    </li>
+  </ul>
+</section>
+
+<!-- ===== FINAL CTA ===== -->
+<div class="final-cta">
+  <h2>Euer bester Abend in Leipzig<br>beginnt mit <em>einem Klick.</em></h2>
+  <div class="sub-text">F&uuml;nf Stationen. Eine Nacht. Erinnerungen, die bleiben.</div>
+  <a href="#" class="cta-light js-checkout">Tour kaufen &mdash; 10&nbsp;&euro;</a>
+  <div class="final-badges">
+    <span class="f-badge">Geld-zur&uuml;ck-Garantie</span>
+    <span class="f-badge">Sofort startklar</span>
+    <span class="f-badge">Jede Tour einzigartig</span>
+  </div>
+</div>
+
+<footer>
+  <span>&copy; 2026 Leipziger Sp&auml;titour</span>
+  <div>
+    <a href="mailto:hallo@spaetitour-leipzig.de">Kontakt</a> &middot;
+    <a href="/impressum">Impressum</a> &middot;
+    <a href="/datenschutz">Datenschutz</a>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.js-checkout').forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    window.location.href = 'https://buy.stripe.com/STRIPE_PAYMENT_LINK';
+  });
+});
+</script>
+</body>
+</html>
