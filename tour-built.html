@@ -1129,6 +1129,28 @@ a:focus-visible {
   animation: fadeIn 0.3s var(--ease-out) both;
 }
 
+/* Desktop: phone-width container */
+@media (min-width: 480px) {
+  .nav-bar,
+  .main,
+  .tab-bar,
+  .sheet,
+  .timer-overlay {
+    max-width: 430px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .main {
+    border-left: 0.5px solid var(--separator);
+    border-right: 0.5px solid var(--separator);
+  }
+  .toast {
+    max-width: calc(430px - 2 * var(--spacing-md));
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 /* Accessibility: reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -1172,13 +1194,13 @@ a:focus-visible {
 
   <!-- MODE SELECT -->
   <section class="screen screen-mode" id="screenMode">
-    <p class="screen-mode__header">Waehle euren Spielmodus</p>
+    <p class="screen-mode__header">W&auml;hle euren Spielmodus</p>
     <div class="grouped-list" id="modeList">
       <button class="grouped-list__item" onclick="selectMode('freunde')">
         <span class="grouped-list__icon">&#x1F46B;</span>
         <div class="grouped-list__content">
           <div class="grouped-list__name">Freunde</div>
-          <div class="grouped-list__desc">Klassischer Modus fuer Gruppen</div>
+          <div class="grouped-list__desc">Klassischer Modus f&uuml;r Gruppen</div>
         </div>
         <svg class="grouped-list__chevron" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,1 7,7 1,13"/></svg>
       </button>
@@ -1257,7 +1279,7 @@ a:focus-visible {
     <div class="weg-actions">
       <button class="btn-primary" onclick="wegErledigt()">Erledigt &#x2713;</button>
       <button class="btn-secondary" onclick="showHintSheet()">Hinweis anzeigen (-5 Pkt)</button>
-      <button class="btn-text" onclick="wegSkip()">Ueberspringen</button>
+      <button class="btn-text" onclick="wegSkip()">&Uuml;berspringen</button>
     </div>
   </section>
 
@@ -1273,7 +1295,7 @@ a:focus-visible {
     </div>
     <div class="spaeti-actions">
       <button class="btn-primary" onclick="spaetiAktion()">Aktion mitgemacht</button>
-      <button class="btn-text" onclick="spaetiWeiter()">Ueberspringen</button>
+      <button class="btn-text" onclick="spaetiWeiter()">&Uuml;berspringen</button>
     </div>
   </section>
 
@@ -4144,7 +4166,7 @@ function createTour(mode) {
       lastMechanik = task.mechanik;
       wegaufgaben.push(task);
     } else {
-      wegaufgaben.push({ id: 'fallback_' + slot, text: 'Lauft weiter zur naechsten Station!', mechanik: 'activity', hint: null, punkte: 10 });
+      wegaufgaben.push({ id: 'fallback_' + slot, text: 'Lauft weiter zur n\u00e4chsten Station!', mechanik: 'activity', hint: null, punkte: 10 });
     }
   }
 
@@ -4481,7 +4503,7 @@ function showSpaeti() {
   document.getElementById('spaetiName').textContent = station.name;
   document.getElementById('spaetiAddress').textContent = station.adresse || '';
   const aktion = station.aktion || {};
-  document.getElementById('spaetiAktion').textContent = aktion.beschreibung || aktion.name || 'Kauft euch ein Getraenk!';
+  document.getElementById('spaetiAktion').textContent = aktion.beschreibung || aktion.name || 'Kauft euch ein Getr\u00e4nk!';
   const bonus = aktion.bonuspunkte || PTS_STATION;
   document.getElementById('spaetiBonus').textContent = '+' + bonus + ' Punkte';
 
@@ -4589,7 +4611,7 @@ function wegSkip() {
 
 function showHintSheet() {
   const task = tour.wegaufgaben[tour.currentStation];
-  const hint = task.hint || 'Kein Hinweis verfuegbar.';
+  const hint = task.hint || 'Kein Hinweis verf\u00fcgbar.';
   tour.hintsUsed[tour.currentStation] = true;
   saveTour();
   openSheet('Hinweis', hint);
@@ -4639,7 +4661,7 @@ function startGPS() {
   gpsArrived = false;
   gpsWegStart = Date.now();
   if (!navigator.geolocation) {
-    document.getElementById('wegDistance').textContent = 'GPS nicht verfuegbar';
+    document.getElementById('wegDistance').textContent = 'GPS nicht verf\u00fcgbar';
     return;
   }
 
