@@ -15,9 +15,11 @@ const fs = require('fs');
 const template = fs.readFileSync('$SCRIPT_DIR/tour.html', 'utf8');
 const spaetis = fs.readFileSync('$SCRIPT_DIR/data/spaetis.json', 'utf8');
 const aufgaben = fs.readFileSync('$SCRIPT_DIR/data/aufgaben.json', 'utf8');
+const pools = fs.readFileSync('$SCRIPT_DIR/data/pools.json', 'utf8');
 let html = template
   .replace('__SPAETIS_DATA__', spaetis.trim())
   .replace('__AUFGABEN_DATA__', aufgaben.trim())
+  .replace('__POOLS_DATA__', pools.trim())
   .replaceAll('__KAEUFER_NAME__', '$KAEUFER');
 fs.writeFileSync('$OUTPUT', html);
 console.log('Built: $OUTPUT (Kaeufer: $KAEUFER)');

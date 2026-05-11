@@ -1,1849 +1,2199 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#0d0b0a">
-  <title>Die Leipziger Spaetitour</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0d0b0a;
-      --surface: #161311;
-      --surface-raised: #1c1917;
-      --border: rgba(255,255,255,0.06);
-      --border-accent: rgba(251,191,36,0.15);
-
-      --text: #fafaf9;
-      --text-sec: #a8a29e;
-      --text-dim: #57534e;
-
-      --amber: #fbbf24;
-      --amber-glow: rgba(251,191,36,0.08);
-      --amber-strong: rgba(251,191,36,0.2);
-      --green: #4ade80;
-      --green-dim: rgba(74,222,128,0.12);
-      --red: #fb7185;
-
-      /* Mechanic colors */
-      --mech-matze: #c4b5fd;
-      --mech-just-one: #67e8f9;
-      --mech-activity: #fca5a5;
-      --mech-wer-bin-ich: #fdba74;
-      --mech-challenge: #fbbf24;
-      --mech-ranking: #86efac;
-      --mech-stadt: #a5b4fc;
-
-      --font-display: 'Syne', sans-serif;
-      --font-body: 'Outfit', sans-serif;
-
-      --ease: cubic-bezier(0.16, 1, 0.3, 1);
-      --radius: 16px;
-      --radius-sm: 10px;
-      --radius-full: 100px;
-    }
-
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
-    html { height: 100%; }
-
-    body {
-      font-family: var(--font-body);
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.55;
-      -webkit-font-smoothing: antialiased;
-      min-height: 100%;
-      overflow-x: hidden;
-    }
-
-    /* === Grain overlay === */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.025;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    }
-
-    /* === Screens === */
-    .screen {
-      display: none;
-      min-height: 100dvh;
-      flex-direction: column;
-    }
-    .screen.active { display: flex; }
-
-    .screen-inner {
-      flex: 1;
-      width: 100%;
-      max-width: 440px;
-      margin: 0 auto;
-      padding: 0 20px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* === Watermark === */
-    .watermark {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-25deg);
-      font-family: var(--font-display);
-      font-size: 5rem;
-      font-weight: 800;
-      color: rgba(255,255,255,0.015);
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 0;
-      user-select: none;
-    }
-
-    /* === Animations === */
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes pulse {
-      0%,100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    @keyframes scaleIn {
-      from { opacity: 0; transform: scale(0.92); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    @keyframes countUp {
-      from { opacity: 0; transform: translateY(10px) scale(0.9); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .anim-slide { animation: slideUp 0.5s var(--ease) both; }
-    .anim-slide-d1 { animation: slideUp 0.5s var(--ease) 0.05s both; }
-    .anim-slide-d2 { animation: slideUp 0.5s var(--ease) 0.1s both; }
-    .anim-slide-d3 { animation: slideUp 0.5s var(--ease) 0.15s both; }
-    .anim-slide-d4 { animation: slideUp 0.5s var(--ease) 0.2s both; }
-    .anim-slide-d5 { animation: slideUp 0.5s var(--ease) 0.25s both; }
-    .anim-fade { animation: fadeIn 0.6s var(--ease) both; }
-
-    /* =============================================
-       START SCREEN
-       ============================================= */
-    #screen-start .screen-inner {
-      justify-content: center;
-      padding-top: 60px;
-      padding-bottom: 40px;
-    }
-
-    .start-badge {
-      font-family: var(--font-body);
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--amber);
-      text-align: center;
-      margin-bottom: 16px;
-    }
-
-    .start-title {
-      font-family: var(--font-display);
-      font-size: 2.8rem;
-      font-weight: 800;
-      text-align: center;
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-      margin-bottom: 12px;
-    }
-    .start-title .accent { color: var(--amber); }
-
-    .start-sub {
-      text-align: center;
-      color: var(--text-sec);
-      font-size: 1rem;
-      font-weight: 300;
-      max-width: 300px;
-      margin: 0 auto 32px;
-      line-height: 1.6;
-    }
-
-    /* How it works - minimal */
-    .how-it-works {
-      display: flex;
-      gap: 2px;
-      margin-bottom: 32px;
-    }
-    .how-step {
-      flex: 1;
-      background: var(--surface);
-      padding: 16px 12px;
-      text-align: center;
-      position: relative;
-    }
-    .how-step:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
-    .how-step:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
-    .how-step .num {
-      font-family: var(--font-display);
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--amber);
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-    .how-step .label {
-      font-size: 0.72rem;
-      font-weight: 500;
-      color: var(--text-sec);
-      letter-spacing: 0.02em;
-    }
-
-    /* Category dots */
-    .cat-row {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 40px;
-      flex-wrap: wrap;
-    }
-    .cat-tag {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.75rem;
-      font-weight: 400;
-      color: var(--text-dim);
-    }
-    .cat-tag .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-    }
-
-    /* Start button */
-    .btn-start {
-      display: block;
-      width: 100%;
-      padding: 20px;
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      font-weight: 700;
-      text-align: center;
-      background: var(--amber);
-      color: var(--bg);
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: transform 0.2s var(--ease), box-shadow 0.2s;
-      box-shadow: 0 0 40px rgba(251,191,36,0.12);
-      letter-spacing: -0.01em;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .btn-start:active {
-      transform: scale(0.97);
-      box-shadow: 0 0 20px rgba(251,191,36,0.08);
-    }
-
-    .start-footer {
-      margin-top: auto;
-      padding-top: 32px;
-      text-align: center;
-      font-size: 0.65rem;
-      color: var(--text-dim);
-      letter-spacing: 0.04em;
-    }
-
-    /* =============================================
-       MODE SELECT SCREEN
-       ============================================= */
-    #screen-mode .screen-inner {
-      padding-top: 40px;
-      padding-bottom: 32px;
-    }
-
-    .mode-header {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-    .mode-header h1 {
-      font-family: var(--font-display);
-      font-size: 1.6rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-    }
-    .mode-header p {
-      color: var(--text-sec);
-      font-size: 0.9rem;
-      font-weight: 300;
-      margin-top: 6px;
-    }
-
-    .mode-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .mode-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      cursor: pointer;
-      transition: all 0.2s var(--ease);
-      -webkit-tap-highlight-color: transparent;
-      position: relative;
-      overflow: hidden;
-    }
-    .mode-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; bottom: 0;
-      width: 3px;
-      background: var(--amber);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .mode-card:active {
-      transform: scale(0.98);
-      background: var(--surface-raised);
-    }
-    .mode-card:active::before { opacity: 1; }
-
-    .mode-card .mode-name {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      margin-bottom: 3px;
-    }
-    .mode-card .mode-desc {
-      font-size: 0.8rem;
-      font-weight: 300;
-      color: var(--text-sec);
-    }
-    .mode-card .mode-players {
-      font-size: 0.65rem;
-      font-weight: 500;
-      color: var(--text-dim);
-      margin-top: 6px;
-      letter-spacing: 0.04em;
-    }
-
-    /* =============================================
-       ROUTE OVERVIEW (after start, before station 1)
-       ============================================= */
-    #screen-route .screen-inner {
-      padding-top: 32px;
-      padding-bottom: 32px;
-    }
-
-    .route-header {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-    .route-header .eyebrow {
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 8px;
-    }
-    .route-header h1 {
-      font-family: var(--font-display);
-      font-size: 1.6rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-    }
-
-    /* Vertical route visualization */
-    .route-list {
-      position: relative;
-      padding-left: 36px;
-      margin-bottom: 28px;
-    }
-    /* Vertical line */
-    .route-list::before {
-      content: '';
-      position: absolute;
-      left: 13px;
-      top: 8px;
-      bottom: 8px;
-      width: 2px;
-      background: repeating-linear-gradient(
-        to bottom,
-        var(--text-dim) 0px,
-        var(--text-dim) 4px,
-        transparent 4px,
-        transparent 8px
-      );
-    }
-
-    .route-stop {
-      position: relative;
-      padding: 14px 0;
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-    }
-
-    .route-stop .dot-wrap {
-      position: absolute;
-      left: -36px;
-      top: 16px;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .route-stop .dot-num {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--surface-raised);
-      border: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-display);
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: var(--text-sec);
-      z-index: 1;
-    }
-
-    .route-stop-info {
-      flex: 1;
-      min-width: 0;
-    }
-    .route-stop-name {
-      font-family: var(--font-display);
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 2px;
-      letter-spacing: -0.01em;
-    }
-    .route-stop-meta {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-    }
-    .route-stop-walk {
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      position: absolute;
-      left: -36px;
-      bottom: -4px;
-      width: 28px;
-      text-align: center;
-    }
-
-    .route-stop-badge {
-      flex-shrink: 0;
-      padding: 3px 10px;
-      border-radius: var(--radius-full);
-      font-size: 0.6rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
-    .route-stop-badge.spaeti {
-      background: var(--amber-glow);
-      color: var(--amber);
-      border: 1px solid var(--amber-strong);
-    }
-    .route-stop-badge.attraktion {
-      background: rgba(196,181,253,0.08);
-      color: var(--mech-matze);
-      border: 1px solid rgba(196,181,253,0.15);
-    }
-
-    .btn-go {
-      display: block;
-      width: 100%;
-      padding: 18px;
-      font-family: var(--font-display);
-      font-size: 1.05rem;
-      font-weight: 700;
-      text-align: center;
-      background: var(--amber);
-      color: var(--bg);
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: transform 0.2s var(--ease);
-      -webkit-tap-highlight-color: transparent;
-      letter-spacing: -0.01em;
-    }
-    .btn-go:active { transform: scale(0.97); }
-
-    /* =============================================
-       WEGAUFGABE SCREEN (walking + task)
-       ============================================= */
-    #screen-wegaufgabe .screen-inner {
-      padding-top: 20px;
-      padding-bottom: 28px;
-    }
-
-    /* Top bar */
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-    .top-bar-left {
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-    }
-    .top-bar-right {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-display);
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--amber);
-    }
-    .top-bar-right .icon { font-size: 0.7rem; }
-
-    /* Progress bar */
-    .progress-bar {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 28px;
-    }
-    .progress-seg {
-      flex: 1;
-      height: 3px;
-      border-radius: 2px;
-      background: var(--border);
-      transition: background 0.5s var(--ease), box-shadow 0.5s;
-    }
-    .progress-seg.done {
-      background: var(--green);
-      box-shadow: 0 0 6px var(--green-dim);
-    }
-    .progress-seg.current {
-      background: var(--amber);
-      box-shadow: 0 0 8px var(--amber-glow);
-    }
-
-    /* Destination card */
-    .dest-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-    .dest-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--amber), transparent);
-      opacity: 0.25;
-    }
-
-    .dest-eyebrow {
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 6px;
-    }
-    .dest-name {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      line-height: 1.15;
-      margin-bottom: 4px;
-    }
-    .dest-address {
-      font-size: 0.8rem;
-      color: var(--text-dim);
-      margin-bottom: 12px;
-    }
-
-    .dest-meta-row {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .dest-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 5px 12px;
-      border-radius: var(--radius-full);
-      font-size: 0.72rem;
-      font-weight: 500;
-      background: var(--surface-raised);
-      border: 1px solid var(--border);
-      color: var(--text-sec);
-    }
-    .dest-chip .emoji { font-size: 0.8rem; }
-
-    .dest-chip.arrived {
-      background: var(--green-dim);
-      border-color: rgba(74,222,128,0.2);
-      color: var(--green);
-      animation: pulse 2s infinite;
-    }
-
-    /* Nav button */
-    .btn-nav {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 14px;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      font-weight: 500;
-      background: var(--surface);
-      color: var(--text-sec);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      margin-bottom: 20px;
-      transition: all 0.2s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .btn-nav:active { transform: scale(0.98); background: var(--surface-raised); }
-
-    /* Task card */
-    .task-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 16px;
-    }
-
-    .task-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .task-category {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      border-radius: var(--radius-full);
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    .task-category.matze {
-      background: rgba(196,181,253,0.1);
-      color: var(--mech-matze);
-      border: 1px solid rgba(196,181,253,0.15);
-    }
-    .task-category.just-one {
-      background: rgba(103,232,249,0.08);
-      color: var(--mech-just-one);
-      border: 1px solid rgba(103,232,249,0.12);
-    }
-    .task-category.activity {
-      background: rgba(252,165,165,0.1);
-      color: var(--mech-activity);
-      border: 1px solid rgba(252,165,165,0.15);
-    }
-    .task-category.wer-bin-ich {
-      background: rgba(253,186,116,0.1);
-      color: var(--mech-wer-bin-ich);
-      border: 1px solid rgba(253,186,116,0.15);
-    }
-    .task-category.challenge {
-      background: rgba(251,191,36,0.1);
-      color: var(--mech-challenge);
-      border: 1px solid rgba(251,191,36,0.15);
-    }
-    .task-category.ranking {
-      background: rgba(134,239,172,0.08);
-      color: var(--mech-ranking);
-      border: 1px solid rgba(134,239,172,0.12);
-    }
-    .task-category.stadt {
-      background: rgba(165,180,252,0.1);
-      color: var(--mech-stadt);
-      border: 1px solid rgba(165,180,252,0.15);
-    }
-
-    .task-points {
-      font-family: var(--font-display);
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--amber);
-    }
-
-    .task-type {
-      font-family: var(--font-display);
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .task-text {
-      font-size: 1.05rem;
-      line-height: 1.6;
-      font-weight: 300;
-      color: var(--text);
-    }
-
-    /* Hint */
-    .hint-trigger {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      margin-top: 14px;
-      padding: 6px 14px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--text-dim);
-      background: transparent;
-      border: 1px dashed var(--border);
-      border-radius: var(--radius-full);
-      cursor: pointer;
-      transition: all 0.2s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .hint-trigger:active { background: var(--surface); }
-
-    .hint-box {
-      margin-top: 12px;
-      padding: 12px 16px;
-      font-size: 0.88rem;
-      font-weight: 400;
-      color: var(--amber);
-      background: var(--amber-glow);
-      border: 1px solid var(--amber-strong);
-      border-radius: var(--radius-sm);
-      line-height: 1.5;
-      animation: scaleIn 0.3s var(--ease);
-    }
-
-    /* Timer display */
-    .timer-display {
-      text-align: center;
-      margin: 16px 0;
-    }
-    .timer-value {
-      font-family: var(--font-display);
-      font-size: 3rem;
-      font-weight: 800;
-      color: var(--amber);
-      line-height: 1;
-      transition: color 0.3s;
-    }
-    .timer-value.urgent { color: var(--red); }
-    .timer-label {
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      margin-top: 4px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    .btn-timer {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      font-weight: 500;
-      background: var(--surface);
-      color: var(--text-sec);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      margin-top: 8px;
-      transition: transform 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .btn-timer:active { transform: scale(0.98); }
-
-    /* Drink rule */
-    .drink-rule {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      background: rgba(251,113,133,0.08);
-      border: 1px solid rgba(251,113,133,0.15);
-      border-radius: var(--radius-sm);
-      margin-top: 12px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--red);
-    }
-
-    /* Team split */
-    .team-split {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      background: var(--amber-glow);
-      border: 1px solid var(--amber-strong);
-      border-radius: var(--radius-sm);
-      margin-bottom: 12px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--amber);
-    }
-
-    /* Action buttons */
-    .action-row {
-      display: flex;
-      gap: 10px;
-      margin-top: auto;
-      padding-top: 8px;
-    }
-    .btn-done {
-      flex: 3;
-      padding: 18px;
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 700;
-      background: var(--amber);
-      color: var(--bg);
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: transform 0.15s;
-      -webkit-tap-highlight-color: transparent;
-      letter-spacing: -0.01em;
-    }
-    .btn-done:active { transform: scale(0.97); }
-
-    .btn-skip {
-      flex: 1;
-      padding: 18px 12px;
-      font-family: var(--font-body);
-      font-size: 0.8rem;
-      font-weight: 500;
-      background: var(--surface);
-      color: var(--text-dim);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: transform 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .btn-skip:active { transform: scale(0.97); }
-
-    /* =============================================
-       SPAETI / STATION SCREEN
-       ============================================= */
-    #screen-spaeti .screen-inner {
-      padding-top: 20px;
-      padding-bottom: 28px;
-    }
-
-    .station-hero {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .station-hero .arrived-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 14px;
-      border-radius: var(--radius-full);
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      background: var(--green-dim);
-      color: var(--green);
-      border: 1px solid rgba(74,222,128,0.2);
-      margin-bottom: 12px;
-    }
-    .station-hero h2 {
-      font-family: var(--font-display);
-      font-size: 1.8rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      line-height: 1.1;
-      margin-bottom: 4px;
-    }
-    .station-hero .addr {
-      font-size: 0.8rem;
-      color: var(--text-dim);
-    }
-
-    /* Aktion card */
-    .aktion-card {
-      background: var(--surface);
-      border: 1px solid var(--border-accent);
-      border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-    .aktion-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--amber), transparent);
-      opacity: 0.3;
-    }
-    .aktion-label {
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 10px;
-    }
-    .aktion-name {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-      letter-spacing: -0.01em;
-    }
-    .aktion-desc {
-      font-size: 0.9rem;
-      font-weight: 300;
-      color: var(--text-sec);
-      line-height: 1.6;
-    }
-    .aktion-bonus {
-      margin-top: 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 12px;
-      border-radius: var(--radius-full);
-      font-size: 0.7rem;
-      font-weight: 600;
-      background: var(--amber-glow);
-      color: var(--amber);
-      border: 1px solid var(--amber-strong);
-    }
-
-    /* Score display */
-    .score-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 14px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      margin-bottom: 16px;
-    }
-    .score-bar .label {
-      font-size: 0.7rem;
-      font-weight: 500;
-      color: var(--text-dim);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    .score-bar .value {
-      font-family: var(--font-display);
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: var(--amber);
-    }
-
-    .btn-aktion {
-      display: block;
-      width: 100%;
-      padding: 18px;
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 700;
-      background: var(--amber);
-      color: var(--bg);
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: transform 0.15s;
-      -webkit-tap-highlight-color: transparent;
-      margin-bottom: 10px;
-    }
-    .btn-aktion:active { transform: scale(0.97); }
-
-    .btn-weiter {
-      display: block;
-      width: 100%;
-      padding: 16px;
-      font-family: var(--font-body);
-      font-size: 0.9rem;
-      font-weight: 500;
-      background: var(--surface);
-      color: var(--text-sec);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: transform 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .btn-weiter:active { transform: scale(0.97); }
-
-    /* =============================================
-       ERGEBNIS SCREEN
-       ============================================= */
-    #screen-ergebnis .screen-inner {
-      padding-top: 48px;
-      padding-bottom: 40px;
-    }
-
-    .ergebnis-hero {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-    .ergebnis-hero .done-label {
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 8px;
-    }
-    .ergebnis-hero h1 {
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 4px;
-    }
-
-    .score-hero {
-      background: linear-gradient(135deg, var(--amber) 0%, #d97706 100%);
-      border-radius: var(--radius);
-      padding: 32px;
-      text-align: center;
-      margin-bottom: 12px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 8px 40px rgba(251,191,36,0.12);
-    }
-    .score-hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 50%);
-      pointer-events: none;
-    }
-    .score-hero .label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: rgba(0,0,0,0.4);
-      margin-bottom: 4px;
-    }
-    .score-hero .value {
-      font-family: var(--font-display);
-      font-size: 3.5rem;
-      font-weight: 800;
-      color: var(--bg);
-      line-height: 1;
-      animation: countUp 0.6s var(--ease) both;
-    }
-
-    .rank-label {
-      text-align: center;
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--amber);
-      margin-bottom: 28px;
-      letter-spacing: -0.01em;
-    }
-
-    .results-list {
-      margin-bottom: 28px;
-    }
-    .result-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .result-item:last-child { border-bottom: none; }
-    .result-num {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-display);
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: var(--text-dim);
-      flex-shrink: 0;
-    }
-    .result-info { flex: 1; min-width: 0; }
-    .result-info h4 {
-      font-family: var(--font-display);
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      margin-bottom: 2px;
-    }
-    .result-info p {
-      font-size: 0.72rem;
-      color: var(--text-dim);
-    }
-    .result-pts {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: var(--amber);
-      flex-shrink: 0;
-    }
-
-    .btn-replay {
-      display: block;
-      width: 100%;
-      padding: 18px;
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 700;
-      background: var(--surface);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: transform 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .btn-replay:active { transform: scale(0.97); }
-
-    /* Generic footer */
-    .foot {
-      text-align: center;
-      font-size: 0.6rem;
-      color: var(--text-dim);
-      padding: 16px 0;
-      letter-spacing: 0.04em;
-      margin-top: auto;
-    }
-
-    /* Utility */
-    .hidden { display: none !important; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Sp&auml;titour Leipzig</title>
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════════ */
+:root {
+  /* Colors */
+  --black: #000000;
+  --surface-0: #000000;
+  --surface-1: #1c1c1e;
+  --surface-2: #2c2c2e;
+  --surface-3: #3a3a3c;
+  --separator: rgba(84, 84, 88, 0.65);
+  --separator-opaque: #38383a;
+  --label-primary: #ffffff;
+  --label-secondary: rgba(235, 235, 245, 0.6);
+  --label-tertiary: rgba(235, 235, 245, 0.3);
+  --label-quaternary: rgba(235, 235, 245, 0.18);
+  --accent: #fbbf24;
+  --accent-dim: rgba(251, 191, 36, 0.15);
+  --red: #ff453a;
+  --green: #30d158;
+  --blue: #0a84ff;
+  --fill-primary: rgba(120, 120, 128, 0.36);
+  --fill-secondary: rgba(120, 120, 128, 0.32);
+  --fill-tertiary: rgba(120, 120, 128, 0.24);
+
+  /* Mechanik badge colors */
+  --mechanik-matze: #c4b5fd;
+  --mechanik-just-one: #67e8f9;
+  --mechanik-activity: #fca5a5;
+  --mechanik-wer-bin-ich: #fdba74;
+  --mechanik-challenge: #fbbf24;
+  --mechanik-ranking: #86efac;
+  --mechanik-stadt: #a5b4fc;
+
+  /* Typography */
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+  --large-title: 700 34px/41px var(--font);
+  --title-1: 700 28px/34px var(--font);
+  --title-2: 700 22px/28px var(--font);
+  --title-3: 600 20px/25px var(--font);
+  --headline: 600 17px/22px var(--font);
+  --body: 400 17px/22px var(--font);
+  --callout: 400 16px/21px var(--font);
+  --subheadline: 400 15px/20px var(--font);
+  --footnote: 400 13px/18px var(--font);
+  --caption-1: 400 12px/16px var(--font);
+  --caption-2: 400 11px/13px var(--font);
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Safe areas */
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+
+  /* Shell heights */
+  --nav-height: 44px;
+  --tab-height: 49px;
+
+  /* Easing */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ═══════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--black);
+  color: var(--label-primary);
+  font: var(--body);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  touch-action: manipulation;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════
+   APP SHELL
+   ═══════════════════════════════════════════════ */
+
+/* Nav Bar */
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: calc(var(--nav-height) + var(--sat));
+  padding-top: var(--sat);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid var(--separator);
+  transition: transform 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
+}
+
+.nav-bar.hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-bar__back {
+  position: absolute;
+  left: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: var(--body);
+  color: var(--accent);
+}
+
+.nav-bar__back svg {
+  width: 12px;
+  height: 20px;
+}
+
+.nav-bar__title {
+  font: var(--headline);
+  color: var(--label-primary);
+  text-align: center;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-bar__score {
+  position: absolute;
+  right: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: var(--headline);
+  color: var(--accent);
+}
+
+/* Tab Bar */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: calc(var(--tab-height) + var(--sab));
+  padding-bottom: var(--sab);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-top: 0.5px solid var(--separator);
+  transition: transform 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
+}
+
+.tab-bar.hidden {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tab-bar__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding-top: 6px;
+  min-width: 64px;
+  color: var(--label-secondary);
+  transition: color 0.2s;
+}
+
+.tab-bar__item.active {
+  color: var(--accent);
+}
+
+.tab-bar__item svg {
+  width: 24px;
+  height: 24px;
+}
+
+.tab-bar__item span {
+  font: var(--caption-2);
+}
+
+/* Main Content */
+.main {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  transition: padding 0.3s var(--ease-out);
+}
+
+.main.with-nav {
+  padding-top: calc(var(--nav-height) + var(--sat));
+}
+
+.main.with-tab {
+  padding-bottom: calc(var(--tab-height) + var(--sab));
+}
+
+/* Screens */
+.screen {
+  display: none;
+  min-height: 100%;
+  padding: var(--spacing-lg);
+}
+
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  animation: screenIn 0.3s var(--ease-spring) both;
+}
+
+@keyframes screenIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ═══════════════════════════════════════════════
+   COMPONENTS
+   ═══════════════════════════════════════════════ */
+
+/* Buttons */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50px;
+  background: var(--accent);
+  color: var(--black);
+  font: var(--headline);
+  border-radius: var(--radius-full);
+  transition: transform 0.1s, opacity 0.1s;
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+  opacity: 0.8;
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50px;
+  background: var(--surface-2);
+  color: var(--label-primary);
+  font: var(--headline);
+  border-radius: var(--radius-md);
+  transition: transform 0.1s, opacity 0.1s;
+}
+
+.btn-secondary:active {
+  transform: scale(0.97);
+  opacity: 0.8;
+}
+
+.btn-text {
+  font: var(--body);
+  color: var(--accent);
+  padding: var(--spacing-md) var(--spacing-lg);
+  min-height: 44px;
+}
+
+.btn-text:active {
+  opacity: 0.6;
+}
+
+/* Cards */
+.card {
+  background: var(--surface-1);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+}
+
+/* Grouped List */
+.grouped-list {
+  background: var(--surface-1);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.grouped-list__item {
+  display: flex;
+  align-items: center;
+  padding: 12px var(--spacing-md);
+  border-bottom: 0.5px solid var(--separator);
+  transition: background 0.15s;
+  width: 100%;
+  text-align: left;
+}
+
+.grouped-list__item:last-child {
+  border-bottom: none;
+}
+
+.grouped-list__item:active {
+  background: var(--fill-tertiary);
+}
+
+.grouped-list__icon {
+  font-size: 28px;
+  width: 40px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.grouped-list__content {
+  flex: 1;
+  margin-left: 12px;
+}
+
+.grouped-list__name {
+  font: var(--body);
+  color: var(--label-primary);
+}
+
+.grouped-list__desc {
+  font: var(--footnote);
+  color: var(--label-secondary);
+  margin-top: 2px;
+}
+
+.grouped-list__chevron {
+  color: var(--label-quaternary);
+  margin-left: 8px;
+  flex-shrink: 0;
+  width: 8px;
+  height: 14px;
+}
+
+/* Pill */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font: var(--footnote);
+  background: var(--surface-2);
+  color: var(--label-secondary);
+}
+
+/* Progress Dots */
+.progress-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.progress-dots__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  transition: all 0.3s var(--ease-spring);
+}
+
+.progress-dots__dot.active {
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+}
+
+.progress-dots__dot.completed {
+  background: var(--accent);
+}
+
+/* ═══════════════════════════════════════════════
+   SCREEN: START
+   ═══════════════════════════════════════════════ */
+.screen-start {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--spacing-2xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.screen-start__glow {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.screen-start__title {
+  font: var(--large-title);
+  font-size: 38px;
+  line-height: 1.1;
+  margin-bottom: var(--spacing-sm);
+  position: relative;
+}
+
+.screen-start__subtitle {
+  font: var(--subheadline);
+  color: var(--label-secondary);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.screen-start__actions {
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* ═══════════════════════════════════════════════
+   SCREEN: MODE SELECT
+   ═══════════════════════════════════════════════ */
+.screen-mode {
+  padding-top: var(--spacing-xl);
+}
+
+.screen-mode__header {
+  font: var(--footnote);
+  color: var(--label-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* ═══════════════════════════════════════════════
+   SCREEN: ROUTE
+   ═══════════════════════════════════════════════ */
+.screen-route {
+  padding-bottom: 100px;
+}
+
+.route-summary {
+  margin-bottom: var(--spacing-lg);
+}
+
+.route-timeline {
+  padding-left: 8px;
+}
+
+.route-timeline__item {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  padding-bottom: var(--spacing-xl);
+}
+
+.route-timeline__item:last-child {
+  padding-bottom: 0;
+}
+
+.route-timeline__line {
+  position: absolute;
+  left: 15px;
+  top: 36px;
+  bottom: 0;
+  width: 2px;
+  background: var(--surface-3);
+}
+
+.route-timeline__item:last-child .route-timeline__line {
+  display: none;
+}
+
+.route-timeline__number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: var(--headline);
+  font-size: 14px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  background: var(--surface-2);
+  color: var(--label-secondary);
+  border: 2px solid var(--surface-3);
+  transition: all 0.3s;
+}
+
+.route-timeline__number.completed {
+  background: var(--accent);
+  color: var(--black);
+  border-color: var(--accent);
+}
+
+.route-timeline__number.active {
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--accent);
+  animation: pulseRing 2s ease-in-out infinite;
+}
+
+.route-timeline__info {
+  margin-left: var(--spacing-md);
+  padding-top: 4px;
+}
+
+.route-timeline__name {
+  font: var(--headline);
+  color: var(--label-primary);
+}
+
+.route-timeline__address {
+  font: var(--footnote);
+  color: var(--label-secondary);
+  margin-top: 2px;
+}
+
+.route-timeline__status {
+  font: var(--caption-1);
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.route-cta {
+  position: fixed;
+  bottom: calc(var(--tab-height) + var(--sab) + var(--spacing-lg));
+  left: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: 50;
+}
+
+/* ═══════════════════════════════════════════════
+   SCREEN: WEGAUFGABE
+   ═══════════════════════════════════════════════ */
+.screen-weg {
+  align-items: center;
+  padding-top: var(--spacing-lg);
+}
+
+.weg-progress {
+  margin-bottom: var(--spacing-lg);
+}
+
+.weg-distance {
+  font: var(--footnote);
+  color: var(--label-secondary);
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+}
+
+.weg-card {
+  width: 100%;
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.weg-card__badge {
+  font-weight: 600;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--spacing-md);
+  display: inline-block;
+}
+
+.weg-card__text {
+  font: var(--title-2);
+  color: var(--label-primary);
+  line-height: 1.35;
+}
+
+.weg-card__team {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  font: var(--footnote);
+  color: var(--label-secondary);
+  border-left: 3px solid var(--accent);
+}
+
+.weg-card__trink {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  font: var(--footnote);
+  color: var(--label-secondary);
+}
+
+.weg-card__trink::before {
+  content: '\1F37A ';
+}
+
+.weg-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: auto;
+}
+
+/* Pool: Tabu Card */
+.tabu-card {
+  background: var(--surface-2);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-top: 16px;
+  text-align: center;
+}
+.tabu-card__wort {
+  font: var(--title-1);
+  color: var(--label-primary);
+}
+.tabu-card__sep {
+  height: 2px;
+  background: var(--separator);
+  margin: 12px 0;
+}
+.tabu-card__liste {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.tabu-card__liste li {
+  font: var(--body);
+  color: var(--label-secondary);
+  padding: 6px 0;
+  border-bottom: 0.5px solid var(--separator);
+}
+.tabu-card__liste li:last-child { border-bottom: none; }
+.tabu-card__liste li::before {
+  content: '\2718 ';
+  color: var(--red);
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+/* Pool: Spektrum Scale */
+.spektrum-scale {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+.spektrum-scale__left,
+.spektrum-scale__right {
+  font: var(--footnote);
+  font-weight: 600;
+  color: var(--label-secondary);
+  min-width: 60px;
+}
+.spektrum-scale__left { text-align: left; }
+.spektrum-scale__right { text-align: right; }
+.spektrum-scale__bar {
+  flex: 1;
+  height: 8px;
+  background: linear-gradient(to right, var(--accent), var(--red));
+  border-radius: 100px;
+}
+
+/* Pool: WYR Options */
+.wyr-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+}
+.wyr-option {
+  background: var(--surface-2);
+  border: 1px solid var(--separator);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  font: var(--title-3);
+  color: var(--label-primary);
+  text-align: center;
+  cursor: pointer;
+}
+.wyr-vs {
+  text-align: center;
+  font: var(--footnote);
+  font-weight: 700;
+  color: var(--label-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ═══════════════════════════════════════════════
+   SCREEN: SPAETI
+   ═══════════════════════════════════════════════ */
+.screen-spaeti {
+  align-items: center;
+  padding-top: var(--spacing-xl);
+}
+
+.spaeti-card {
+  width: 100%;
+  margin-bottom: var(--spacing-xl);
+}
+
+.spaeti-card__name {
+  font: var(--title-1);
+  margin-bottom: 4px;
+}
+
+.spaeti-card__address {
+  font: var(--subheadline);
+  color: var(--label-secondary);
+  margin-bottom: var(--spacing-md);
+}
+
+.spaeti-card__separator {
+  height: 0.5px;
+  background: var(--separator);
+  margin-bottom: var(--spacing-md);
+}
+
+.spaeti-card__aktion-label {
+  font: var(--caption-1);
+  color: var(--label-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.spaeti-card__aktion {
+  font: var(--body);
+  color: var(--label-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.spaeti-card__bonus {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: var(--accent-dim);
+  color: var(--accent);
+  font: var(--caption-1);
+  font-weight: 600;
+}
+
+.spaeti-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: auto;
+}
+
+/* ═══════════════════════════════════════════════
+   SCREEN: ERGEBNIS
+   ═══════════════════════════════════════════════ */
+.screen-ergebnis {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  background: radial-gradient(ellipse at 50% 10%, rgba(251, 191, 36, 0.15) 0%, transparent 60%);
+}
+
+.ergebnis-score {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.ergebnis-label {
+  font: var(--subheadline);
+  color: var(--label-secondary);
+  margin-bottom: var(--spacing-md);
+}
+
+.ergebnis-ranking {
+  display: inline-flex;
+  padding: 6px 16px;
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius-full);
+  font: var(--headline);
+  color: var(--accent);
+  margin-bottom: var(--spacing-xl);
+}
+
+.ergebnis-breakdown {
+  width: 100%;
+  text-align: left;
+  margin-bottom: var(--spacing-xl);
+}
+
+.ergebnis-breakdown__title {
+  font: var(--footnote);
+  color: var(--label-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+}
+
+.ergebnis-breakdown__list {
+  background: var(--surface-1);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.ergebnis-breakdown__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px var(--spacing-md);
+  border-bottom: 0.5px solid var(--separator);
+}
+
+.ergebnis-breakdown__item:last-child {
+  border-bottom: none;
+}
+
+.ergebnis-breakdown__station {
+  font: var(--body);
+  color: var(--label-primary);
+}
+
+.ergebnis-breakdown__points {
+  font: var(--headline);
+  color: var(--accent);
+}
+
+.ergebnis-actions {
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-sm);
+}
+
+.ergebnis-actions .btn-primary { flex: 2; }
+.ergebnis-actions .btn-secondary { flex: 1; }
+
+/* ═══════════════════════════════════════════════
+   SCREEN: SCORE TAB
+   ═══════════════════════════════════════════════ */
+.screen-score {
+  padding-top: var(--spacing-xl);
+}
+
+.score-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.score-header__value {
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.score-header__label {
+  font: var(--subheadline);
+  color: var(--label-secondary);
+}
+
+/* ═══════════════════════════════════════════════
+   BOTTOM SHEET
+   ═══════════════════════════════════════════════ */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.sheet-backdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 201;
+  background: rgba(28, 28, 30, 0.85);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: var(--spacing-sm) var(--spacing-lg) calc(var(--spacing-xl) + var(--sab));
+  transform: translateY(100%);
+  transition: transform 0.35s var(--ease-spring);
+}
+
+.sheet.visible {
+  transform: translateY(0);
+}
+
+.sheet__handle {
+  width: 36px;
+  height: 5px;
+  border-radius: var(--radius-full);
+  background: var(--surface-3);
+  margin: 0 auto var(--spacing-md);
+}
+
+.sheet__title {
+  font: var(--headline);
+  margin-bottom: var(--spacing-md);
+}
+
+.sheet__body {
+  font: var(--body);
+  color: var(--label-secondary);
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════════════════════════
+   TIMER OVERLAY
+   ═══════════════════════════════════════════════ */
+.timer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.95);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xl);
+}
+
+.timer-overlay.visible {
+  display: flex;
+}
+
+.timer-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.timer-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer-ring__bg {
+  fill: none;
+  stroke: var(--surface-3);
+  stroke-width: 8;
+}
+
+.timer-ring__progress {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear, stroke 0.3s;
+}
+
+.timer-ring__time {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: var(--large-title);
+  font-variant-numeric: tabular-nums;
+  color: var(--label-primary);
+}
+
+/* ═══════════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  top: calc(var(--sat) + var(--nav-height) + var(--spacing-sm));
+  left: var(--spacing-md);
+  right: var(--spacing-md);
+  z-index: 150;
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  padding: 12px var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font: var(--subheadline);
+  color: var(--label-primary);
+  transform: translateY(-20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.35s var(--ease-spring), opacity 0.3s;
+}
+
+.toast.visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.toast__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.toast__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ═══════════════════════════════════════════════
+   POINTS FLOAT
+   ═══════════════════════════════════════════════ */
+.points-float {
+  position: fixed;
+  z-index: 160;
+  font: var(--headline);
+  color: var(--accent);
+  pointer-events: none;
+  animation: scoreFloat 1.2s var(--ease-out) forwards;
+}
+
+/* ═══════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════ */
+@keyframes cardIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulseRing {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(251, 191, 36, 0);
+  }
+}
+
+@keyframes scoreFloat {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-60px);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-card-in {
+  animation: cardIn 0.4s var(--ease-spring) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s var(--ease-out) both;
+}
+
+/* Accessibility: reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
 </head>
 <body>
 
-<div class="watermark">__KAEUFER_NAME__</div>
+<!-- ═══════════════════════════════════════════════
+     NAV BAR
+     ═══════════════════════════════════════════════ -->
+<nav class="nav-bar hidden" id="navBar">
+  <button class="nav-bar__back" id="navBack" style="display:none" onclick="navGoBack()">
+    <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="10,2 2,10 10,18"/>
+    </svg>
+  </button>
+  <span class="nav-bar__title" id="navTitle"></span>
+  <span class="nav-bar__score" id="navScore" style="display:none"></span>
+</nav>
 
-<!-- ================================================
-     SCREEN: START
-     ================================================ -->
-<div id="screen-start" class="screen active">
-  <div class="screen-inner">
-    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
-      <div class="start-badge anim-slide">Leipzig &middot; Nacht &middot; Abenteuer</div>
-      <h1 class="start-title anim-slide-d1">Die Leipziger<br><span class="accent">Spaetitour</span></h1>
-      <p class="start-sub anim-slide-d2">5 Stationen, jede Tour anders. Handy rumgeben, gemeinsam loesen, Leipzig entdecken.</p>
+<!-- ═══════════════════════════════════════════════
+     MAIN CONTENT
+     ═══════════════════════════════════════════════ -->
+<main class="main" id="mainContent">
 
-      <div class="how-it-works anim-slide-d3">
-        <div class="how-step"><div class="num">1</div><div class="label">Starten</div></div>
-        <div class="how-step"><div class="num">2</div><div class="label">Hinlaufen</div></div>
-        <div class="how-step"><div class="num">3</div><div class="label">Aufgabe</div></div>
-        <div class="how-step"><div class="num">4</div><div class="label">Punkte!</div></div>
-      </div>
-
-      <div class="cat-row anim-slide-d4">
-        <span class="cat-tag"><span class="dot" style="background:var(--mech-matze)"></span>Hotel Matze</span>
-        <span class="cat-tag"><span class="dot" style="background:var(--mech-just-one)"></span>Just One</span>
-        <span class="cat-tag"><span class="dot" style="background:var(--mech-activity)"></span>Activity</span>
-        <span class="cat-tag"><span class="dot" style="background:var(--mech-challenge)"></span>Challenge</span>
-        <span class="cat-tag"><span class="dot" style="background:var(--mech-stadt)"></span>Stadtmission</span>
-      </div>
-
-      <button class="btn-start anim-slide-d5" onclick="startTour()">Los geht's</button>
+  <!-- START -->
+  <section class="screen screen-start" id="screenStart">
+    <div class="screen-start__glow"></div>
+    <h1 class="screen-start__title">Sp&auml;titour<br>Leipzig</h1>
+    <p class="screen-start__subtitle">5 Stationen. 1 Nacht. Unvergesslich.</p>
+    <div class="screen-start__actions">
+      <button class="btn-primary" onclick="startTour()">Los geht's</button>
+      <button class="btn-secondary" id="btnResume" style="display:none" onclick="resumeTour()">Tour fortsetzen</button>
     </div>
+  </section>
 
-    <div class="start-footer">Tour von __KAEUFER_NAME__</div>
-  </div>
+  <!-- MODE SELECT -->
+  <section class="screen screen-mode" id="screenMode">
+    <p class="screen-mode__header">Waehle euren Spielmodus</p>
+    <div class="grouped-list" id="modeList">
+      <button class="grouped-list__item" onclick="selectMode('freunde')">
+        <span class="grouped-list__icon">&#x1F46B;</span>
+        <div class="grouped-list__content">
+          <div class="grouped-list__name">Freunde</div>
+          <div class="grouped-list__desc">Klassischer Modus fuer Gruppen</div>
+        </div>
+        <svg class="grouped-list__chevron" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,1 7,7 1,13"/></svg>
+      </button>
+      <button class="grouped-list__item" onclick="selectMode('date')">
+        <span class="grouped-list__icon">&#x1F495;</span>
+        <div class="grouped-list__content">
+          <div class="grouped-list__name">Date</div>
+          <div class="grouped-list__desc">Aufgaben zu zweit mit Flirtfaktor</div>
+        </div>
+        <svg class="grouped-list__chevron" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,1 7,7 1,13"/></svg>
+      </button>
+      <button class="grouped-list__item" onclick="selectMode('trinkspiel')">
+        <span class="grouped-list__icon">&#x1F37A;</span>
+        <div class="grouped-list__content">
+          <div class="grouped-list__name">Trinkspiel</div>
+          <div class="grouped-list__desc">Mit Trinkregeln und Shots</div>
+        </div>
+        <svg class="grouped-list__chevron" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,1 7,7 1,13"/></svg>
+      </button>
+      <button class="grouped-list__item" onclick="selectMode('team-duell')">
+        <span class="grouped-list__icon">&#x2694;&#xFE0F;</span>
+        <div class="grouped-list__content">
+          <div class="grouped-list__name">Team-Duell</div>
+          <div class="grouped-list__desc">Zwei Teams gegeneinander</div>
+        </div>
+        <svg class="grouped-list__chevron" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,1 7,7 1,13"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ROUTE -->
+  <section class="screen screen-route" id="screenRoute">
+    <div class="route-summary">
+      <div class="pill" id="routeSummaryPill"></div>
+    </div>
+    <div class="route-timeline" id="routeTimeline"></div>
+    <div class="route-cta">
+      <button class="btn-primary" id="routeCta" onclick="routeCtaAction()">Tour starten</button>
+    </div>
+  </section>
+
+  <!-- WEGAUFGABE -->
+  <section class="screen screen-weg" id="screenWeg">
+    <div class="progress-dots weg-progress" id="wegDots"></div>
+    <div class="weg-distance" id="wegDistance">Entfernung wird berechnet...</div>
+    <div class="card weg-card animate-card-in" id="wegCard">
+      <span class="weg-card__badge" id="wegBadge"></span>
+      <p class="weg-card__text" id="wegText"></p>
+      <div class="weg-card__team" id="wegTeam" style="display:none"></div>
+      <div class="weg-card__trink" id="wegTrink" style="display:none"></div>
+      <!-- Pool: Tabu -->
+      <div class="weg-card__pool" id="wegTabu" style="display:none">
+        <div class="tabu-card">
+          <div class="tabu-card__wort" id="wegTabuWort"></div>
+          <div class="tabu-card__sep"></div>
+          <ul class="tabu-card__liste" id="wegTabuListe"></ul>
+        </div>
+      </div>
+      <!-- Pool: Spektrum -->
+      <div class="weg-card__pool" id="wegSpektrum" style="display:none">
+        <div class="spektrum-scale">
+          <span class="spektrum-scale__left" id="wegSpektrumLeft"></span>
+          <div class="spektrum-scale__bar"></div>
+          <span class="spektrum-scale__right" id="wegSpektrumRight"></span>
+        </div>
+      </div>
+      <!-- Pool: WYR -->
+      <div class="weg-card__pool" id="wegWyr" style="display:none">
+        <div class="wyr-options">
+          <div class="wyr-option" id="wegWyrA"></div>
+          <div class="wyr-vs">oder</div>
+          <div class="wyr-option" id="wegWyrB"></div>
+        </div>
+      </div>
+    </div>
+    <div class="weg-actions">
+      <button class="btn-primary" onclick="wegErledigt()">Erledigt &#x2713;</button>
+      <button class="btn-secondary" onclick="showHintSheet()">Hinweis anzeigen (-5 Pkt)</button>
+      <button class="btn-text" onclick="wegSkip()">Ueberspringen</button>
+    </div>
+  </section>
+
+  <!-- SPAETI -->
+  <section class="screen screen-spaeti" id="screenSpaeti">
+    <div class="card spaeti-card animate-card-in" id="spaetiCard">
+      <h2 class="spaeti-card__name" id="spaetiName"></h2>
+      <p class="spaeti-card__address" id="spaetiAddress"></p>
+      <div class="spaeti-card__separator"></div>
+      <p class="spaeti-card__aktion-label">Aktion an dieser Station</p>
+      <p class="spaeti-card__aktion" id="spaetiAktion"></p>
+      <span class="spaeti-card__bonus" id="spaetiBonus"></span>
+    </div>
+    <div class="spaeti-actions">
+      <button class="btn-primary" onclick="spaetiAktion()">Aktion mitgemacht</button>
+      <button class="btn-text" onclick="spaetiWeiter()">Ueberspringen</button>
+    </div>
+  </section>
+
+  <!-- ERGEBNIS -->
+  <section class="screen screen-ergebnis" id="screenErgebnis">
+    <div class="ergebnis-score" id="ergebnisScore">0</div>
+    <div class="ergebnis-label">Punkte</div>
+    <div class="ergebnis-ranking" id="ergebnisRanking"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)" style="vertical-align:-2px;margin-right:4px"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><span id="ergebnisRankingLabel"></span></div>
+    <div class="ergebnis-breakdown" id="ergebnisBreakdown"></div>
+    <div class="ergebnis-actions">
+      <button class="btn-primary" onclick="neueTour()">Nochmal spielen</button>
+      <button class="btn-secondary" onclick="shareTour()">Teilen</button>
+    </div>
+  </section>
+
+  <!-- SCORE TAB -->
+  <section class="screen screen-score" id="screenScoreTab">
+    <div class="score-header">
+      <div class="score-header__value" id="scoreTabValue">0</div>
+      <div class="score-header__label">Aktuelle Punkte</div>
+    </div>
+    <div class="ergebnis-breakdown" id="scoreTabBreakdown"></div>
+    <div style="margin-top:auto; padding-top:var(--spacing-lg);">
+      <button class="btn-text" onclick="abortTour()" style="color:var(--label-secondary)">Tour abbrechen</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════
+     TAB BAR
+     ═══════════════════════════════════════════════ -->
+<div class="tab-bar hidden" id="tabBar">
+  <button class="tab-bar__item active" id="tabTour" onclick="switchTab('tour')">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 8.5v7l5.5-3.5L10 8.5z"/>
+    </svg>
+    <span>Tour</span>
+  </button>
+  <button class="tab-bar__item" id="tabKarte" onclick="switchTab('karte')">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M1 6l7-4 8 4 7-4v16l-7 4-8-4-7 4V6z" opacity="0.3"/><path d="M1 6l7-4 8 4 7-4v16l-7 4-8-4-7 4V6z" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="8" y1="2" x2="8" y2="18" stroke="currentColor" stroke-width="1.5"/><line x1="16" y1="6" x2="16" y2="22" stroke="currentColor" stroke-width="1.5"/>
+    </svg>
+    <span>Karte</span>
+  </button>
+  <button class="tab-bar__item" id="tabScore" onclick="switchTab('score')">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/>
+    </svg>
+    <span>Score</span>
+  </button>
 </div>
 
-<!-- ================================================
-     SCREEN: MODE SELECT
-     ================================================ -->
-<div id="screen-mode" class="screen">
-  <div class="screen-inner">
-    <div class="mode-header">
-      <h1>Wie wollt ihr spielen?</h1>
-      <p>Waehlt euren Modus fuer den Abend</p>
-    </div>
-
-    <div class="mode-grid">
-      <div class="mode-card" onclick="selectMode('freunde')">
-        <div class="mode-name">Freunde</div>
-        <div class="mode-desc">Tiefgruendig, lustig, unvergesslich</div>
-        <div class="mode-players">Ab 3 Spieler</div>
-      </div>
-      <div class="mode-card" onclick="selectMode('date')">
-        <div class="mode-name">Date</div>
-        <div class="mode-desc">Von Smalltalk zu echten Gespraechen</div>
-        <div class="mode-players">Fuer 2</div>
-      </div>
-      <div class="mode-card" onclick="selectMode('trinkspiel')">
-        <div class="mode-name">Trinkspiel</div>
-        <div class="mode-desc">Trinken mit Niveau. Oder ohne.</div>
-        <div class="mode-players">Ab 3 Spieler</div>
-      </div>
-      <div class="mode-card" onclick="selectMode('team-duell')">
-        <div class="mode-name">Team-Duell</div>
-        <div class="mode-desc">Teilt euch. Tretet an. Gewinnt.</div>
-        <div class="mode-players">Ab 4 Spieler</div>
-      </div>
-    </div>
-
-    <div class="foot">Tour von __KAEUFER_NAME__</div>
-  </div>
+<!-- ═══════════════════════════════════════════════
+     BOTTOM SHEET
+     ═══════════════════════════════════════════════ -->
+<div class="sheet-backdrop" id="sheetBackdrop" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet__handle"></div>
+  <div class="sheet__title" id="sheetTitle"></div>
+  <div class="sheet__body" id="sheetBody"></div>
 </div>
 
-<!-- ================================================
-     SCREEN: ROUTE OVERVIEW
-     ================================================ -->
-<div id="screen-route" class="screen">
-  <div class="screen-inner">
-    <div class="route-header">
-      <div class="eyebrow">Eure Route</div>
-      <h1>5 Stationen quer durch Leipzig</h1>
-    </div>
-
-    <div class="route-list" id="route-list"></div>
-
-    <button class="btn-go" onclick="showWegaufgabe()">Erste Station ansteuern</button>
-
-    <div class="foot">Tour von __KAEUFER_NAME__</div>
+<!-- ═══════════════════════════════════════════════
+     TIMER OVERLAY
+     ═══════════════════════════════════════════════ -->
+<div class="timer-overlay" id="timerOverlay">
+  <div class="timer-ring">
+    <svg viewBox="0 0 120 120">
+      <circle class="timer-ring__bg" cx="60" cy="60" r="52"/>
+      <circle class="timer-ring__progress" id="timerProgress" cx="60" cy="60" r="52"
+        stroke-dasharray="326.73" stroke-dashoffset="0"/>
+    </svg>
+    <div class="timer-ring__time" id="timerTime">0</div>
   </div>
+  <button class="btn-text" onclick="cancelTimer()">Abbrechen</button>
 </div>
 
-<!-- ================================================
-     SCREEN: WEGAUFGABE
-     ================================================ -->
-<div id="screen-wegaufgabe" class="screen">
-  <div class="screen-inner">
-    <div class="top-bar">
-      <div class="top-bar-left" id="weg-station-label"></div>
-      <div class="top-bar-right"><span class="icon">&#9733;</span> <span id="weg-score">0</span></div>
-    </div>
-
-    <div class="progress-bar" id="progress-bar"></div>
-
-    <div class="dest-card anim-slide">
-      <div class="dest-eyebrow" id="dest-eyebrow"></div>
-      <div class="dest-name" id="dest-name"></div>
-      <div class="dest-address" id="dest-address"></div>
-      <div class="dest-meta-row">
-        <div class="dest-chip" id="dest-walk"><span class="emoji">&#128694;</span> <span id="dest-walk-text"></span></div>
-        <div class="dest-chip hidden" id="dest-gps"><span id="dest-gps-text"></span></div>
-      </div>
-    </div>
-
-    <button class="btn-nav hidden" id="btn-nav" onclick="openNavigation()">&#128204; Route in Google Maps</button>
-
-    <div class="task-card anim-slide-d1">
-      <div class="task-header">
-        <div class="task-category" id="task-category"></div>
-        <div class="task-points" id="task-points"></div>
-      </div>
-      <div class="task-type" id="task-type"></div>
-      <div class="task-text" id="task-text"></div>
-      <button class="hint-trigger hidden" id="hint-trigger" onclick="useHint()">&#128161; Hinweis (-5 Pkt.)</button>
-      <div class="hint-box hidden" id="hint-box"></div>
-      <div class="team-split hidden" id="team-split"></div>
-      <div class="timer-display hidden" id="timer-display">
-        <div class="timer-value" id="timer-value">30</div>
-        <div class="timer-label">Sekunden</div>
-        <button class="btn-timer" id="btn-timer" onclick="startTimer()">Timer starten</button>
-      </div>
-      <div class="drink-rule hidden" id="drink-rule"></div>
-    </div>
-
-    <div class="action-row">
-      <button class="btn-done" onclick="wegErledigt()">Erledigt!</button>
-      <button class="btn-skip" onclick="wegSkip()">Skip</button>
-    </div>
-
-    <div class="foot">Tour von __KAEUFER_NAME__</div>
-  </div>
+<!-- ═══════════════════════════════════════════════
+     TOAST
+     ═══════════════════════════════════════════════ -->
+<div class="toast" id="toast">
+  <span class="toast__icon" id="toastIcon"></span>
+  <span id="toastText"></span>
 </div>
 
-<!-- ================================================
-     SCREEN: SPAETI / STATION
-     ================================================ -->
-<div id="screen-spaeti" class="screen">
-  <div class="screen-inner">
-    <div class="top-bar">
-      <div class="top-bar-left" id="spaeti-station-label"></div>
-      <div class="top-bar-right"><span class="icon">&#9733;</span> <span id="spaeti-score">0</span></div>
-    </div>
-
-    <div class="progress-bar" id="progress-bar-spaeti"></div>
-
-    <div class="station-hero anim-slide">
-      <div class="arrived-badge">&#10003; Angekommen</div>
-      <h2 id="spaeti-name"></h2>
-      <div class="addr" id="spaeti-address"></div>
-    </div>
-
-    <div class="aktion-card anim-slide-d1">
-      <div class="aktion-label" id="aktion-label">Bonus-Aktion vor Ort</div>
-      <div class="aktion-name" id="aktion-name"></div>
-      <div class="aktion-desc" id="aktion-desc"></div>
-      <div class="aktion-bonus" id="aktion-bonus"></div>
-    </div>
-
-    <div class="score-bar anim-slide-d2">
-      <span class="label">Punkte bisher</span>
-      <span class="value" id="spaeti-punkte-value">0</span>
-    </div>
-
-    <button class="btn-aktion" id="btn-aktion" onclick="spaetiAktion()">Aktion mitgemacht!</button>
-    <button class="btn-weiter" id="btn-weiter" onclick="spaetiWeiter()">Weiter</button>
-
-    <div class="foot">Tour von __KAEUFER_NAME__</div>
-  </div>
-</div>
-
-<!-- ================================================
-     SCREEN: ERGEBNIS
-     ================================================ -->
-<div id="screen-ergebnis" class="screen">
-  <div class="screen-inner">
-    <div class="ergebnis-hero anim-slide">
-      <div class="done-label">Tour beendet</div>
-      <h1>Was fuer ein Abend!</h1>
-    </div>
-
-    <div class="score-hero anim-slide-d1">
-      <div class="label">Gesamtpunkte</div>
-      <div class="value" id="ergebnis-punkte">0</div>
-    </div>
-
-    <div class="rank-label anim-slide-d2" id="ergebnis-ranking"></div>
-
-    <div class="results-list anim-slide-d3" id="results-list"></div>
-
-    <button class="btn-replay anim-slide-d4" onclick="neueTour()">Nochmal spielen</button>
-
-    <div class="foot">Tour von __KAEUFER_NAME__</div>
-  </div>
-</div>
-
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════ -->
 <script>
-// === DATA ===
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// DATA INJECTION (replaced by build.sh)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const SPAETIS = __SPAETIS_DATA__;
 const AUFGABEN = __AUFGABEN_DATA__;
+const POOLS = __POOLS_DATA__;
+const KAEUFER = '__KAEUFER_NAME__';
 
-const _k = '__KAEUFER_NAME__';
-const _wz = () => _k;
-
-// === CONSTANTS ===
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// CONSTANTS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const STATION_COUNT = 5;
 const PTS_STATION = 20;
 const PTS_HINT = 5;
-const RANKINGS = [
-  { min: 0, max: 100, label: 'Anfaenger-Nachtschwaermer' },
-  { min: 101, max: 175, label: 'Spaeti-Kenner' },
-  { min: 176, max: 999, label: 'Leipzig-Legende' }
-];
-const MECH_LABELS = {
-  'matze':'Hotel Matze', 'just-one':'Just One', 'activity':'Activity',
-  'wer-bin-ich':'Wer bin ich', 'challenge':'Challenge', 'ranking':'Ranking', 'stadt':'Stadtmission'
-};
-const TYP_LABELS = { spaeti:'Spaeti', attraktion:'Sehenswuerdigkeit' };
-const TEAM_LABELS = {
-  'links-rechts': 'Teilt euch: Wer links laeuft vs. wer rechts laeuft',
-  'frei-waehlen': 'Teilt euch frei in 2 gleich grosse Teams',
-  'juengere-aeltere': 'Teilt euch: Juengere Haelfte vs. aeltere Haelfte'
-};
 const GPS_THRESHOLD = 40;
 const STORAGE_KEY = 'spaetitour_state';
+const RANKINGS = [
+  { min: 0, max: 100, label: 'Anf\u00e4nger' },
+  { min: 101, max: 175, label: 'Sp\u00e4ti-Kenner' },
+  { min: 176, max: Infinity, label: 'Leipzig-Legende' }
+];
 
-// === STATE ===
+const MECHANIK_COLORS = {
+  'matze': '#c4b5fd',
+  'just-one': '#67e8f9',
+  'activity': '#fca5a5',
+  'wer-bin-ich': '#fdba74',
+  'challenge': '#fbbf24',
+  'ranking': '#86efac',
+  'stadt': '#a5b4fc'
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// STATE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 let tour = null;
+let currentScreen = null;
 let gpsWatchId = null;
+let gpsArrived = false;
+let gpsWegStart = 0;
+let timerInterval = null;
+let timerCallback = null;
+let activeTab = 'tour';
+let navStack = [];
+var poolState = { tabu: 0, spektrum: 0, wyr: 0 };
 
-// === UTILS ===
-function shuffle(a) {
-  const b = [...a];
-  for (let i = b.length - 1; i > 0; i--) {
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// UTILITIES
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function resolvePoolTask(task) {
+  if (!task.pool) return task;
+  var resolved = JSON.parse(JSON.stringify(task));
+  var typ = task.pool.typ;
+  var pool = POOLS[typ];
+  if (!pool || pool.length === 0) return resolved;
+  var idx = (poolState[typ] + Math.floor(Math.random() * (pool.length - 1))) % pool.length;
+  poolState[typ] = idx + 1;
+  resolved._resolved = { typ: typ, data: pool[idx] };
+  return resolved;
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [b[i], b[j]] = [b[j], b[i]];
+    [a[i], a[j]] = [a[j], a[i]];
   }
-  return b;
+  return a;
 }
 
 function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371000, toR = d => d * Math.PI / 180;
-  const dLat = toR(lat2 - lat1), dLon = toR(lon2 - lon1);
-  const a = Math.sin(dLat/2)**2 + Math.cos(toR(lat1)) * Math.cos(toR(lat2)) * Math.sin(dLon/2)**2;
+  const R = 6371000;
+  const toRad = x => x * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// === TOUR CREATION ===
-function createTour(spaetis, aufgaben, count, modus) {
-  const selected = shuffle(spaetis).slice(0, count);
-  // Optimize route (nearest neighbor)
-  const route = [selected[0]];
-  const rem = selected.slice(1);
-  while (rem.length) {
-    const cur = route[route.length - 1];
-    let best = 0, bestT = Infinity;
-    for (let i = 0; i < rem.length; i++) {
-      const t = (cur.gehzeit_min && cur.gehzeit_min[rem[i].id]) || 99;
-      if (t < bestT) { bestT = t; best = i; }
+function saveTour() {
+  if (tour) localStorage.setItem(STORAGE_KEY, JSON.stringify(tour));
+}
+
+function loadTour() {
+  try {
+    const d = localStorage.getItem(STORAGE_KEY);
+    return d ? JSON.parse(d) : null;
+  } catch (e) { return null; }
+}
+
+function clearTour() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+function getRanking(score) {
+  return RANKINGS.find(r => score >= r.min && score <= r.max) || RANKINGS[0];
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// TOUR CREATION
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function createTour(mode) {
+  // Pick STATION_COUNT spaetis using nearest-neighbor from random start
+  const available = shuffle(SPAETIS);
+  const selected = [available[0]];
+  const remaining = available.slice(1);
+
+  while (selected.length < STATION_COUNT && remaining.length > 0) {
+    const last = selected[selected.length - 1];
+    let nearestIdx = 0;
+    let nearestDist = Infinity;
+    for (let i = 0; i < remaining.length; i++) {
+      const d = haversine(last.lat, last.lng, remaining[i].lat, remaining[i].lng);
+      if (d < nearestDist) {
+        nearestDist = d;
+        nearestIdx = i;
+      }
     }
-    route.push(rem[best]);
-    rem.splice(best, 1);
+    selected.push(remaining.splice(nearestIdx, 1)[0]);
   }
 
   // Filter tasks by mode
-  const pool = shuffle(aufgaben.filter(a => a.modi.includes(modus)));
+  const modeTasks = shuffle(AUFGABEN.filter(a => a.modi && a.modi.includes(mode)));
 
-  // Slot-based assignment with mechanic variety
-  const tasks = [];
-  let lastMech = null;
-  for (let slot = 1; slot <= count; slot++) {
-    // Prefer different mechanic than previous
-    let candidates = pool.filter(a => a.slots.includes(slot) && a.mechanik !== lastMech && !tasks.includes(a));
-    // Fallback: allow same mechanic
-    if (candidates.length === 0) candidates = pool.filter(a => a.slots.includes(slot) && !tasks.includes(a));
-    // Fallback: expand to neighboring slots
-    if (candidates.length === 0) candidates = pool.filter(a => (a.slots.includes(slot-1) || a.slots.includes(slot+1)) && !tasks.includes(a));
-    // Last resort: any remaining task
-    if (candidates.length === 0) candidates = pool.filter(a => !tasks.includes(a));
+  // Slot-based assignment: assign tasks by station position (1-5)
+  const wegaufgaben = [];
+  const usedIds = new Set();
+  let lastMechanik = null;
 
-    const chosen = candidates[0];
-    tasks.push(chosen);
-    lastMech = chosen ? chosen.mechanik : null;
+  for (let slot = 1; slot <= STATION_COUNT; slot++) {
+    // Prefer tasks that match this slot AND have a different mechanik
+    let task = null;
+    for (let j = 0; j < modeTasks.length; j++) {
+      const t = modeTasks[j];
+      if (usedIds.has(t.id)) continue;
+      if (t.slots && t.slots.includes(slot) && t.mechanik !== lastMechanik) {
+        task = t;
+        break;
+      }
+    }
+    // Fallback: match slot but allow same mechanik
+    if (!task) {
+      for (let j = 0; j < modeTasks.length; j++) {
+        const t = modeTasks[j];
+        if (usedIds.has(t.id)) continue;
+        if (t.slots && t.slots.includes(slot)) { task = t; break; }
+      }
+    }
+    // Fallback: adjacent slot (+/-1)
+    if (!task) {
+      for (let j = 0; j < modeTasks.length; j++) {
+        const t = modeTasks[j];
+        if (usedIds.has(t.id)) continue;
+        if (t.slots && (t.slots.includes(slot - 1) || t.slots.includes(slot + 1))) { task = t; break; }
+      }
+    }
+    // Last resort: any unused task
+    if (!task) {
+      for (let j = 0; j < modeTasks.length; j++) {
+        if (!usedIds.has(modeTasks[j].id)) { task = modeTasks[j]; break; }
+      }
+    }
+    if (task) {
+      usedIds.add(task.id);
+      lastMechanik = task.mechanik;
+      wegaufgaben.push(task);
+    } else {
+      wegaufgaben.push({ id: 'fallback_' + slot, text: 'Lauft weiter zur naechsten Station!', mechanik: 'activity', hint: null, punkte: 10 });
+    }
   }
 
-  const stationen = route.map((s, i) => {
-    const gehzeit = i > 0 ? ((route[i-1].gehzeit_min && route[i-1].gehzeit_min[s.id]) || 15) : 0;
-    return { ...s, aufgabe: tasks[i], gehzeit, aufgabeErledigt: false, aktionErledigt: false, hintUsed: false };
-  });
+  // Resolve pool tasks (draw random entries from pools)
+  var resolvedWeg = wegaufgaben.map(resolvePoolTask);
 
-  return { stationen, currentIdx: 0, punkte: 0, modus };
+  return {
+    mode,
+    stations: selected,
+    wegaufgaben: resolvedWeg,
+    currentStation: 0,
+    phase: 'weg',
+    score: 0,
+    stationScores: new Array(STATION_COUNT).fill(0),
+    hintsUsed: new Array(STATION_COUNT).fill(false),
+    completed: false,
+    startedAt: Date.now()
+  };
 }
 
-// === PERSISTENCE ===
-function saveTour() { if (tour) localStorage.setItem(STORAGE_KEY, JSON.stringify(tour)); }
-function loadTour() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e) { return null; } }
-function clearTour() { localStorage.removeItem(STORAGE_KEY); }
-
-// === SCREEN MANAGEMENT ===
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// UI CONTROLLERS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0, 0);
+  const screen = document.getElementById(id);
+  if (screen) screen.classList.add('active');
+  currentScreen = id;
 }
 
-function renderProgress(containerId) {
-  const el = document.getElementById(containerId);
-  el.innerHTML = '';
-  for (let i = 0; i < tour.stationen.length; i++) {
-    const seg = document.createElement('div');
-    seg.className = 'progress-seg';
-    if (i < tour.currentIdx) seg.classList.add('done');
-    else if (i === tour.currentIdx) seg.classList.add('current');
-    el.appendChild(seg);
+function setNavBar(title, opts) {
+  const o = opts || {};
+  const nav = document.getElementById('navBar');
+  const backBtn = document.getElementById('navBack');
+  const titleEl = document.getElementById('navTitle');
+  const scoreEl = document.getElementById('navScore');
+
+  nav.classList.remove('hidden');
+  titleEl.textContent = title;
+  backBtn.style.display = o.back ? '' : 'none';
+  scoreEl.style.display = o.score ? '' : 'none';
+  if (o.score && tour) scoreEl.textContent = tour.score + ' Pkt';
+}
+
+function hideNavBar() {
+  document.getElementById('navBar').classList.add('hidden');
+}
+
+function showTabBar() {
+  document.getElementById('tabBar').classList.remove('hidden');
+}
+
+function hideTabBar() {
+  document.getElementById('tabBar').classList.add('hidden');
+}
+
+function setMainPadding(nav, tab) {
+  const main = document.getElementById('mainContent');
+  main.classList.toggle('with-nav', nav);
+  main.classList.toggle('with-tab', tab);
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-bar__item').forEach(t => t.classList.remove('active'));
+
+  const tabId = 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1);
+  const tabEl = document.getElementById(tabId);
+  if (tabEl) tabEl.classList.add('active');
+
+  if (tab === 'tour') {
+    if (tour.phase === 'weg') showWegaufgabe();
+    else showSpaeti();
+  } else if (tab === 'karte') {
+    showRoute();
+  } else if (tab === 'score') {
+    showScoreTab();
   }
 }
 
-function parseAufgabe(text) {
-  const m = text.match(/^([A-ZÄÖÜ][A-ZÄÖÜ ]+):\s*/);
-  return m ? { typ: m[1], text: text.slice(m[0].length) } : { typ: null, text };
+function updateScoreBadge() {
+  const scoreEl = document.getElementById('navScore');
+  if (scoreEl.style.display !== 'none' && tour) {
+    scoreEl.textContent = tour.score + ' Pkt';
+  }
 }
 
-// === GPS ===
-function startGPS() {
-  if (!navigator.geolocation || !tour) return;
-  const s = tour.stationen[tour.currentIdx];
-  if (!s.lat || !s.lng) return;
-
-  const gpsEl = document.getElementById('dest-gps');
-  const gpsText = document.getElementById('dest-gps-text');
-  gpsEl.classList.remove('hidden', 'arrived');
-  gpsText.textContent = 'GPS wird gesucht\u2026';
-
-  gpsWatchId = navigator.geolocation.watchPosition(
-    pos => {
-      const d = haversine(pos.coords.latitude, pos.coords.longitude, s.lat, s.lng);
-      if (d < GPS_THRESHOLD) {
-        gpsEl.classList.add('arrived');
-        gpsText.textContent = 'Ihr seid da!';
-      } else {
-        gpsEl.classList.remove('arrived');
-        gpsText.textContent = d < 1000 ? Math.round(d) + ' m' : (d/1000).toFixed(1) + ' km';
-      }
-    },
-    () => { gpsText.textContent = 'Kein GPS'; },
-    { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
-  );
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// NAVIGATION
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function navGoBack() {
+  if (navStack.length > 0) {
+    const prev = navStack.pop();
+    prev();
+  } else {
+    showStartScreen();
+  }
 }
 
-function stopGPS() {
-  if (gpsWatchId !== null) { navigator.geolocation.clearWatch(gpsWatchId); gpsWatchId = null; }
-  const gpsEl = document.getElementById('dest-gps');
-  if (gpsEl) gpsEl.classList.add('hidden');
+function showStartScreen() {
+  hideNavBar();
+  hideTabBar();
+  setMainPadding(false, false);
+  showScreen('screenStart');
+  stopGPS();
 }
 
-function openNavigation() {
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// FLOW ACTIONS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function startTour() {
+  navStack = [showStartScreen];
+  setNavBar('Spielmodus', { back: true });
+  hideTabBar();
+  setMainPadding(true, false);
+  showScreen('screenMode');
+}
+
+function selectMode(mode) {
+  tour = createTour(mode);
+  saveTour();
+  navStack = [];
+  showRoute();
+  showTabBar();
+  setMainPadding(true, true);
+}
+
+function resumeTour() {
+  tour = loadTour();
   if (!tour) return;
-  const s = tour.stationen[tour.currentIdx];
-  if (s.lat && s.lng) window.open('https://www.google.com/maps/dir/?api=1&destination='+s.lat+','+s.lng+'&travelmode=walking','_blank');
+  navStack = [];
+  showTabBar();
+  setMainPadding(true, true);
+
+  if (tour.completed) {
+    showErgebnis();
+  } else if (tour.phase === 'weg') {
+    showWegaufgabe();
+  } else {
+    showSpaeti();
+  }
 }
 
-// === ROUTE OVERVIEW ===
+function neueTour() {
+  if (!confirm('Neue Tour starten? Der aktuelle Fortschritt geht verloren.')) return;
+  clearTour();
+  tour = null;
+  stopGPS();
+  showStartScreen();
+}
+
+function abortTour() {
+  if (!confirm('Tour wirklich abbrechen?')) return;
+  clearTour();
+  tour = null;
+  stopGPS();
+  showStartScreen();
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SCREEN: ROUTE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function showRoute() {
-  const list = document.getElementById('route-list');
-  list.innerHTML = '';
-  tour.stationen.forEach((s, i) => {
-    const stop = document.createElement('div');
-    stop.className = 'route-stop';
-    stop.style.animationDelay = (i * 0.06) + 's';
+  setNavBar('Route', { score: true });
+  showTabBar();
+  setMainPadding(true, true);
+  showScreen('screenRoute');
 
-    const typ = s.typ || 'spaeti';
-    const walkText = i > 0 ? s.gehzeit + ' Min.' : '';
+  // Summary pill
+  const modeLabels = { freunde: 'Freunde', date: 'Date', trinkspiel: 'Trinkspiel', 'team-duell': 'Team-Duell' };
+  document.getElementById('routeSummaryPill').textContent =
+    STATION_COUNT + ' Stationen \u00B7 ~45 Min \u00B7 ' + (modeLabels[tour.mode] || tour.mode);
 
-    stop.innerHTML =
-      '<div class="dot-wrap"><div class="dot-num">' + (i+1) + '</div></div>' +
-      '<div class="route-stop-info">' +
-        '<div class="route-stop-name">' + s.name + '</div>' +
-        '<div class="route-stop-meta">' + s.adresse + (walkText ? ' &middot; ' + walkText + ' Fussweg' : '') + '</div>' +
-      '</div>' +
-      '<div class="route-stop-badge ' + typ + '">' + (TYP_LABELS[typ] || typ) + '</div>';
-
-    list.appendChild(stop);
-  });
-  showScreen('screen-route');
-}
-
-// === WEGAUFGABE ===
-function showWegaufgabe() {
-  stopTimer();
-  const s = tour.stationen[tour.currentIdx];
-
-  document.getElementById('weg-station-label').textContent = 'Station ' + (tour.currentIdx+1) + '/' + tour.stationen.length;
-  document.getElementById('weg-score').textContent = tour.punkte;
-  renderProgress('progress-bar');
-
-  // Destination
-  const typ = s.typ || 'spaeti';
-  document.getElementById('dest-eyebrow').textContent = (TYP_LABELS[typ] || typ) + ' \u00B7 Station ' + (tour.currentIdx+1);
-  document.getElementById('dest-name').textContent = s.name;
-  document.getElementById('dest-address').textContent = s.adresse;
-
-  const walkEl = document.getElementById('dest-walk');
-  const walkText = document.getElementById('dest-walk-text');
-  if (s.gehzeit && tour.currentIdx > 0) {
-    walkEl.classList.remove('hidden');
-    walkText.textContent = s.gehzeit + ' Min.';
-  } else if (tour.currentIdx === 0) {
-    walkEl.classList.remove('hidden');
-    walkText.textContent = 'Startpunkt';
-  } else {
-    walkEl.classList.add('hidden');
-  }
-
-  // Nav button
-  const navBtn = document.getElementById('btn-nav');
-  if (s.lat && s.lng) { navBtn.classList.remove('hidden'); } else { navBtn.classList.add('hidden'); }
-
-  // Task - mechanic badge
-  const mech = s.aufgabe.mechanik;
-  const catEl = document.getElementById('task-category');
-  catEl.className = 'task-category ' + mech;
-  catEl.textContent = MECH_LABELS[mech] || mech;
-
-  const maxPts = PTS_STATION + s.aufgabe.punkte - (s.hintUsed ? PTS_HINT : 0);
-  document.getElementById('task-points').textContent = maxPts + ' Pkt.';
-
-  const parsed = parseAufgabe(s.aufgabe.text);
-  const typeEl = document.getElementById('task-type');
-  if (parsed.typ) {
-    typeEl.textContent = parsed.typ;
-    typeEl.style.color = 'var(--mech-' + mech + ')';
-    typeEl.classList.remove('hidden');
-  } else {
-    typeEl.classList.add('hidden');
-  }
-  document.getElementById('task-text').textContent = parsed.text;
-
-  // Team split
-  const teamEl = document.getElementById('team-split');
-  if (s.aufgabe.meta && s.aufgabe.meta.team_modus) {
-    teamEl.textContent = TEAM_LABELS[s.aufgabe.meta.team_modus] || 'Teilt euch in 2 gleich grosse Teams';
-    teamEl.classList.remove('hidden');
-  } else {
-    teamEl.classList.add('hidden');
-  }
-
-  // Timer
-  const timerDisplay = document.getElementById('timer-display');
-  const timerBtn = document.getElementById('btn-timer');
-  if (s.aufgabe.meta && s.aufgabe.meta.timer_sek) {
-    document.getElementById('timer-value').textContent = s.aufgabe.meta.timer_sek;
-    document.getElementById('timer-value').classList.remove('urgent');
-    timerBtn.textContent = 'Timer starten';
-    timerBtn.disabled = false;
-    timerDisplay.classList.remove('hidden');
-  } else {
-    timerDisplay.classList.add('hidden');
-  }
-
-  // Drink rule
-  const drinkEl = document.getElementById('drink-rule');
-  if (s.aufgabe.meta && s.aufgabe.meta.trink_regel) {
-    drinkEl.textContent = '\uD83C\uDF7A ' + s.aufgabe.meta.trink_regel;
-    drinkEl.classList.remove('hidden');
-  } else {
-    drinkEl.classList.add('hidden');
-  }
-
-  // Hint
-  const hintTrigger = document.getElementById('hint-trigger');
-  const hintBox = document.getElementById('hint-box');
-  if (s.aufgabe.hint) {
-    if (s.hintUsed) {
-      hintTrigger.classList.add('hidden');
-      hintBox.textContent = s.aufgabe.hint;
-      hintBox.classList.remove('hidden');
-    } else {
-      hintTrigger.classList.remove('hidden');
-      hintBox.classList.add('hidden');
-    }
-  } else {
-    hintTrigger.classList.add('hidden');
-    hintBox.classList.add('hidden');
-  }
-
-  // GPS
-  stopGPS();
-  startGPS();
-
-  showScreen('screen-wegaufgabe');
-}
-
-// === SPAETI ===
-function showSpaeti() {
-  stopTimer();
-  stopGPS();
-  const s = tour.stationen[tour.currentIdx];
-
-  document.getElementById('spaeti-station-label').textContent = 'Station ' + (tour.currentIdx+1) + '/' + tour.stationen.length;
-  document.getElementById('spaeti-score').textContent = tour.punkte;
-  renderProgress('progress-bar-spaeti');
-
-  document.getElementById('spaeti-name').textContent = s.name;
-  document.getElementById('spaeti-address').textContent = s.adresse;
-
-  const typ = s.typ || 'spaeti';
-  document.getElementById('aktion-label').textContent = typ === 'attraktion' ? 'Challenge vor Ort' : 'Bonus-Aktion vor Ort';
-  document.getElementById('aktion-name').textContent = s.aktion.name;
-  document.getElementById('aktion-desc').textContent = s.aktion.beschreibung;
-  document.getElementById('aktion-bonus').textContent = '+' + s.aktion.bonuspunkte + ' Punkte';
-
-  document.getElementById('spaeti-punkte-value').textContent = tour.punkte;
-  document.getElementById('btn-aktion').style.display = s.aktionErledigt ? 'none' : 'block';
-  document.getElementById('btn-weiter').textContent = (tour.currentIdx === tour.stationen.length - 1) ? 'Tour beenden' : 'Weiter zur naechsten Station';
-
-  showScreen('screen-spaeti');
-}
-
-// === ERGEBNIS ===
-function showErgebnis() {
-  document.getElementById('ergebnis-punkte').textContent = tour.punkte;
-
-  const rank = RANKINGS.find(r => tour.punkte >= r.min && tour.punkte <= r.max);
-  document.getElementById('ergebnis-ranking').textContent = rank ? rank.label : 'Spaeti-Legende';
-
-  const list = document.getElementById('results-list');
-  list.innerHTML = '';
-  tour.stationen.forEach((s, i) => {
+  // Timeline
+  const timeline = document.getElementById('routeTimeline');
+  timeline.innerHTML = '';
+  tour.stations.forEach(function(s, i) {
+    const isCompleted = i < tour.currentStation;
+    const isActive = i === tour.currentStation && !tour.completed;
     const item = document.createElement('div');
-    item.className = 'result-item';
+    item.className = 'route-timeline__item';
 
-    let pts = PTS_STATION;
-    const details = [];
-    if (s.aufgabeErledigt) {
-      const ap = Math.max(0, s.aufgabe.punkte - (s.hintUsed ? PTS_HINT : 0));
-      pts += ap;
-      details.push('Aufgabe ' + ap);
-    }
-    if (s.aktionErledigt) {
-      pts += s.aktion.bonuspunkte;
-      details.push('Aktion ' + s.aktion.bonuspunkte);
-    }
-    details.push('Station ' + PTS_STATION);
+    var statusHtml = '';
+    if (isActive) statusHtml = '<div class="route-timeline__status">Aktuelle Station</div>';
+    else if (isCompleted) statusHtml = '<div class="route-timeline__status" style="color:var(--green)">Abgeschlossen</div>';
 
     item.innerHTML =
-      '<div class="result-num">' + (i+1) + '</div>' +
-      '<div class="result-info"><h4>' + s.name + '</h4><p>' + details.join(' \u00B7 ') + '</p></div>' +
-      '<div class="result-pts">' + pts + '</div>';
-
-    list.appendChild(item);
+      '<div class="route-timeline__line"></div>' +
+      '<div class="route-timeline__number ' + (isCompleted ? 'completed' : '') + ' ' + (isActive ? 'active' : '') + '">' + (i + 1) + '</div>' +
+      '<div class="route-timeline__info">' +
+        '<div class="route-timeline__name">' + s.name + '</div>' +
+        '<div class="route-timeline__address">' + (s.adresse || '') + '</div>' +
+        statusHtml +
+      '</div>';
+    timeline.appendChild(item);
   });
 
-  showScreen('screen-ergebnis');
+  // CTA
+  const cta = document.getElementById('routeCta');
+  if (tour.completed) {
+    cta.textContent = 'Ergebnis anzeigen';
+    cta.onclick = function() { showErgebnis(); };
+  } else if (tour.currentStation === 0 && tour.phase === 'weg') {
+    cta.textContent = 'Tour starten';
+    cta.onclick = function() { switchTab('tour'); };
+  } else {
+    cta.textContent = 'Weiter zur Aufgabe';
+    cta.onclick = function() { switchTab('tour'); };
+  }
 }
 
-// === ACTIONS ===
-function startTour() {
-  showScreen('screen-mode');
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SCREEN: WEGAUFGABE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function showWegaufgabe() {
+  const i = tour.currentStation;
+  setNavBar('Station ' + (i + 1) + '/' + STATION_COUNT, { score: true });
+  showTabBar();
+  setMainPadding(true, true);
+  showScreen('screenWeg');
+
+  // Progress dots
+  const dotsEl = document.getElementById('wegDots');
+  dotsEl.innerHTML = '';
+  for (let d = 0; d < STATION_COUNT; d++) {
+    const dot = document.createElement('div');
+    dot.className = 'progress-dots__dot';
+    if (d === i) dot.classList.add('active');
+    else if (d < i) dot.classList.add('completed');
+    dotsEl.appendChild(dot);
+  }
+
+  // Task card
+  const task = tour.wegaufgaben[i];
+  const badge = document.getElementById('wegBadge');
+  const mechanik = task.mechanik || 'activity';
+  const MECH_LABELS = { 'matze': 'Hotel Matze', 'just-one': 'Just One', 'activity': 'Activity', 'wer-bin-ich': 'Wer bin ich', 'challenge': 'Challenge', 'ranking': 'Ranking', 'stadt': 'Stadtmission' };
+  const color = MECHANIK_COLORS[mechanik] || '#fbbf24';
+  badge.textContent = MECH_LABELS[mechanik] || mechanik;
+  badge.style.background = color + '22';
+  badge.style.color = color;
+
+  document.getElementById('wegText').textContent = task.text || '';
+
+  // Team-Modus display
+  const teamEl = document.getElementById('wegTeam');
+  if (task.meta && task.meta.team_modus) {
+    teamEl.textContent = 'Teilt euch: ' + task.meta.team_modus;
+    teamEl.style.display = 'block';
+  } else {
+    teamEl.style.display = 'none';
+  }
+
+  // Trinkregel display
+  const trinkEl = document.getElementById('wegTrink');
+  if (task.meta && task.meta.trink_regel) {
+    trinkEl.textContent = task.meta.trink_regel;
+    trinkEl.style.display = 'block';
+  } else {
+    trinkEl.style.display = 'none';
+  }
+
+  // Pool displays
+  document.getElementById('wegTabu').style.display = 'none';
+  document.getElementById('wegSpektrum').style.display = 'none';
+  document.getElementById('wegWyr').style.display = 'none';
+
+  if (task._resolved) {
+    var r = task._resolved;
+    if (r.typ === 'tabu') {
+      document.getElementById('wegTabu').style.display = 'block';
+      document.getElementById('wegTabuWort').textContent = r.data.wort;
+      var ul = document.getElementById('wegTabuListe');
+      ul.innerHTML = '';
+      r.data.verboten.forEach(function(w) {
+        var li = document.createElement('li');
+        li.textContent = w;
+        ul.appendChild(li);
+      });
+    }
+    if (r.typ === 'spektrum') {
+      document.getElementById('wegSpektrum').style.display = 'block';
+      document.getElementById('wegSpektrumLeft').textContent = r.data[0];
+      document.getElementById('wegSpektrumRight').textContent = r.data[1];
+    }
+    if (r.typ === 'wyr') {
+      document.getElementById('wegWyr').style.display = 'block';
+      document.getElementById('wegWyrA').textContent = r.data[0];
+      document.getElementById('wegWyrB').textContent = r.data[1];
+    }
+  }
+
+  // Non-pool tabu_woerter display
+  if (!task._resolved && task.meta && task.meta.tabu_woerter && task.meta.tabu_woerter.length > 0) {
+    document.getElementById('wegTabu').style.display = 'block';
+    var tabuWort = (task.text.match(/'([^']+)'/) || [])[1] || 'Begriff';
+    document.getElementById('wegTabuWort').textContent = tabuWort;
+    var ul = document.getElementById('wegTabuListe');
+    ul.innerHTML = '';
+    task.meta.tabu_woerter.forEach(function(w) {
+      var li = document.createElement('li');
+      li.textContent = w;
+      ul.appendChild(li);
+    });
+  }
+
+  // Re-trigger card animation
+  const card = document.getElementById('wegCard');
+  card.classList.remove('animate-card-in');
+  void card.offsetWidth;
+  card.classList.add('animate-card-in');
+
+  // Timer auto-start
+  cancelTimer();
+  if (task.meta && task.meta.timer_sek && task.meta.timer_sek >= 5) {
+    startTimer(task.meta.timer_sek, null);
+  }
+
+  // Start GPS tracking
+  startGPS();
 }
 
-function selectMode(modus) {
-  tour = createTour(SPAETIS, AUFGABEN, STATION_COUNT, modus);
-  saveTour();
-  showRoute();
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SCREEN: SPAETI
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function showSpaeti() {
+  const i = tour.currentStation;
+  const station = tour.stations[i];
+  setNavBar(station.name, { score: true });
+  showTabBar();
+  setMainPadding(true, true);
+  showScreen('screenSpaeti');
+
+  document.getElementById('spaetiName').textContent = station.name;
+  document.getElementById('spaetiAddress').textContent = station.adresse || '';
+  const aktion = station.aktion || {};
+  document.getElementById('spaetiAktion').textContent = aktion.beschreibung || aktion.name || 'Kauft euch ein Getraenk!';
+  const bonus = aktion.bonuspunkte || PTS_STATION;
+  document.getElementById('spaetiBonus').textContent = '+' + bonus + ' Punkte';
+
+  // Re-trigger card animation
+  const card = document.getElementById('spaetiCard');
+  card.classList.remove('animate-card-in');
+  void card.offsetWidth;
+  card.classList.add('animate-card-in');
+
+  showToast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>', 'Willkommen bei ' + station.name + '!');
+  stopGPS();
 }
 
-function useHint() {
-  const s = tour.stationen[tour.currentIdx];
-  if (!s.aufgabe.hint || s.hintUsed) return;
-  s.hintUsed = true;
-  saveTour();
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SCREEN: ERGEBNIS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function showErgebnis() {
+  hideNavBar();
+  hideTabBar();
+  setMainPadding(false, false);
+  showScreen('screenErgebnis');
+  stopGPS();
 
-  document.getElementById('hint-trigger').classList.add('hidden');
-  const hintBox = document.getElementById('hint-box');
-  hintBox.textContent = s.aufgabe.hint;
-  hintBox.classList.remove('hidden');
+  // Count-up animation (2s, ease-out)
+  const scoreEl = document.getElementById('ergebnisScore');
+  const target = tour.score;
+  const duration = 2000;
+  const start = performance.now();
+  function animateScore(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    scoreEl.textContent = Math.round(target * eased);
+    if (progress < 1) requestAnimationFrame(animateScore);
+  }
+  requestAnimationFrame(animateScore);
 
-  const maxPts = PTS_STATION + s.aufgabe.punkte - PTS_HINT;
-  document.getElementById('task-points').textContent = maxPts + ' Pkt.';
+  document.getElementById('ergebnisRankingLabel').textContent = getRanking(tour.score).label;
+
+  // Breakdown
+  const breakdown = document.getElementById('ergebnisBreakdown');
+  var listHtml = '';
+  tour.stations.forEach(function(s, i) {
+    const hintPenalty = tour.hintsUsed[i] ? ' <span style="color:var(--red)">(-' + PTS_HINT + ')</span>' : '';
+    listHtml += '<div class="ergebnis-breakdown__item">' +
+      '<span class="ergebnis-breakdown__station">' + s.name + '</span>' +
+      '<span class="ergebnis-breakdown__points">+' + tour.stationScores[i] + hintPenalty + '</span>' +
+    '</div>';
+  });
+  breakdown.innerHTML =
+    '<p class="ergebnis-breakdown__title">Punkteverteilung</p>' +
+    '<div class="ergebnis-breakdown__list">' + listHtml + '</div>';
 }
 
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SCREEN: SCORE TAB
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function showScoreTab() {
+  setNavBar('Score', { score: false });
+  showTabBar();
+  setMainPadding(true, true);
+  showScreen('screenScoreTab');
+
+  document.getElementById('scoreTabValue').textContent = tour.score;
+
+  const breakdown = document.getElementById('scoreTabBreakdown');
+  var listHtml = '';
+  tour.stations.forEach(function(s, i) {
+    var name = (i < tour.currentStation || tour.stationScores[i] > 0) ? s.name : '???';
+    var pts = tour.stationScores[i] > 0 ? ('+' + tour.stationScores[i]) : '\u2013';
+    listHtml += '<div class="ergebnis-breakdown__item">' +
+      '<span class="ergebnis-breakdown__station">' + name + '</span>' +
+      '<span class="ergebnis-breakdown__points">' + pts + '</span>' +
+    '</div>';
+  });
+  breakdown.innerHTML =
+    '<p class="ergebnis-breakdown__title">Bisherige Punkte</p>' +
+    '<div class="ergebnis-breakdown__list">' + listHtml + '</div>';
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ACTIONS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function wegErledigt() {
-  const s = tour.stationen[tour.currentIdx];
-  s.aufgabeErledigt = true;
-  tour.punkte += Math.max(0, s.aufgabe.punkte - (s.hintUsed ? PTS_HINT : 0)) + PTS_STATION;
+  cancelTimer();
+  const i = tour.currentStation;
+  const task = tour.wegaufgaben[i];
+  const basePts = task.punkte || PTS_STATION;
+  const pts = tour.hintsUsed[i] ? Math.max(basePts - PTS_HINT, 5) : basePts;
+  tour.stationScores[i] += pts;
+  tour.score += pts;
+  tour.phase = 'spaeti';
   saveTour();
+  floatPoints(pts);
+  if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
   showSpaeti();
 }
 
 function wegSkip() {
-  tour.stationen[tour.currentIdx].aufgabeErledigt = false;
-  tour.punkte += PTS_STATION;
+  cancelTimer();
+  tour.phase = 'spaeti';
   saveTour();
   showSpaeti();
 }
 
+function showHintSheet() {
+  const task = tour.wegaufgaben[tour.currentStation];
+  const hint = task.hint || 'Kein Hinweis verfuegbar.';
+  tour.hintsUsed[tour.currentStation] = true;
+  saveTour();
+  openSheet('Hinweis', hint);
+}
+
 function spaetiAktion() {
-  const s = tour.stationen[tour.currentIdx];
-  if (!s.aktionErledigt) {
-    s.aktionErledigt = true;
-    tour.punkte += s.aktion.bonuspunkte;
-    saveTour();
-    document.getElementById('spaeti-punkte-value').textContent = tour.punkte;
-    document.getElementById('spaeti-score').textContent = tour.punkte;
-    document.getElementById('btn-aktion').style.display = 'none';
-  }
+  const i = tour.currentStation;
+  const station = tour.stations[i];
+  const bonus = (station.aktion && station.aktion.bonuspunkte) || PTS_STATION;
+  tour.stationScores[i] += bonus;
+  tour.score += bonus;
+  floatPoints(bonus);
+  if (navigator.vibrate) navigator.vibrate(200);
+  advanceStation();
 }
 
 function spaetiWeiter() {
-  tour.currentIdx++;
-  if (tour.currentIdx >= tour.stationen.length) {
-    clearTour();
+  advanceStation();
+}
+
+function advanceStation() {
+  tour.currentStation++;
+  if (tour.currentStation >= STATION_COUNT) {
+    tour.completed = true;
+    saveTour();
     showErgebnis();
   } else {
+    tour.phase = 'weg';
     saveTour();
     showWegaufgabe();
   }
 }
 
-function neueTour() {
-  clearTour();
-  tour = null;
-  stopTimer();
-  showScreen('screen-start');
+function routeCtaAction() {
+  if (tour.completed) {
+    showErgebnis();
+  } else {
+    switchTab('tour');
+  }
 }
 
-// === TIMER ===
-let timerInterval = null;
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// GPS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function startGPS() {
+  stopGPS();
+  gpsArrived = false;
+  gpsWegStart = Date.now();
+  if (!navigator.geolocation) {
+    document.getElementById('wegDistance').textContent = 'GPS nicht verfuegbar';
+    return;
+  }
 
-function startTimer() {
-  const s = tour.stationen[tour.currentIdx];
-  if (!s.aufgabe.meta || !s.aufgabe.meta.timer_sek) return;
+  gpsWatchId = navigator.geolocation.watchPosition(
+    function(pos) {
+      if (!tour || tour.phase !== 'weg') return;
+      const target = tour.stations[tour.currentStation];
+      const dist = haversine(pos.coords.latitude, pos.coords.longitude, target.lat, target.lng);
+      const distEl = document.getElementById('wegDistance');
 
-  let remaining = s.aufgabe.meta.timer_sek;
-  const valueEl = document.getElementById('timer-value');
-  const btn = document.getElementById('btn-timer');
-  btn.textContent = 'Laeuft...';
-  btn.disabled = true;
+      if (dist < 1000) {
+        distEl.textContent = 'noch ~' + Math.round(dist) + 'm';
+      } else {
+        distEl.textContent = 'noch ~' + (dist / 1000).toFixed(1) + ' km';
+      }
 
-  if (timerInterval) clearInterval(timerInterval);
+      // Guard: ignore if already arrived, or if weg screen open less than 10s
+      if (dist <= GPS_THRESHOLD && !gpsArrived && (Date.now() - gpsWegStart > 10000)) {
+        gpsArrived = true;
+        if (navigator.vibrate) navigator.vibrate(200);
+        showToast('<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>', 'Ihr seid da!');
+        setTimeout(function() {
+          if (tour && tour.phase === 'weg') {
+            cancelTimer();
+            tour.phase = 'spaeti';
+            saveTour();
+            showSpaeti();
+          }
+        }, 1500);
+      }
+    },
+    function(err) {
+      var target = tour.stations[tour.currentStation];
+      var el = document.getElementById('wegDistance');
+      el.innerHTML = '<a href="https://maps.apple.com/?daddr=' + target.lat + ',' + target.lng + '&dirflg=w" target="_blank" style="color:var(--accent)">In Maps navigieren &#x2192;</a>';
+    },
+    { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
+  );
+}
+
+function stopGPS() {
+  if (gpsWatchId !== null) {
+    navigator.geolocation.clearWatch(gpsWatchId);
+    gpsWatchId = null;
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// BOTTOM SHEET
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function openSheet(title, body) {
+  document.getElementById('sheetTitle').textContent = title;
+  document.getElementById('sheetBody').textContent = body;
+  document.getElementById('sheetBackdrop').classList.add('visible');
+  document.getElementById('sheet').classList.add('visible');
+}
+
+function closeSheet() {
+  document.getElementById('sheetBackdrop').classList.remove('visible');
+  document.getElementById('sheet').classList.remove('visible');
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// TIMER
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function startTimer(seconds, cb) {
+  timerCallback = cb;
+  var remaining = seconds;
+  const circumference = 2 * Math.PI * 52;
+  const progress = document.getElementById('timerProgress');
+  const timeDisplay = document.getElementById('timerTime');
+  const overlay = document.getElementById('timerOverlay');
+
+  progress.style.strokeDasharray = circumference;
+  progress.style.strokeDashoffset = '0';
+  progress.style.stroke = 'var(--accent)';
+  timeDisplay.style.color = 'var(--label-primary)';
+  timeDisplay.textContent = remaining;
+  overlay.classList.add('visible');
+
   timerInterval = setInterval(function() {
     remaining--;
-    valueEl.textContent = remaining;
-    if (remaining <= 5) valueEl.classList.add('urgent');
+    timeDisplay.textContent = remaining;
+    const offset = circumference * (1 - remaining / seconds);
+    progress.style.strokeDashoffset = offset;
+
+    if (remaining <= 5) {
+      progress.style.stroke = 'var(--red)';
+      timeDisplay.style.color = 'var(--red)';
+    }
+
     if (remaining <= 0) {
       clearInterval(timerInterval);
       timerInterval = null;
-      valueEl.textContent = '0';
-      btn.textContent = 'Nochmal';
-      btn.disabled = false;
-      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+      if (navigator.vibrate) navigator.vibrate(500);
+      setTimeout(function() {
+        overlay.classList.remove('visible');
+        if (timerCallback) timerCallback();
+      }, 1000);
     }
   }, 1000);
 }
 
-function stopTimer() {
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+function cancelTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  document.getElementById('timerOverlay').classList.remove('visible');
 }
 
-// === INIT ===
-(function() {
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// TOAST
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let toastTimeout = null;
+
+function showToast(icon, text) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastIcon').innerHTML = icon;
+  document.getElementById('toastText').textContent = text;
+  toast.classList.add('visible');
+  if (toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(function() {
+    toast.classList.remove('visible');
+    toastTimeout = null;
+  }, 3000);
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// POINTS FLOAT
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function floatPoints(pts) {
+  const el = document.createElement('div');
+  el.className = 'points-float';
+  el.textContent = '+' + pts;
+  el.style.top = '80px';
+  el.style.right = '20px';
+  document.body.appendChild(el);
+  setTimeout(function() { el.remove(); }, 1200);
+  updateScoreBadge();
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SHARE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function shareTour() {
+  const text = 'Sp\u00e4titour Leipzig: ' + tour.score + ' Punkte! ' + getRanking(tour.score).label + ' \uD83C\uDF1F';
+  if (navigator.share) {
+    navigator.share({ title: 'Sp\u00e4titour Leipzig', text: text });
+  } else {
+    navigator.clipboard.writeText(text).then(function() {
+      showToast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>', 'In Zwischenablage kopiert!');
+    });
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// INIT
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function init() {
   const saved = loadTour();
   if (saved) {
-    tour = saved;
-    const s = tour.stationen[tour.currentIdx];
-    if (s.aufgabe && !s.aufgabeErledigt) showWegaufgabe();
-    else showSpaeti();
+    document.getElementById('btnResume').style.display = '';
   }
+  showScreen('screenStart');
 })();
 </script>
-
 </body>
 </html>

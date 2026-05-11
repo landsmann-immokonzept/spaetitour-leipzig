@@ -1,12 +1,12 @@
 [
   {
     "id": "matze_freunde_01",
-    "text": "Jeder erzaehlt: Was ist eine Eigenschaft an dir die die meisten Leute nicht kennen?",
+    "text": "Jeder erzaehlt: Was war der letzte Moment wo ihr dachtet -- das muss ich spaeter erzaehlen?",
     "mechanik": "matze",
     "modi": ["freunde", "date"],
     "slots": [3, 4],
     "punkte": 15,
-    "hint": "Denkt an Hobbys, Gewohnheiten oder Talente die ihr selten zeigt.",
+    "hint": "Absurde Alltagssituationen, Begegnungen, Missverstaendnisse.",
     "meta": {
       "min_spieler": 2,
       "timer_sek": null,
@@ -38,7 +38,7 @@
     "modi": ["freunde"],
     "slots": [3, 4],
     "punkte": 15,
-    "hint": "Was hast du spaeter gelernt das du damals gern gewusst haettest?",
+    "hint": "Was hast du spaeter gelernt, das du damals gern gewusst haettest?",
     "meta": {
       "min_spieler": 2,
       "timer_sek": null,
@@ -49,7 +49,7 @@
   },
   {
     "id": "matze_freunde_04",
-    "text": "Jeder beantwortet: Worauf bist du richtig stolz auch wenn es sich klein anfuehlt?",
+    "text": "Worauf bist du richtig stolz, auch wenn es sich klein anfuehlt? Reihum erzaehlen.",
     "mechanik": "matze",
     "modi": ["freunde"],
     "slots": [2, 3],
@@ -65,7 +65,7 @@
   },
   {
     "id": "matze_freunde_05",
-    "text": "Fragerunde: Jeder darf einer Person aus der Gruppe EINE persoenliche Frage stellen. Ehrlich antworten.",
+    "text": "Fragerunde: Jeder darf einer Person EINE persoenliche Frage stellen -- und die muss ehrlich beantwortet werden!",
     "mechanik": "matze",
     "modi": ["freunde"],
     "slots": [4, 5],
@@ -97,7 +97,7 @@
   },
   {
     "id": "justone_freunde_02",
-    "text": "JUST ONE: Gesucht: eure beste gemeinsame Erinnerung. Jeder gibt EIN Hinweiswort. Doppelte raus!",
+    "text": "JUST ONE: Bestimmt einen Rater. Denkt an eure beste gemeinsame Erinnerung. Jeder gibt EIN Hinweiswort. Doppelte raus! Erraet der Rater den Moment?",
     "mechanik": "just-one",
     "modi": ["freunde"],
     "slots": [2, 3],
@@ -161,7 +161,7 @@
   },
   {
     "id": "activity_freunde_03",
-    "text": "KETTENPANTOMIME: Erster denkt sich eine Taetigkeit aus und zeigt sie dem Zweiten. Der gibt sie weiter ohne das Original zu kennen. Was kommt am Ende raus?",
+    "text": "Stille Post als Pantomime! Erster zeigt dem Zweiten eine Taetigkeit, der gibt seine Version an den Dritten weiter. Was kommt am Ende raus?",
     "mechanik": "activity",
     "modi": ["freunde"],
     "slots": [1, 2],
@@ -241,15 +241,15 @@
   },
   {
     "id": "challenge_freunde_02",
-    "text": "Jeder sagt EIN Wort das beschreibt wie er oder sie sich genau jetzt gerade fuehlt. Keine Wiederholungen!",
+    "text": "60 Sekunden: Zaehlt abwechselnd Songtitel auf die ihr alle kennt. Kein Song doppelt!",
     "mechanik": "challenge",
-    "modi": ["freunde", "date"],
+    "modi": ["freunde"],
     "slots": [2, 3],
-    "punkte": 10,
-    "hint": "Seid ehrlich - es gibt keine falschen Gefuehle.",
+    "punkte": 15,
+    "hint": "Denkt an Genres durch - Pop, Rap, Rock, Charts.",
     "meta": {
-      "min_spieler": 2,
-      "timer_sek": null,
+      "min_spieler": 3,
+      "timer_sek": 60,
       "tabu_woerter": null,
       "trink_regel": null,
       "team_modus": null
@@ -273,12 +273,12 @@
   },
   {
     "id": "ranking_freunde_02",
-    "text": "Einigt euch auf EINE Sache: Was macht eine gute Freundschaft wirklich aus?",
+    "text": "Streitet euch: Was ist wichtiger in einer Freundschaft -- Ehrlichkeit oder Loyalitaet? Nur EINE Antwort gilt.",
     "mechanik": "ranking",
     "modi": ["freunde"],
     "slots": [3, 4],
     "punkte": 15,
-    "hint": "Denkt an Situationen in denen Freundschaft wirklich wichtig war.",
+    "hint": "Denkt an einen konkreten Moment wo ein Freund fuer euch da war.",
     "meta": {
       "min_spieler": 2,
       "timer_sek": null,
@@ -321,7 +321,7 @@
   },
   {
     "id": "matze_date_01",
-    "text": "Was ist dir seit unserem letzten Treffen im Kopf geblieben?",
+    "text": "Was hat dich in letzter Zeit zum Lachen gebracht?",
     "mechanik": "matze",
     "modi": ["date"],
     "slots": [1],
@@ -385,12 +385,12 @@
   },
   {
     "id": "matze_date_05",
-    "text": "Was nervt dich im Alltag wirklich? Und was ist dein guilty pleasure danach?",
+    "text": "Beschreibt euch gegenseitig in 3 Adjektiven. Dann: Stimmt ihr zu oder ueberrascht euch was?",
     "mechanik": "matze",
     "modi": ["date"],
     "slots": [2, 3],
-    "punkte": 10,
-    "hint": "Pendeln, Meetings, Haushalt - jeder hat was.",
+    "punkte": 15,
+    "hint": "Seid ehrlich - Ueberraschungen sind das Spannende.",
     "meta": {
       "min_spieler": 2,
       "timer_sek": null,
@@ -406,7 +406,7 @@
     "modi": ["date"],
     "slots": [3],
     "punkte": 15,
-    "hint": "Denkt an Eigenschaften, Verhaltensweisen, Energie.",
+    "hint": "Humor, wie jemand erzaehlt, Selbstironie -- alles zaehlt.",
     "meta": {
       "min_spieler": 2,
       "timer_sek": null,
@@ -433,7 +433,7 @@
   },
   {
     "id": "matze_date_08",
-    "text": "Worin bist du nicht so gut? Was wuerdest du gern besser koennen?",
+    "text": "Hand aufs Herz: Was kannst du ueberhaupt nicht? Koch-Desaster, Parkluecken, IKEA-Anleitungen?",
     "mechanik": "matze",
     "modi": ["date"],
     "slots": [4],
@@ -465,7 +465,7 @@
   },
   {
     "id": "matze_date_10",
-    "text": "Was suchst du aktuell wirklich? Im Leben, nicht nur beim Dating.",
+    "text": "Was wuenscht du dir gerade am meisten -- abgesehen von einem weiteren Bier?",
     "mechanik": "matze",
     "modi": ["date"],
     "slots": [4],
@@ -534,7 +534,7 @@
     "modi": ["date"],
     "slots": [3, 4],
     "punkte": 15,
-    "hint": "Seid ehrlich - es gibt keine falschen Antworten.",
+    "hint": "Je konkreter, desto spannender wird die Diskussion.",
     "meta": {
       "min_spieler": 2,
       "timer_sek": null,
@@ -566,7 +566,7 @@
     "modi": ["date"],
     "slots": [2, 3],
     "punkte": 10,
-    "hint": "Denkt an die Stimmung gerade - nicht an euren Lieblingsgenre.",
+    "hint": "Denkt an die Stimmung gerade - nicht an euer Lieblingsgenre.",
     "meta": {
       "min_spieler": 2,
       "timer_sek": null,
@@ -608,13 +608,13 @@
     }
   },
   {
-    "id": "justone_date_01",
-    "text": "JUST ONE: Einer raet. Gesucht: etwas das man am Gegenueber mag. EIN Wort, Doppelte raus!",
-    "mechanik": "just-one",
+    "id": "werbinich_date_01",
+    "text": "Einer denkt sich eine Person die ihr beide kennt (Promi, Freund, Bekannter). 10 Ja/Nein-Fragen -- schafft ihr es?",
+    "mechanik": "wer-bin-ich",
     "modi": ["date"],
-    "slots": [3, 4],
+    "slots": [2, 3],
     "punkte": 15,
-    "hint": "Seid spezifisch - 'nett' denken alle.",
+    "hint": "Fragt nach Beruf, Alter und wie ihr die Person kennt.",
     "meta": {
       "min_spieler": 2,
       "timer_sek": null,
@@ -641,7 +641,7 @@
   },
   {
     "id": "challenge_trink_01",
-    "text": "Zaehlt reihum Zahlen hoch. Bei jeder Zahl die eine 7 enthaelt oder durch 7 teilbar ist: TRINKEN statt Zahl sagen. Wer es falsch macht trinkt doppelt.",
+    "text": "Zaehlt reihum hoch. Zahl mit 7 oder durch 7 teilbar? TRINKEN statt sagen! Fehler = doppelt.",
     "mechanik": "challenge",
     "modi": ["trinkspiel"],
     "slots": [1, 2],
@@ -673,7 +673,7 @@
   },
   {
     "id": "challenge_trink_03",
-    "text": "Wuerde-ich-nie: Einer sagt etwas Absurdes. Wer sich vorstellen kann es zu tun trinkt NICHT. Wer es nie tun wuerde trinkt.",
+    "text": "Wuerde-ich-nie: Einer sagt etwas Verruecktes. Achtung umgekehrt: Wer es NICHT tun wuerde trinkt! Wer sich traut bleibt trocken.",
     "mechanik": "challenge",
     "modi": ["trinkspiel"],
     "slots": [2, 3],
@@ -689,17 +689,17 @@
   },
   {
     "id": "challenge_trink_04",
-    "text": "Busfahrer: Rot oder Schwarz? Ratet die Farbe eures naechsten Getaenks (hell oder dunkel). Falsch = trinken.",
+    "text": "Blickkontakt-Duell: Zwei Freiwillige starren sich an. Wer zuerst lacht trinkt.",
     "mechanik": "challenge",
     "modi": ["trinkspiel"],
-    "slots": [1],
+    "slots": [1, 2],
     "punkte": 10,
-    "hint": "Schaut euch das Regal an bevor ihr bestellt.",
+    "hint": "Denkt an was Lustiges - aber zeigt es nicht.",
     "meta": {
-      "min_spieler": 2,
+      "min_spieler": 3,
       "timer_sek": null,
       "tabu_woerter": null,
-      "trink_regel": "Falsch geraten = trinken",
+      "trink_regel": "Wer zuerst lacht trinkt",
       "team_modus": null
     }
   },
@@ -785,7 +785,7 @@
   },
   {
     "id": "activity_trink_02",
-    "text": "ERKLAEREN: Erklaert 'Kater' ohne trinken, Alkohol, Kopfschmerz, morgens und Party. Versagt ihr trinkt ihr.",
+    "text": "ERKLAEREN: Einer erklaert 'Kater' ohne die Woerter trinken, Alkohol, Kopfschmerz, morgens und Party. Versagt ihr -- trinkt ihr.",
     "mechanik": "activity",
     "modi": ["trinkspiel"],
     "slots": [2, 3],
@@ -801,17 +801,17 @@
   },
   {
     "id": "activity_trink_03",
-    "text": "PANTOMIME: Stellt nacheinander euer peinlichstes Erlebnis pantomimisch dar. Gruppe raet. Nicht erraten = alle trinken.",
-    "mechanik": "activity",
+    "text": "FREEZE! Alle bleiben stehen und halten ihre aktuelle Pose. Wer sich zuerst bewegt trinkt. Letzte Person stehend verteilt einen Schluck.",
+    "mechanik": "challenge",
     "modi": ["trinkspiel"],
     "slots": [2, 3],
     "punkte": 15,
-    "hint": "Uebertreibt ruhig.",
+    "hint": "Blinzeln zaehlt nicht -- aber Lachen schon.",
     "meta": {
       "min_spieler": 3,
       "timer_sek": null,
       "tabu_woerter": null,
-      "trink_regel": "Nicht erraten = alle trinken",
+      "trink_regel": "Wer sich zuerst bewegt trinkt",
       "team_modus": null
     }
   },
@@ -913,7 +913,7 @@
   },
   {
     "id": "challenge_trink_06",
-    "text": "Thumbmaster: Einer ist Thumbmaster. Wann immer der Thumbmaster den Daumen auf den Tisch legt muessen alle es nachmachen. Letzter trinkt. Gilt bis zur naechsten Station!",
+    "text": "Einer wird Thumbmaster. Legt er den Daumen irgendwo ab muessen alle nachmachen. Letzter trinkt! Gilt bis zur naechsten Station.",
     "mechanik": "challenge",
     "modi": ["trinkspiel"],
     "slots": [1, 2, 3, 4, 5],
@@ -945,7 +945,7 @@
   },
   {
     "id": "challenge_trink_08",
-    "text": "Zwei Wahrheiten eine Luege: Jeder erzaehlt 3 Dinge ueber sich. Gruppe raet was die Luege ist. Falsch geraten = trinken.",
+    "text": "Zwei Wahrheiten, eine Luege: Jeder erzaehlt 3 Dinge ueber sich. Gruppe raet die Luege. Falsch geraten = trinken.",
     "mechanik": "challenge",
     "modi": ["trinkspiel"],
     "slots": [2, 3, 4],
@@ -961,7 +961,7 @@
   },
   {
     "id": "challenge_team_01",
-    "text": "TEAM-DUELL: Teilt euch in 2 Teams. Jedes Team zaehlt abwechselnd Laender auf. Wer zuerst stockt verliert. Verlierer bestimmt wer die naechste Runde aussucht.",
+    "text": "Laender aufzaehlen! Teams abwechselnd, wer stockt verliert.",
     "mechanik": "challenge",
     "modi": ["team-duell"],
     "slots": [1, 2],
@@ -977,7 +977,7 @@
   },
   {
     "id": "challenge_team_02",
-    "text": "TEAM-DUELL: Teilt euch in 2 Teams. 60 Sekunden: Welches Team zaehlt mehr Dinge auf die gelb sind?",
+    "text": "60 Sekunden: Welches Team zaehlt mehr Dinge auf die gelb sind?",
     "mechanik": "challenge",
     "modi": ["team-duell"],
     "slots": [1, 2],
@@ -993,7 +993,7 @@
   },
   {
     "id": "challenge_team_03",
-    "text": "TEAM-DUELL: Teilt euch! Welches Team kann laenger einen Zungenbrecher fehlerfrei aufsagen? 'Fischers Fritz fischt frische Fische.'",
+    "text": "Zungenbrecher-Battle! 'Brautkleid bleibt Brautkleid und Blaukraut bleibt Blaukraut.' Jede Runde schneller -- wer sich zuerst verhaspelt verliert.",
     "mechanik": "challenge",
     "modi": ["team-duell"],
     "slots": [1, 2],
@@ -1009,7 +1009,7 @@
   },
   {
     "id": "challenge_team_04",
-    "text": "TEAM-DUELL: Teilt euch! 30 Sekunden pro Team: Wer zaehlt mehr Leipziger Sehenswuerdigkeiten auf?",
+    "text": "30 Sekunden pro Team: Wer zaehlt mehr Leipziger Sehenswuerdigkeiten auf?",
     "mechanik": "challenge",
     "modi": ["team-duell"],
     "slots": [2, 3],
@@ -1025,7 +1025,7 @@
   },
   {
     "id": "challenge_team_05",
-    "text": "TEAM-DUELL: Schlag-den-Star-Schaetzen: Wie viele Schritte sind es bis zur naechsten Strassenlaterne? Teams schaetzen. Naeher dran gewinnt.",
+    "text": "Schaetz-Duell: Wie viele Schritte bis zur naechsten Strassenlaterne? Teams schaetzen, naeher dran gewinnt.",
     "mechanik": "challenge",
     "modi": ["team-duell"],
     "slots": [1, 2, 3],
@@ -1041,7 +1041,7 @@
   },
   {
     "id": "activity_team_01",
-    "text": "TEAM-DUELL: Teilt euch! Team A stellt einen Film pantomimisch dar. Team B hat 3 Versuche. Dann tauschen. Schnelleres Team gewinnt.",
+    "text": "Film-Pantomime! Team A stellt einen Film dar, Team B hat 3 Versuche. Dann tauschen. Schnelleres Team gewinnt.",
     "mechanik": "activity",
     "modi": ["team-duell"],
     "slots": [1, 2],
@@ -1057,7 +1057,7 @@
   },
   {
     "id": "activity_team_02",
-    "text": "TEAM-DUELL: Erklaer-Battle! Gleicher Begriff, Teams erklaeren gleichzeitig ihrem Rater. Wer zuerst erraten wird gewinnt. Begriff: 'Baumwollspinnerei'",
+    "text": "Erklaer-Battle! Gleicher Begriff, jedes Team erklaert ihn gleichzeitig seinem Rater. Wer zuerst erraten wird gewinnt.",
     "mechanik": "activity",
     "modi": ["team-duell"],
     "slots": [2, 3],
@@ -1073,7 +1073,7 @@
   },
   {
     "id": "activity_team_03",
-    "text": "TEAM-DUELL: Geraeuscheraten! Teams machen abwechselnd Geraeusche. Gegnerteam raet. Mehr Treffer gewinnt. 4 Runden pro Team.",
+    "text": "Geraeuscheraten! Teams machen abwechselnd Geraeusche, Gegnerteam raet. Mehr Treffer gewinnt. 4 Runden.",
     "mechanik": "activity",
     "modi": ["team-duell"],
     "slots": [1, 2],
@@ -1089,7 +1089,7 @@
   },
   {
     "id": "activity_team_04",
-    "text": "TEAM-DUELL: Gemeinsame Geschichte! Team A beginnt einen Satz, Team B muss fortsetzen. Abwechselnd. Wer den Faden verliert verliert.",
+    "text": "Gemeinsame Geschichte! Team A beginnt einen Satz, Team B setzt fort. Abwechselnd -- wer den Faden verliert verliert.",
     "mechanik": "activity",
     "modi": ["team-duell"],
     "slots": [2, 3],
@@ -1105,7 +1105,7 @@
   },
   {
     "id": "justone_team_01",
-    "text": "TEAM-DUELL: Just One Battle! Gleicher Suchbegriff fuer beide Teams. Welcher Rater erratet zuerst? Gesucht: ein Tier.",
+    "text": "Just One Battle! Gleicher Suchbegriff fuer beide Teams. Welcher Rater erratet zuerst? Gesucht: ein Tier.",
     "mechanik": "just-one",
     "modi": ["team-duell"],
     "slots": [1, 2],
@@ -1121,7 +1121,7 @@
   },
   {
     "id": "justone_team_02",
-    "text": "TEAM-DUELL: Just One Battle! Gleicher Suchbegriff. Welches Team schafft es? Gesucht: ein Beruf.",
+    "text": "Just One Battle! Gleicher Suchbegriff, welches Team schafft es? Gesucht: ein Beruf.",
     "mechanik": "just-one",
     "modi": ["team-duell"],
     "slots": [2, 3],
@@ -1137,7 +1137,7 @@
   },
   {
     "id": "justone_team_03",
-    "text": "TEAM-DUELL: Just One Battle! Gesucht: etwas das man im Spaeti kaufen kann. Welcher Rater ist schneller?",
+    "text": "Just One Battle! Gesucht: etwas das man im Spaeti kaufen kann. Welcher Rater ist schneller?",
     "mechanik": "just-one",
     "modi": ["team-duell"],
     "slots": [2, 3],
@@ -1153,7 +1153,7 @@
   },
   {
     "id": "werbinich_team_01",
-    "text": "TEAM-DUELL: Wer bin ich Battle! Beide Teams bekommen gleichzeitig eine Person. Wer sie mit weniger Fragen erratet gewinnt.",
+    "text": "Wer bin ich Battle! Bestimmt einen Spielleiter. Der fluestert jedem Team-Rater die gleiche Person zu. Weniger Fragen = Sieg.",
     "mechanik": "wer-bin-ich",
     "modi": ["team-duell"],
     "slots": [2, 3],
@@ -1169,7 +1169,7 @@
   },
   {
     "id": "werbinich_team_02",
-    "text": "TEAM-DUELL: Ein Spieler aus jedem Team bekommt das gleiche Tier. Beide Teams raten gleichzeitig. Schnelleres Team gewinnt.",
+    "text": "Wer bin ich: Ein Spieler aus jedem Team bekommt das gleiche Tier. Beide Teams raten gleichzeitig. Schnelleres Team gewinnt.",
     "mechanik": "wer-bin-ich",
     "modi": ["team-duell"],
     "slots": [1, 2],
@@ -1185,12 +1185,12 @@
   },
   {
     "id": "ranking_team_01",
-    "text": "TEAM-DUELL: Schaetzfrage! Wie hoch ist das Voelkerschlachtdenkmal? Teams schaetzen. Naeher dran gewinnt. (91 Meter)",
+    "text": "Jedes Team einigt sich auf die 3 besten Bars in Leipzig. Dann praesentiert und argumentiert! Applaus-Abstimmung.",
     "mechanik": "ranking",
     "modi": ["team-duell"],
     "slots": [2, 3],
     "punkte": 15,
-    "hint": "Denkt an bekannte Gebaeude als Vergleich.",
+    "hint": "Denkt an Atmosphaere, Drinks und Location.",
     "meta": {
       "min_spieler": 4,
       "timer_sek": null,
@@ -1201,7 +1201,7 @@
   },
   {
     "id": "ranking_team_02",
-    "text": "TEAM-DUELL: Jedes Team einigt sich: Was ist die beste Pizza-Sorte? Dann argumentiert ihr vor der Gruppe. Applaus-Abstimmung!",
+    "text": "Was ist die beste Pizza-Sorte? Jedes Team einigt sich und argumentiert. Applaus-Abstimmung!",
     "mechanik": "ranking",
     "modi": ["team-duell"],
     "slots": [1, 2],
@@ -1217,15 +1217,15 @@
   },
   {
     "id": "ranking_team_03",
-    "text": "TEAM-DUELL: Geheimes Ranking! Beide Teams sortieren die gleiche Liste (5 beste Doener-Zutaten). Mehr Uebereinstimmung mit der Gesamtgruppe gewinnt.",
+    "text": "Blitz-Debatte! 'Leipzig ist besser als Berlin' -- ein Team dafuer, eins dagegen. 30 Sekunden pro Team, dann Abstimmung.",
     "mechanik": "ranking",
     "modi": ["team-duell"],
     "slots": [3, 4],
     "punkte": 15,
-    "hint": "Denkt mainstream - nicht nach eurem Geschmack.",
+    "hint": "Kultur, Mieten, Nachtleben, Groesse - alles gilt.",
     "meta": {
       "min_spieler": 4,
-      "timer_sek": null,
+      "timer_sek": 30,
       "tabu_woerter": null,
       "trink_regel": null,
       "team_modus": "frei-waehlen"
@@ -1233,7 +1233,7 @@
   },
   {
     "id": "matze_team_01",
-    "text": "TEAM-DUELL: Pitch Battle! Jedes Team hat 60 Sekunden: Ueberzeugt die anderen warum EUER Lieblingsviertel in Leipzig das beste ist.",
+    "text": "Pitch Battle! Jedes Team hat 60 Sekunden: Ueberzeugt die anderen warum EUER Lieblingsviertel in Leipzig das beste ist.",
     "mechanik": "matze",
     "modi": ["team-duell"],
     "slots": [3, 4],
@@ -1249,7 +1249,7 @@
   },
   {
     "id": "challenge_team_06",
-    "text": "TEAM-DUELL: Finale! Stein-Schere-Papier Best-of-5 zwischen den Team-Captains. Verlierer-Team muss ein Gruppenfoto in einer peinlichen Pose machen.",
+    "text": "Finale! Stein-Schere-Papier Best-of-5 zwischen den Team-Captains. Verlierer-Team macht ein Gruppenfoto in peinlicher Pose.",
     "mechanik": "challenge",
     "modi": ["team-duell"],
     "slots": [5],
@@ -1265,7 +1265,7 @@
   },
   {
     "id": "challenge_team_07",
-    "text": "TEAM-DUELL: Sync-Challenge! Beide Teams muessen gleichzeitig das gleiche Wort sagen (Kategorie: Frucht). 3 Versuche pro Team. Mehr Treffer gewinnt.",
+    "text": "Sync-Challenge! Innerhalb jedes Teams: Zaehlt bis 3, dann sagt alle gleichzeitig eine Frucht. Gleiche Antwort = Punkt. 3 Runden, mehr Treffer gewinnt.",
     "mechanik": "challenge",
     "modi": ["team-duell"],
     "slots": [3, 4],
@@ -1431,6 +1431,437 @@
     "slots": [3, 4, 5],
     "punkte": 10,
     "hint": "Benennt sie nach etwas das ihr heute Abend erlebt habt.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "werbinich_date_02",
+    "text": "Denkt euch gegenseitig eine fiktive Figur aus (Film, Serie, Buch) die zum anderen passen wuerde. Begruendet warum!",
+    "mechanik": "wer-bin-ich",
+    "modi": ["date"],
+    "slots": [3, 4],
+    "punkte": 15,
+    "hint": "Denkt an Persoenlichkeit, nicht an Aussehen.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_freunde_03",
+    "text": "Handy raus! Zeigt euch gegenseitig das letzte Foto in eurer Galerie. Erklaert den Kontext in 10 Sekunden.",
+    "mechanik": "challenge",
+    "modi": ["freunde", "date"],
+    "slots": [1, 2],
+    "punkte": 10,
+    "hint": "Seid mutig - das letzte echte Foto, kein Screenshot.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "ranking_freunde_03",
+    "text": "Einigt euch: Was ist die beste Serie die ihr alle kennt? Jeder nominiert eine, dann wird abgestimmt.",
+    "mechanik": "ranking",
+    "modi": ["freunde"],
+    "slots": [1, 2],
+    "punkte": 10,
+    "hint": "Argumentiert fuer eure Serie - was macht sie besonders?",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "ranking_freunde_04",
+    "text": "Erstellt gemeinsam eure Bucket List: 3 Dinge die ihr zusammen noch erleben wollt. Einigt euch!",
+    "mechanik": "ranking",
+    "modi": ["freunde"],
+    "slots": [4, 5],
+    "punkte": 15,
+    "hint": "Reise, Abenteuer, Unsinn - alles zaehlt.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_freunde_08",
+    "text": "Letzte Runde ehrlich: Was hat euch heute Abend am meisten ueberrascht - an der Tour oder aneinander?",
+    "mechanik": "matze",
+    "modi": ["freunde"],
+    "slots": [5],
+    "punkte": 15,
+    "hint": "Denkt an Momente, Aussagen oder Reaktionen von heute.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_trink_09",
+    "text": "Countdown: Zaehlt gemeinsam von 20 runter. Bei jeder durch 3 teilbaren Zahl muss die Person trinken statt zu sprechen. Fehler = Neustart.",
+    "mechanik": "challenge",
+    "modi": ["trinkspiel"],
+    "slots": [3, 4, 5],
+    "punkte": 15,
+    "hint": "18, 15, 12, 9, 6, 3 - merkt euch die Dreier.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Fehler = Neustart + trinken",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "werbinich_trink_03",
+    "text": "WER BIN ICH: Einer denkt sich eine beruehmte Person. Nur JA/NEIN Fragen erlaubt. Ab Frage 5: bei jedem NEIN trinkt die Gruppe.",
+    "mechanik": "wer-bin-ich",
+    "modi": ["trinkspiel"],
+    "slots": [4, 5],
+    "punkte": 15,
+    "hint": "Stellt praezise Fragen - jedes Nein wird teuer.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Ab Frage 5: Nein = Gruppe trinkt",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "challenge_team_08",
+    "text": "Finale! Teams stehen sich gegenueber. Abwechselnd sagt jeder etwas Nettes ueber das andere Team. Wer stockt oder wiederholt verliert.",
+    "mechanik": "challenge",
+    "modi": ["team-duell"],
+    "slots": [5],
+    "punkte": 20,
+    "hint": "Aussehen, Humor, Sprueche von heute Abend - alles gilt.",
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "activity_freunde_05",
+    "text": "PANTOMIME: Stellt den peinlichsten Moment eures Lebens pantomimisch dar. Gruppe raet was passiert ist.",
+    "mechanik": "activity",
+    "modi": ["freunde", "trinkspiel"],
+    "slots": [3, 4],
+    "punkte": 20,
+    "hint": "Uebertreibt ruhig - das macht es lustiger UND leichter zu erraten.",
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "matze_date_13",
+    "text": "Schickt euch gleichzeitig per Handy ein Emoji das den heutigen Abend beschreibt. Zeigt gleichzeitig!",
+    "mechanik": "matze",
+    "modi": ["date"],
+    "slots": [5],
+    "punkte": 10,
+    "hint": "Seid spontan - das erste Emoji das euch einfaellt.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "activity_date_03",
+    "text": "ERKLAEREN: Erklaert 'Vertrauen' ohne glauben, sicher, Freund, kennen und immer.",
+    "mechanik": "activity",
+    "modi": ["date"],
+    "slots": [4, 5],
+    "punkte": 20,
+    "hint": "Beschreibt eine konkrete Situation statt das abstrakte Wort.",
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": ["glauben", "sicher", "Freund", "kennen", "immer"],
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "pool_tabu_allround_01",
+    "text": "ERKLAEREN: Erklaert den angezeigten Begriff ohne die verbotenen Woerter!",
+    "mechanik": "activity",
+    "modi": ["freunde", "trinkspiel", "team-duell"],
+    "slots": [1, 2, 3],
+    "punkte": 20,
+    "hint": "Umschreibt den Begriff mit Beispielen oder Situationen.",
+    "pool": {"typ": "tabu"},
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": 60,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "pool_tabu_allround_02",
+    "text": "ERKLAEREN: Einer erklaert, alle raten. Vorsicht vor den verbotenen Woertern!",
+    "mechanik": "activity",
+    "modi": ["freunde", "trinkspiel", "team-duell"],
+    "slots": [2, 3, 4],
+    "punkte": 20,
+    "hint": "Nutzt Gesten und Emotionen um den Begriff naeher zu bringen.",
+    "pool": {"typ": "tabu"},
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": 60,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "pool_tabu_date_01",
+    "text": "ERKLAEREN: Einer erklaert den angezeigten Begriff, der andere raet -- ohne die verbotenen Woerter!",
+    "mechanik": "activity",
+    "modi": ["date", "freunde"],
+    "slots": [2, 3],
+    "punkte": 15,
+    "hint": "Nehmt euch Zeit und habt Spass beim Umschreiben.",
+    "pool": {"typ": "tabu"},
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "pool_tabu_team_01",
+    "text": "ERKLAEREN: Beide Teams gleichzeitig -- wer raet schneller?",
+    "mechanik": "activity",
+    "modi": ["team-duell"],
+    "slots": [1, 2, 3],
+    "punkte": 20,
+    "hint": "Ein Erklaerer pro Team, Rest raet. Schnellstes Team gewinnt!",
+    "pool": {"typ": "tabu"},
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": 60,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "links-rechts"
+    }
+  },
+  {
+    "id": "pool_tabu_trink_01",
+    "text": "ERKLAEREN: Erklaert den Begriff. Jedes Tabu-Wort das rausrutscht = trinken!",
+    "mechanik": "activity",
+    "modi": ["trinkspiel"],
+    "slots": [1, 2, 3],
+    "punkte": 15,
+    "hint": "Passt auf eure Wortwahl auf -- die Gruppe hoert genau zu.",
+    "pool": {"typ": "tabu"},
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Tabu-Wort benutzt = trinken",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "pool_spektrum_allround_01",
+    "text": "Spektrum: Wo ordnet ihr euch auf der angezeigten Skala ein? Diskutiert!",
+    "mechanik": "ranking",
+    "modi": ["freunde", "date", "trinkspiel"],
+    "slots": [2, 3, 4],
+    "punkte": 15,
+    "hint": "Seid ehrlich -- Unterschiede machen die Diskussion spannend.",
+    "pool": {"typ": "spektrum"},
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "pool_spektrum_allround_02",
+    "text": "Spektrum: Wo liegt Leipzig auf dieser Skala? Einigt euch!",
+    "mechanik": "ranking",
+    "modi": ["freunde", "trinkspiel", "team-duell"],
+    "slots": [1, 2, 3],
+    "punkte": 15,
+    "hint": "Denkt an konkrete Orte und Erlebnisse in Leipzig.",
+    "pool": {"typ": "spektrum"},
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "pool_spektrum_team_01",
+    "text": "Spektrum: Jedes Team einigt sich auf eine Position. Dann vergleicht: Wer liegt naeher beieinander?",
+    "mechanik": "ranking",
+    "modi": ["team-duell"],
+    "slots": [2, 3, 4],
+    "punkte": 15,
+    "hint": "Diskutiert intern und einigt euch auf eine Position.",
+    "pool": {"typ": "spektrum"},
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "pool_spektrum_date_01",
+    "text": "Spektrum: Wo seht ihr euch auf dieser Skala -- und wo den anderen?",
+    "mechanik": "ranking",
+    "modi": ["date"],
+    "slots": [3, 4],
+    "punkte": 15,
+    "hint": "Schaetzt zuerst fuer euch selbst, dann fuer den anderen.",
+    "pool": {"typ": "spektrum"},
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "pool_spektrum_trink_01",
+    "text": "Spektrum: Jeder zeigt mit Fingern 1-10 wo er sich sieht. Ausreisser trinken!",
+    "mechanik": "ranking",
+    "modi": ["trinkspiel"],
+    "slots": [1, 2, 3],
+    "punkte": 15,
+    "hint": "Gleichzeitig zeigen -- nicht abgucken!",
+    "pool": {"typ": "spektrum"},
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Ausreisser trinken",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "pool_wyr_allround_01",
+    "text": "Wuerdest du lieber... Jeder entscheidet sich und begruendet!",
+    "mechanik": "matze",
+    "modi": ["freunde", "date"],
+    "slots": [1, 2, 3],
+    "punkte": 15,
+    "hint": "Es gibt keine richtige Antwort -- die Begruendung zaehlt.",
+    "pool": {"typ": "wyr"},
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "pool_wyr_allround_02",
+    "text": "Wuerdest du lieber... Spontan antworten -- wer zoegert muss begruenden!",
+    "mechanik": "matze",
+    "modi": ["freunde", "date"],
+    "slots": [2, 3, 4],
+    "punkte": 15,
+    "hint": "Spontane Antworten sind oft die ehrlichsten.",
+    "pool": {"typ": "wyr"},
+    "meta": {
+      "min_spieler": 2,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": null
+    }
+  },
+  {
+    "id": "pool_wyr_trink_01",
+    "text": "Wuerdest du lieber... Alle zeigen gleichzeitig links oder rechts. Minderheit trinkt!",
+    "mechanik": "challenge",
+    "modi": ["trinkspiel"],
+    "slots": [1, 2, 3],
+    "punkte": 15,
+    "hint": "Links = erste Option, Rechts = zweite Option. Gleichzeitig zeigen!",
+    "pool": {"typ": "wyr"},
+    "meta": {
+      "min_spieler": 3,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": "Minderheit trinkt",
+      "team_modus": null
+    }
+  },
+  {
+    "id": "pool_wyr_team_01",
+    "text": "Wuerdest du lieber... Jedes Team muss sich intern einigen. Schnelleres Team bekommt den Punkt.",
+    "mechanik": "ranking",
+    "modi": ["team-duell"],
+    "slots": [2, 3],
+    "punkte": 15,
+    "hint": "Diskutiert schnell -- Zeit ist ein Faktor!",
+    "pool": {"typ": "wyr"},
+    "meta": {
+      "min_spieler": 4,
+      "timer_sek": null,
+      "tabu_woerter": null,
+      "trink_regel": null,
+      "team_modus": "frei-waehlen"
+    }
+  },
+  {
+    "id": "pool_wyr_date_01",
+    "text": "Wuerdest du lieber... Was sagt eure Antwort ueber euch aus?",
+    "mechanik": "matze",
+    "modi": ["date"],
+    "slots": [3, 4, 5],
+    "punkte": 15,
+    "hint": "Geht tiefer -- was verraet die Wahl ueber eure Werte?",
+    "pool": {"typ": "wyr"},
     "meta": {
       "min_spieler": 2,
       "timer_sek": null,
