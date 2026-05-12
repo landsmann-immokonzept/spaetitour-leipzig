@@ -1,0 +1,572 @@
+[
+  {
+    "id": "ort_p1_date_01",
+    "kontext": "ort",
+    "phase": 1,
+    "modi": ["date"],
+    "mechanik": "matze",
+    "text": "Was hat dich in letzter Zeit zum Lachen gebracht?",
+    "hint": "Sei ehrlich - auch Kleinigkeiten zählen.",
+    "punkte": 10
+  },
+  {
+    "id": "ort_p1_date_02",
+    "kontext": "ort",
+    "phase": 1,
+    "modi": ["date"],
+    "mechanik": "matze",
+    "text": "Erzählt euch die lustigste oder absurdeste Sache die euch diese Woche passiert ist.",
+    "hint": "Je alltäglicher desto lustiger oft.",
+    "punkte": 10
+  },
+  {
+    "id": "ort_p1_freunde_01",
+    "kontext": "ort",
+    "phase": 1,
+    "modi": ["freunde"],
+    "mechanik": "ranking",
+    "text": "Sortiert euch in eine Reihe: Wer ist am spontansten? Diskutiert und einigt euch!",
+    "hint": "Denkt an konkrete Situationen wo jemand spontan war.",
+    "punkte": 10
+  },
+  {
+    "id": "ort_p1_freunde_02",
+    "kontext": "ort",
+    "phase": 1,
+    "modi": ["freunde"],
+    "mechanik": "ranking",
+    "text": "Einigt euch: Was ist die beste Serie die ihr alle kennt? Jeder nominiert eine, dann wird abgestimmt.",
+    "hint": "Argumentiert für eure Serie - was macht sie besonders?",
+    "punkte": 10
+  },
+  {
+    "id": "ort_p1_beide_01",
+    "kontext": "ort",
+    "phase": 1,
+    "modi": ["freunde", "date"],
+    "mechanik": "challenge",
+    "text": "Zählt gemeinsam 20 Dinge auf die man im Späti kaufen kann. Ihr habt 30 Sekunden!",
+    "hint": "Denkt an Getränke, Snacks, Tabak, Zeitungen.",
+    "punkte": 15,
+    "timer": 30
+  },
+  {
+    "id": "ort_p1_freunde_03",
+    "kontext": "ort",
+    "phase": 1,
+    "modi": ["freunde"],
+    "mechanik": "wer-bin-ich",
+    "text": "WER BIN ICH: Einer denkt sich ein Tier. Die Gruppe hat 15 Ja/Nein-Fragen. Schafft ihr es?",
+    "hint": "Fangt mit Lebensraum und Größe an.",
+    "punkte": 15
+  },
+  {
+    "id": "weg_p2_beide_01",
+    "kontext": "weg",
+    "phase": 2,
+    "modi": ["freunde", "date"],
+    "mechanik": "matze",
+    "text": "Jeder erzählt: Was war der letzte Moment wo ihr dachtet -- das muss ich später erzählen?",
+    "hint": "Absurde Alltagssituationen, Begegnungen, Missverständnisse.",
+    "punkte": 15
+  },
+  {
+    "id": "weg_p2_freunde_01",
+    "kontext": "weg",
+    "phase": 2,
+    "modi": ["freunde"],
+    "mechanik": "matze",
+    "text": "Reihum: Wann hast du zuletzt so gelacht dass dir die Tränen kamen?",
+    "hint": "Denkt an peinliche Situationen oder Insider-Witze.",
+    "punkte": 10
+  },
+  {
+    "id": "weg_p2_freunde_02",
+    "kontext": "weg",
+    "phase": 2,
+    "modi": ["freunde"],
+    "mechanik": "matze",
+    "text": "Worauf bist du richtig stolz, auch wenn es sich klein anfühlt? Reihum erzählen.",
+    "hint": "Es muss nichts Großes sein - kleine Erfolge zählen.",
+    "punkte": 10
+  },
+  {
+    "id": "weg_p2_date_01",
+    "kontext": "weg",
+    "phase": 2,
+    "modi": ["date"],
+    "mechanik": "matze",
+    "text": "Wie gehst du mit Stress um? Was machst du wenn alles zu viel wird?",
+    "hint": "Sport, Rückzug, Reden, Kochen - es gibt keine falsche Antwort.",
+    "punkte": 10
+  },
+  {
+    "id": "weg_p2_date_02",
+    "kontext": "weg",
+    "phase": 2,
+    "modi": ["date"],
+    "mechanik": "matze",
+    "text": "Bist du eher Planer oder spontan? Woran merkt man das bei dir?",
+    "hint": "Denkt an konkrete Alltagssituationen.",
+    "punkte": 10
+  },
+  {
+    "id": "weg_p2_date_03",
+    "kontext": "weg",
+    "phase": 2,
+    "modi": ["date"],
+    "mechanik": "ranking",
+    "text": "Top 3 Dinge die ein gutes Date ausmachen. Einigt euch!",
+    "hint": "Essen, Gespräch, Ort, Überraschung, Chemie?",
+    "punkte": 15
+  },
+  {
+    "id": "ort_p2_date_01",
+    "kontext": "ort",
+    "phase": 2,
+    "modi": ["date"],
+    "mechanik": "matze",
+    "text": "Hand aufs Herz: Was kannst du überhaupt nicht? Koch-Desaster, Parklücken, IKEA-Anleitungen?",
+    "hint": "Schwächen zeigen ist mutig. Sei ehrlich.",
+    "punkte": 15
+  },
+  {
+    "id": "ort_p2_beide_01",
+    "kontext": "ort",
+    "phase": 2,
+    "modi": ["freunde", "date"],
+    "mechanik": "challenge",
+    "text": "Handy raus! Zeigt euch gegenseitig das letzte Foto in eurer Galerie. Erklärt den Kontext in 10 Sekunden.",
+    "hint": "Seid mutig - das letzte echte Foto, kein Screenshot.",
+    "punkte": 10
+  },
+  {
+    "id": "ort_p2_date_02",
+    "kontext": "ort",
+    "phase": 2,
+    "modi": ["date"],
+    "mechanik": "ranking",
+    "text": "3 Songs die zu eurem heutigen Abend passen würden. Einigt euch auf eine Playlist.",
+    "hint": "Denkt an die Stimmung gerade - nicht an eür Lieblingsgenre.",
+    "punkte": 10
+  },
+  {
+    "id": "ort_p2_freunde_01",
+    "kontext": "ort",
+    "phase": 2,
+    "modi": ["freunde"],
+    "mechanik": "wer-bin-ich",
+    "text": "WER BIN ICH: Jeder flüster dem Nachbarn eine berühmte Person ins Ohr. 10 Ja/Nein-Fragen zum Raten!",
+    "hint": "Fragt zürst ob die Person noch lebt.",
+    "punkte": 15
+  },
+  {
+    "id": "ort_p2_date_03",
+    "kontext": "ort",
+    "phase": 2,
+    "modi": ["date"],
+    "mechanik": "wer-bin-ich",
+    "text": "Einer denkt sich eine Person die ihr beide kennt (Promi, Freund, Bekannter). 10 Ja/Nein-Fragen -- schafft ihr es?",
+    "hint": "Fragt nach Beruf, Alter und wie ihr die Person kennt.",
+    "punkte": 15
+  },
+  {
+    "id": "ort_p2_freunde_02",
+    "kontext": "ort",
+    "phase": 2,
+    "modi": ["freunde"],
+    "mechanik": "just-one",
+    "text": "JUST ONE: Bestimmt einen Rater. Die anderen denken sich ein Tier aus. Jeder gibt EIN Wort als Hinweis. Gleiche Wörter fallen weg! Dann wird geraten.",
+    "hint": "Denkt an ungewöhnliche Merkmale statt an das Offensichtliche.",
+    "punkte": 15
+  },
+  {
+    "id": "ort_p2_freunde_03",
+    "kontext": "ort",
+    "phase": 2,
+    "modi": ["freunde"],
+    "mechanik": "just-one",
+    "text": "JUST ONE: Bestimmt einen Rater. Denkt an eure beste gemeinsame Erinnerung. Jeder gibt EIN Hinweiswort. Doppelte raus! Errät der Rater den Moment?",
+    "hint": "Seid spezifisch - 'Urlaub' denken alle.",
+    "punkte": 15
+  },
+  {
+    "id": "ort_p2_beide_pool_tabu_01",
+    "kontext": "ort",
+    "phase": 2,
+    "modi": ["freunde", "date"],
+    "mechanik": "activity",
+    "text": "ERKLÄREN: Erklärt den angezeigten Begriff ohne die verbotenen Wörter!",
+    "hint": "Umschreibt den Begriff mit Beispielen oder Situationen.",
+    "punkte": 20,
+    "pool": {"typ": "tabu"},
+    "timer": 60
+  },
+  {
+    "id": "ort_p2_date_pool_tabu_01",
+    "kontext": "ort",
+    "phase": 2,
+    "modi": ["date"],
+    "mechanik": "activity",
+    "text": "ERKLÄREN: Einer erklärt den angezeigten Begriff, der andere rät -- ohne die verbotenen Wörter!",
+    "hint": "Nehmt euch Zeit und habt Spaß beim Umschreiben.",
+    "punkte": 15,
+    "pool": {"typ": "tabu"}
+  },
+  {
+    "id": "weg_p2_beide_pool_wyr_01",
+    "kontext": "weg",
+    "phase": 2,
+    "modi": ["freunde", "date"],
+    "mechanik": "matze",
+    "text": "Würdest du lieber... Jeder entscheidet sich und begründet!",
+    "hint": "Es gibt keine richtige Antwort -- die Begründung zählt.",
+    "punkte": 15,
+    "pool": {"typ": "wyr"}
+  },
+  {
+    "id": "weg_p3_freunde_01",
+    "kontext": "weg",
+    "phase": 3,
+    "modi": ["freunde"],
+    "mechanik": "matze",
+    "text": "Jeder sagt: Welchen Rat würdest du deinem 16-jährigen Ich geben?",
+    "hint": "Was hast du später gelernt, das du damals gern gewusst hättest?",
+    "punkte": 15
+  },
+  {
+    "id": "weg_p3_date_01",
+    "kontext": "weg",
+    "phase": 3,
+    "modi": ["date"],
+    "mechanik": "matze",
+    "text": "Was findest du attraktiv an Menschen - nicht nur optisch?",
+    "hint": "Humor, wie jemand erzählt, Selbstironie -- alles zählt.",
+    "punkte": 15
+  },
+  {
+    "id": "weg_p3_date_02",
+    "kontext": "weg",
+    "phase": 3,
+    "modi": ["date"],
+    "mechanik": "matze",
+    "text": "Was ist für dich ein richtig gutes Date? Beschreib den perfekten Abend.",
+    "hint": "Es muss nicht teür sein - was zählt wirklich?",
+    "punkte": 15
+  },
+  {
+    "id": "weg_p3_beide_01",
+    "kontext": "weg",
+    "phase": 3,
+    "modi": ["freunde", "date"],
+    "mechanik": "matze",
+    "text": "Was hast du in den letzten Jahren über dich gelernt?",
+    "hint": "Denk an eine Situation die dich verändert hat.",
+    "punkte": 15
+  },
+  {
+    "id": "ort_p3_freunde_01",
+    "kontext": "ort",
+    "phase": 3,
+    "modi": ["freunde"],
+    "mechanik": "matze",
+    "text": "Fragerunde: Jeder darf einer Person EINE persönliche Frage stellen -- und die muss ehrlich beantwortet werden!",
+    "hint": "Stellt Fragen die ihr euch sonst nie traün würdet.",
+    "punkte": 20
+  },
+  {
+    "id": "ort_p3_date_01",
+    "kontext": "ort",
+    "phase": 3,
+    "modi": ["date"],
+    "mechanik": "matze",
+    "text": "Beschreibt euch gegenseitig in 3 Adjektiven. Dann: Stimmt ihr zu oder überrascht euch was?",
+    "hint": "Seid ehrlich - Überraschungen sind das Spannende.",
+    "punkte": 15
+  },
+  {
+    "id": "ort_p3_beide_01",
+    "kontext": "ort",
+    "phase": 3,
+    "modi": ["freunde", "date"],
+    "mechanik": "activity",
+    "text": "ERKLÄREN: Erklärt das Wort 'Heimat' ohne die Wörter Haus, Zuhause, Familie und Stadt.",
+    "hint": "Beschreibt das Gefühl statt den Ort.",
+    "punkte": 20,
+    "tabu_woerter": ["Haus", "Zuhause", "Familie", "Stadt"]
+  },
+  {
+    "id": "ort_p3_freunde_02",
+    "kontext": "ort",
+    "phase": 3,
+    "modi": ["freunde"],
+    "mechanik": "activity",
+    "text": "ERKLÄREN: Erklärt 'Freundschaft' ohne Freund, zusammen, gern und helfen.",
+    "hint": "Verwendet eine Metapher oder ein konkretes Beispiel.",
+    "punkte": 20,
+    "tabu_woerter": ["Freund", "zusammen", "gern", "helfen"]
+  },
+  {
+    "id": "ort_p3_beide_02",
+    "kontext": "ort",
+    "phase": 3,
+    "modi": ["freunde", "date"],
+    "mechanik": "activity",
+    "text": "ERKLÄREN: Erklärt 'Liebe' ohne Herz, Gefühl, Partner, Beziehung und gern.",
+    "hint": "Beschreibt was man tut statt was man fühlt.",
+    "punkte": 20,
+    "tabu_woerter": ["Herz", "Gefühl", "Partner", "Beziehung", "gern"]
+  },
+  {
+    "id": "ort_p3_date_02",
+    "kontext": "ort",
+    "phase": 3,
+    "modi": ["date"],
+    "mechanik": "activity",
+    "text": "ERKLÄREN: Erklärt 'Glück' ohne Freude, gut, positiv, Zufall und Lachen.",
+    "hint": "Denkt an einen konkreten Moment statt an das abstrakte Wort.",
+    "punkte": 20,
+    "tabu_woerter": ["Freude", "gut", "positiv", "Zufall", "Lachen"]
+  },
+  {
+    "id": "ort_p3_freunde_03",
+    "kontext": "ort",
+    "phase": 3,
+    "modi": ["freunde"],
+    "mechanik": "just-one",
+    "text": "JUST ONE: Der Jüngste rät. Gesucht: ein Ort in Leipzig. EIN Hinweiswort pro Person. Doppelte raus!",
+    "hint": "Gebt einen Hinweis der spezifisch für diesen Ort ist.",
+    "punkte": 20
+  },
+  {
+    "id": "weg_p3_date_pool_spek_01",
+    "kontext": "weg",
+    "phase": 3,
+    "modi": ["date"],
+    "mechanik": "ranking",
+    "text": "Spektrum: Wo seht ihr euch auf dieser Skala -- und wo den anderen?",
+    "hint": "Schätzt zürst für euch selbst, dann für den anderen.",
+    "punkte": 15,
+    "pool": {"typ": "spektrum"}
+  },
+  {
+    "id": "weg_p3_date_pool_wyr_01",
+    "kontext": "weg",
+    "phase": 3,
+    "modi": ["date"],
+    "mechanik": "matze",
+    "text": "Würdest du lieber... Was sagt eure Antwort über euch aus?",
+    "hint": "Geht tiefer -- was verrät die Wahl über eure Werte?",
+    "punkte": 15,
+    "pool": {"typ": "wyr"}
+  },
+  {
+    "id": "weg_p4_freunde_01",
+    "kontext": "weg",
+    "phase": 4,
+    "modi": ["freunde"],
+    "mechanik": "ranking",
+    "text": "Streitet euch: Was ist wichtiger in einer Freundschaft -- Ehrlichkeit oder Loyalität? Nur EINE Antwort gilt.",
+    "hint": "Denkt an einen konkreten Moment wo ein Freund für euch da war.",
+    "punkte": 15
+  },
+  {
+    "id": "weg_p4_date_01",
+    "kontext": "weg",
+    "phase": 4,
+    "modi": ["date"],
+    "mechanik": "ranking",
+    "text": "Was sind eure Top 3 Dealbreaker? Gibt es Überschneidungen?",
+    "hint": "Je konkreter, desto spannender wird die Diskussion.",
+    "punkte": 15
+  },
+  {
+    "id": "weg_p4_date_02",
+    "kontext": "weg",
+    "phase": 4,
+    "modi": ["date"],
+    "mechanik": "matze",
+    "text": "Was wünscht du dir gerade am meisten -- abgesehen von einem weiteren Bier?",
+    "hint": "Ruhe, Abenteür, Verbindung, Klarheit - alles ist erlaubt.",
+    "punkte": 20
+  },
+  {
+    "id": "ort_p4_freunde_01",
+    "kontext": "ort",
+    "phase": 4,
+    "modi": ["freunde"],
+    "mechanik": "challenge",
+    "text": "60 Sekunden: Zählt abwechselnd Songtitel auf die ihr alle kennt. Kein Song doppelt!",
+    "hint": "Denkt an Genres durch - Pop, Rap, Rock, Charts.",
+    "punkte": 15,
+    "timer": 60
+  },
+  {
+    "id": "ort_p4_date_01",
+    "kontext": "ort",
+    "phase": 4,
+    "modi": ["date"],
+    "mechanik": "activity",
+    "text": "ERKLÄREN: Erklärt 'Glück' ohne Freude, gut, positiv, Zufall und Lachen.",
+    "hint": "Denkt an einen konkreten Moment statt an das abstrakte Wort.",
+    "punkte": 20,
+    "tabu_woerter": ["Freude", "gut", "positiv", "Zufall", "Lachen"]
+  },
+  {
+    "id": "ort_p4_date_02",
+    "kontext": "ort",
+    "phase": 4,
+    "modi": ["date"],
+    "mechanik": "wer-bin-ich",
+    "text": "Denkt euch gegenseitig eine fiktive Figur aus (Film, Serie, Buch) die zum anderen passen würde. Begründet warum!",
+    "hint": "Denkt an Persönlichkeit, nicht an Aussehen.",
+    "punkte": 15
+  },
+  {
+    "id": "ort_p4_beide_pool_tabu_01",
+    "kontext": "ort",
+    "phase": 4,
+    "modi": ["freunde", "date"],
+    "mechanik": "activity",
+    "text": "ERKLÄREN: Einer erklärt, alle raten. Vorsicht vor den verbotenen Wörtern!",
+    "hint": "Nutzt Gesten und Emotionen um den Begriff näher zu bringen.",
+    "punkte": 20,
+    "pool": {"typ": "tabu"},
+    "timer": 60
+  },
+  {
+    "id": "weg_p4_beide_pool_spek_01",
+    "kontext": "weg",
+    "phase": 4,
+    "modi": ["freunde", "date"],
+    "mechanik": "ranking",
+    "text": "Spektrum: Wo ordnet ihr euch auf der angezeigten Skala ein? Diskutiert!",
+    "hint": "Seid ehrlich -- Unterschiede machen die Diskussion spannend.",
+    "punkte": 15,
+    "pool": {"typ": "spektrum"}
+  },
+  {
+    "id": "weg_p4_beide_pool_spek_02",
+    "kontext": "weg",
+    "phase": 4,
+    "modi": ["freunde", "date"],
+    "mechanik": "ranking",
+    "text": "Spektrum: Wo liegt Leipzig auf dieser Skala? Einigt euch!",
+    "hint": "Denkt an konkrete Orte und Erlebnisse in Leipzig.",
+    "punkte": 15,
+    "pool": {"typ": "spektrum"}
+  },
+  {
+    "id": "weg_p4_beide_pool_wyr_01",
+    "kontext": "weg",
+    "phase": 4,
+    "modi": ["freunde", "date"],
+    "mechanik": "matze",
+    "text": "Würdest du lieber... Spontan antworten -- wer zögert muss begründen!",
+    "hint": "Spontane Antworten sind oft die ehrlichsten.",
+    "punkte": 15,
+    "pool": {"typ": "wyr"}
+  },
+  {
+    "id": "weg_p5_freunde_01",
+    "kontext": "weg",
+    "phase": 5,
+    "modi": ["freunde"],
+    "mechanik": "matze",
+    "text": "Reihum: Was ist die schönste Erinnerung die du mit jemandem aus dieser Gruppe hast?",
+    "hint": "Denkt an Reisen, Feiern oder spontane Momente.",
+    "punkte": 10
+  },
+  {
+    "id": "ort_p5_freunde_01",
+    "kontext": "ort",
+    "phase": 5,
+    "modi": ["freunde"],
+    "mechanik": "matze",
+    "text": "Was macht ihr als nächstes zusammen? Plant spontan etwas Konkretes mit Datum!",
+    "hint": "Schlagt etwas vor das ihr diese Woche noch machen könnt.",
+    "punkte": 10
+  },
+  {
+    "id": "ort_p5_freunde_02",
+    "kontext": "ort",
+    "phase": 5,
+    "modi": ["freunde"],
+    "mechanik": "matze",
+    "text": "Letzte Runde ehrlich: Was hat euch heute Abend am meisten überrascht - an der Tour oder aneinander?",
+    "hint": "Denkt an Momente, Aussagen oder Reaktionen von heute.",
+    "punkte": 15
+  },
+  {
+    "id": "ort_p5_date_01",
+    "kontext": "ort",
+    "phase": 5,
+    "modi": ["date"],
+    "mechanik": "matze",
+    "text": "Was sollten wir unbedingt noch zusammen machen? Spontane Ideen!",
+    "hint": "Denkt gross - Tagesausflug, Kochen, Konzert?",
+    "punkte": 10
+  },
+  {
+    "id": "ort_p5_date_02",
+    "kontext": "ort",
+    "phase": 5,
+    "modi": ["date"],
+    "mechanik": "matze",
+    "text": "Worauf hättest du gerade noch Lust? Heute Abend ist noch nicht vorbei.",
+    "hint": "Essen, Spaziergang, noch eine Bar, Nachtspaziergang?",
+    "punkte": 10
+  },
+  {
+    "id": "ort_p5_date_03",
+    "kontext": "ort",
+    "phase": 5,
+    "modi": ["date"],
+    "mechanik": "matze",
+    "text": "Schickt euch gleichzeitig per Handy ein Emoji das den heutigen Abend beschreibt. Zeigt gleichzeitig!",
+    "hint": "Seid spontan - das erste Emoji das euch einfällt.",
+    "punkte": 10
+  },
+  {
+    "id": "ort_p5_freunde_03",
+    "kontext": "ort",
+    "phase": 5,
+    "modi": ["freunde"],
+    "mechanik": "ranking",
+    "text": "Erstellt gemeinsam eure Bucket List: 3 Dinge die ihr zusammen noch erleben wollt. Einigt euch!",
+    "hint": "Reise, Abenteür, Unsinn - alles zählt.",
+    "punkte": 15
+  },
+  {
+    "id": "ort_p5_date_04",
+    "kontext": "ort",
+    "phase": 5,
+    "modi": ["date"],
+    "mechanik": "ranking",
+    "text": "Plant spontan eür nächstes Date: Was, Wo, Wann? Einigt euch auf EINEN konkreten Plan.",
+    "hint": "Macht es konkret - Tag und Uhrzeit festlegen.",
+    "punkte": 15
+  },
+  {
+    "id": "ort_p5_beide_01",
+    "kontext": "ort",
+    "phase": 5,
+    "modi": ["freunde", "date"],
+    "mechanik": "challenge",
+    "text": "30 Sekunden: Zählt abwechselnd Dinge auf die ihr aneinander möget. Ohne Pause!",
+    "hint": "Kleine Dinge zählen - Lachen, Gestik, Wortwahl.",
+    "punkte": 15,
+    "timer": 30
+  },
+  {
+    "id": "ort_p5_date_05",
+    "kontext": "ort",
+    "phase": 5,
+    "modi": ["date"],
+    "mechanik": "activity",
+    "text": "ERKLÄREN: Erklärt 'Vertraün' ohne glauben, sicher, Freund, kennen und immer.",
+    "hint": "Beschreibt eine konkrete Situation statt das abstrakte Wort.",
+    "punkte": 20,
+    "tabu_woerter": ["glauben", "sicher", "Freund", "kennen", "immer"]
+  }
+]
