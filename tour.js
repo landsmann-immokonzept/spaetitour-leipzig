@@ -427,19 +427,50 @@ function selectMode(mode) {
 function resumeTour() {
   tour = loadTour();
   if (!tour) return;
-  navStack = [];
-  showTabBar();
-  setMainPadding(true, true);
 
   if (tour.completed) {
+    navStack = [];
+    showTabBar();
+    setMainPadding(true, true);
     showErgebnis();
-  } else if (tour.phase === 'weg') {
-    showWegaufgabe();
-  } else if (tour.phase === 'ort') {
-    showOrtaufgabe();
-  } else if (tour.phase === 'bonus') {
-    showBonus();
+    return;
   }
+
+  // Resume-Sheet mit Kontext-Info
+  var station = tour.stations[tour.currentStation];
+  var phaseLabel = PHASE_LABELS[tour.currentStation];
+  var roundInfo = tour.round === 2 ? ' (Runde 2)' : '';
+
+  openSheet(
+    'Willkommen zurück!',
+    'Ihr wart bei Station ' + (tour.currentStation + 1) + ' von 5' + roundInfo + ' (' + phaseLabel + ').\n\n' +
+    'Nächste Station: ' + station.name + '\n' +
+    (station.adresse || ''),
+    [
+      {
+        label: 'Weiter',
+        primary: true,
+        action: function() {
+          navStack = [];
+          showTabBar();
+          setMainPadding(true, true);
+          if (tour.phase === 'weg') showWegaufgabe();
+          else if (tour.phase === 'ort') showOrtaufgabe();
+          else if (tour.phase === 'bonus') showBonus();
+        }
+      },
+      {
+        label: 'Neu starten',
+        primary: false,
+        action: function() {
+          clearTour();
+          tour = null;
+          stopGPS();
+          showStartScreen();
+        }
+      }
+    ]
+  );
 }
 
 function neueTour() {
@@ -872,9 +903,25 @@ function stopGPS() {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // BOTTOM SHEET
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function openSheet(title, body) {
+function openSheet(title, body, actions) {
   document.getElementById('sheetTitle').textContent = title;
   document.getElementById('sheetBody').textContent = body;
+
+  var actionsEl = document.getElementById('sheetActions');
+  if (actions && actions.length) {
+    actionsEl.innerHTML = '';
+    actions.forEach(function(a) {
+      var btn = document.createElement('button');
+      btn.className = a.primary ? 'btn-primary' : 'btn-secondary';
+      btn.textContent = a.label;
+      btn.onclick = function() { closeSheet(); a.action(); };
+      actionsEl.appendChild(btn);
+    });
+    actionsEl.style.display = 'flex';
+  } else {
+    actionsEl.style.display = 'none';
+  }
+
   document.getElementById('sheetBackdrop').classList.add('visible');
   document.getElementById('sheet').classList.add('visible');
 }
