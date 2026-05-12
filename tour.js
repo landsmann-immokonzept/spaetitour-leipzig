@@ -1137,7 +1137,9 @@ function floatPoints(pts) {
 // SHARE
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function shareTour() {
-  const text = 'Sp\u00e4titour Leipzig: ' + tour.score + ' Punkte! ' + getRanking(tour.score).label + ' \uD83C\uDF1F';
+  var totalScore = tour.round === 2 ? (tour.round1Score || 0) + tour.score : tour.score;
+  var text = 'Sp\u00e4titour Leipzig: ' + totalScore + ' Punkte! ' + getRanking(totalScore).label + ' \uD83C\uDF1F';
+  if (tour.round === 2) text += ' (2 Runden!)';
   if (navigator.share) {
     navigator.share({ title: 'Sp\u00e4titour Leipzig', text: text });
   } else {
