@@ -8,8 +8,8 @@
       "date"
     ],
     "mechanik": "challenge",
-    "text": "Zählt gemeinsam 20 Dinge auf die man im Späti kaufen kann. Ihr habt 30 Sekunden!",
-    "hint": "Denkt an Getränke, Snacks, Tabak, Zeitungen.",
+    "text": "Zählt gemeinsam 20 Dinge auf die man im Späti kaufen kann -- in 30 Sekunden! Danach: Welches davon hat eine gute Geschichte? Erzählt sie.",
+    "hint": "Getränke, Snacks, Kram -- und dann: Welches Produkt verbindet ihr mit einer Erinnerung?",
     "punkte": 15,
     "timer": 30
   },
@@ -22,8 +22,8 @@
       "date"
     ],
     "mechanik": "challenge",
-    "text": "Schaut euch um: Wer kann in 30 Sekunden die meisten Dinge aufzählen die in diesem Späti gelb sind?",
-    "hint": "Verpackungen, Schilder, Aufkleber -- alles zählt.",
+    "text": "Schaut euch den Späti an: Wer findet in 30 Sekunden das Produkt mit der absurdesten Verpackung? Stellt es den anderen vor als wäre es die Erfindung des Jahrhunderts.",
+    "hint": "Geht durch die Regale -- Snacks, Getränke, Krimskrams. Die Verkaufspräsentation macht den Punkt.",
     "punkte": 10,
     "timer": 30
   },
@@ -60,8 +60,8 @@
       "date"
     ],
     "mechanik": "matze",
-    "text": "Erzählt euch die lustigste oder absurdeste Sache die euch diese Woche passiert ist.",
-    "hint": "Je alltäglicher desto lustiger oft.",
+    "text": "Was ist die eine Sache die du nie aufgibst -- egal wie oft es schiefgeht? Kochen, Sport, ein Hobby?",
+    "hint": "Die hartnäckigen Sachen verraten am meisten über jemanden.",
     "punkte": 10
   },
   {
@@ -97,7 +97,7 @@
     ],
     "mechanik": "ranking",
     "text": "Einigt euch: Was ist die beste Serie die ihr alle kennt? Jeder nominiert eine, dann wird abgestimmt.",
-    "hint": "Argumentiert für eure Serie -- was macht sie besonders?",
+    "hint": "Wer die Gruppe überzeugt hat gewonnen. Warum hat euch die Serie miteinander verbunden?",
     "punkte": 10
   },
   {
@@ -108,8 +108,8 @@
       "freunde"
     ],
     "mechanik": "wer-bin-ich",
-    "text": "Einer denkt sich ein Tier. Die Gruppe hat 15 Ja/Nein-Fragen. Schafft ihr es?",
-    "hint": "Fangt mit Lebensraum und Größe an.",
+    "text": "Einer denkt sich jemanden aus der Gruppe. Die anderen haben 15 Ja/Nein-Fragen um rauszufinden wen. Aber Achtung: Es geht um eine bestimmte Situation mit dieser Person!",
+    "hint": "Fragt nach Ort, Zeitpunkt und Stimmung -- nicht nur nach der Person selbst.",
     "punkte": 15
   },
   {
@@ -134,7 +134,7 @@
     ],
     "mechanik": "challenge",
     "text": "Handy raus! Zeigt euch gegenseitig das letzte Foto in eurer Galerie. Erklärt den Kontext in 10 Sekunden.",
-    "hint": "Seid mutig -- das letzte echte Foto, kein Screenshot.",
+    "hint": "Das letzte echte Foto, kein Screenshot. Die Geschichte dahinter ist oft besser als das Bild.",
     "punkte": 10
   },
   {
@@ -146,8 +146,8 @@
       "date"
     ],
     "mechanik": "challenge",
-    "text": "Alle gleichzeitig: Nennt euren Lieblings-Snack aus dem Späti. Wer den gleichen hat stößt an!",
-    "hint": "Spontan antworten -- nicht nachdenken.",
+    "text": "Jeder wählt ein Produkt aus dem Späti-Regal das die eigene Persönlichkeit am besten beschreibt. Stellt es den anderen vor und erklärt warum.",
+    "hint": "Chipstüte weil chaotisch? Pfefferminztee weil beruhigend? Seid kreativ.",
     "punkte": 10
   },
   {
@@ -160,7 +160,7 @@
     ],
     "mechanik": "activity",
     "text": "Erklärt den angezeigten Begriff ohne die verbotenen Wörter zu benutzen!",
-    "hint": "Umschreibt den Begriff mit Beispielen oder Situationen.",
+    "hint": "Denkt an Situationen wo der Begriff vorkommt -- Beispiele sagen oft mehr als Definitionen.",
     "punkte": 20,
     "pool": {
       "typ": "tabu"
@@ -223,8 +223,8 @@
       "freunde"
     ],
     "mechanik": "just-one",
-    "text": "Bestimmt einen Rater. Die anderen denken sich ein Tier aus. Jeder gibt EIN Wort als Hinweis. Gleiche Wörter fallen weg! Dann wird geraten.",
-    "hint": "Denkt an ungewöhnliche Merkmale statt an das Offensichtliche.",
+    "text": "Bestimmt einen Rater. Denkt an einen Laden oder Ort in Leipzig den ihr alle kennt. Jeder gibt EIN Wort als Hinweis. Gleiche Wörter fallen weg! Dann wird geraten.",
+    "hint": "Seid spezifisch -- 'Laden' oder 'Straße' denken alle. Was ist einzigartig an dem Ort?",
     "punkte": 15
   },
   {
@@ -273,8 +273,8 @@
       "date"
     ],
     "mechanik": "matze",
-    "text": "Ihr lauft gerade durch Leipzig. Was ist ein Ort in dieser Stadt an den ihr immer wieder zurückkommt -- und warum?",
-    "hint": "Café, Park, Aussichtspunkt, Laden -- ein Ort mit Geschichte.",
+    "text": "Ihr lauft gerade durch Leipzig. Gibt es einen Ort in dieser Stadt an den ihr immer wieder zurückkommt? Oder einen an den ihr zurückkommen wollt -- und warum?",
+    "hint": "Café, Park, Laden, Aussichtspunkt -- ein Ort mit persönlicher Geschichte.",
     "punkte": 15
   },
   {
@@ -314,8 +314,8 @@
       "date"
     ],
     "mechanik": "matze",
-    "text": "Wie gehst du mit Stress um? Was machst du wenn alles zu viel wird?",
-    "hint": "Sport, Rückzug, Reden, Kochen -- es gibt keine falsche Antwort.",
+    "text": "Wenn alles zu viel wird -- was ist dein Fluchtort? Der Ort, das Ritual, die Sache die dich wieder runterbringt?",
+    "hint": "Badewanne, Lieblingsserie, langer Spaziergang -- die ehrlichen Antworten sind die besten.",
     "punkte": 10
   },
   {
@@ -326,8 +326,8 @@
       "date"
     ],
     "mechanik": "matze",
-    "text": "Bist du eher Planer oder spontan? Woran merkt man das bei dir?",
-    "hint": "Denkt an konkrete Alltagssituationen.",
+    "text": "Spontan-Check: Wenn morgen ein Flug nach irgendwo frei wäre -- nimmst du ihn? Oder brauchst du erst einen Plan? Was sagt das über dich?",
+    "hint": "Es gibt kein Richtig oder Falsch. Aber die Geschichten dahinter sind immer gut.",
     "punkte": 10
   },
   {
@@ -562,7 +562,7 @@
     ],
     "mechanik": "matze",
     "text": "Was findest du attraktiv an Menschen -- nicht nur optisch?",
-    "hint": "Humor, wie jemand erzählt, Selbstironie -- alles zählt.",
+    "hint": "Denk dran wie die Person gerade gegenüber erzählt. Was davon zieht dich an?",
     "punkte": 15
   },
   {
@@ -585,8 +585,8 @@
       "date"
     ],
     "mechanik": "matze",
-    "text": "Was ist für dich ein richtig gutes Date? Beschreib den perfekten Abend.",
-    "hint": "Es muss nicht teuer sein -- was zählt wirklich?",
+    "text": "Was ist ein Gespräch das du mal hattest und danach war alles anders? Erzähl davon.",
+    "hint": "Muss kein schweres Thema sein. Manchmal verändert ein einziger Satz alles.",
     "punkte": 15
   },
   {
@@ -651,7 +651,7 @@
       "freunde"
     ],
     "mechanik": "ranking",
-    "text": "Wenn ihr euch an einem Graffiti inspiriert -- was wäre die Botschaft die ihr an eine Wand in Leipzig sprühen würdet? Einigt euch auf einen Satz.",
+    "text": "Schaut euch um -- seht ihr ein Graffiti oder einen Aufkleber? Was wäre die Botschaft die ihr an eine Wand in Leipzig sprühen würdet? Einigt euch auf einen Satz.",
     "hint": "Nicht 'Frieden' oder 'Liebe'. Denkt an was, das ihr wirklich meint. Was bewegt euch gerade?",
     "punkte": 15
   },
@@ -704,7 +704,7 @@
     ],
     "mechanik": "activity",
     "text": "Einer erklärt, alle raten. Vorsicht vor den verbotenen Wörtern -- wer eins benutzt ist raus!",
-    "hint": "Nutzt Gesten und Emotionen um den Begriff näher zu bringen.",
+    "hint": "Beschreibt was man dabei fühlt, wo es passiert oder wann man es zuletzt erlebt hat.",
     "punkte": 20,
     "pool": {
       "typ": "tabu"
@@ -744,8 +744,8 @@
       "date"
     ],
     "mechanik": "challenge",
-    "text": "Wer kann in 45 Sekunden mehr Hauptstädte aufzählen? Abwechselnd. Doppelte zählen nicht.",
-    "hint": "Afrika und Asien werden gerne vergessen -- da liegen die Punkte.",
+    "text": "45 Sekunden, abwechselnd: Nennt Orte in Leipzig und sagt in einem Satz was ihr dort machen würdet -- zusammen. Keine Wiederholungen!",
+    "hint": "Clara-Zetkin-Park, Südvorstadt, Plagwitz -- und was würdet ihr da zusammen erleben?",
     "punkte": 15,
     "timer": 45
   },
@@ -757,8 +757,8 @@
       "freunde"
     ],
     "mechanik": "challenge",
-    "text": "60 Sekunden: Zählt abwechselnd Songtitel auf die ihr alle kennt. Kein Song doppelt -- wer stockt fliegt raus!",
-    "hint": "Denkt an Genres durch -- Pop, Rap, Rock, Charts.",
+    "text": "60 Sekunden: Zählt abwechselnd Songs auf die euch an gemeinsame Erlebnisse erinnern. Kein Song doppelt -- und jeder muss kurz sagen welcher Moment das war!",
+    "hint": "Roadtrip-Musik, Festival-Hymnen, WG-Playlist -- da stecken die besten Geschichten drin.",
     "punkte": 15,
     "timer": 60
   },
@@ -795,8 +795,8 @@
       "date"
     ],
     "mechanik": "ranking",
-    "text": "Diskutiert: Ist es besser immer ehrlich zu sein -- oder manchmal zu lügen um jemanden zu schützen? Ihr müsst euch auf EINE Antwort einigen.",
-    "hint": "Denkt an konkrete Situationen. Abstrakt ist langweilig.",
+    "text": "Leipzig ist die Stadt der friedlichen Revolution. Frage an euch: Ist es besser immer ehrlich zu sein -- oder manchmal zu lügen um jemanden zu schützen? Ihr müsst euch auf EINE Antwort einigen.",
+    "hint": "Denkt an konkrete Situationen aus eurem Leben. Abstrakt wird das langweilig.",
     "punkte": 15
   },
   {
@@ -856,7 +856,7 @@
     ],
     "mechanik": "ranking",
     "text": "Was sind eure Top 3 Dealbreaker? Gibt es Überschneidungen?",
-    "hint": "Je konkreter, desto spannender wird die Diskussion.",
+    "hint": "Socken im Bett, Nicht-Zurückschreiben, Unentschlossenheit -- die echten Dealbreaker sind oft überraschend banal.",
     "punkte": 15
   },
   {
@@ -965,8 +965,8 @@
       "date"
     ],
     "mechanik": "matze",
-    "text": "Worauf hättest du gerade noch Lust? Heute Abend ist noch nicht vorbei.",
-    "hint": "Essen, Spaziergang, noch eine Bar, Nachtspaziergang?",
+    "text": "Ganz ehrlich: Worauf hättest du gerade noch Lust? Wenn du dir den Rest des Abends frei gestalten könntest -- was wäre es?",
+    "hint": "Streetfood am Kanal, Nachtspaziergang durch Plagwitz, noch ein Späti -- oder einfach hier sitzen bleiben?",
     "punkte": 10
   },
   {
@@ -977,8 +977,8 @@
       "date"
     ],
     "mechanik": "matze",
-    "text": "Schickt euch gleichzeitig per Handy ein Emoji das den heutigen Abend beschreibt. Zeigt gleichzeitig!",
-    "hint": "Seid spontan -- das erste Emoji das euch einfällt.",
+    "text": "Schickt euch gleichzeitig per Handy ein Emoji das den heutigen Abend beschreibt. Zeigt auf drei -- und dann erklärt warum genau dieses.",
+    "hint": "Das erste Emoji das euch einfällt. Die Erklärung ist das eigentlich Spannende.",
     "punkte": 10
   },
   {
