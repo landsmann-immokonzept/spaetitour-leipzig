@@ -841,6 +841,53 @@ a:focus-visible {
 }
 
 /* ═══════════════════════════════════════════════
+   SCREEN: NACHSPIEL
+   ═══════════════════════════════════════════════ */
+.screen-nachspiel {
+  align-items: center;
+  padding-top: var(--spacing-lg);
+}
+
+.nachspiel-header {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.nachspiel-header__count {
+  font: var(--footnote);
+  color: var(--label-tertiary);
+}
+
+.nachspiel-card {
+  width: 100%;
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.nachspiel-card__badge {
+  font-weight: 600;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--spacing-md);
+  display: inline-block;
+}
+
+.nachspiel-card__text {
+  font: var(--title-2);
+  color: var(--label-primary);
+  line-height: 1.35;
+}
+
+.nachspiel-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: auto;
+}
+
+/* ═══════════════════════════════════════════════
    SCREEN: ERGEBNIS
    ═══════════════════════════════════════════════ */
 .screen-ergebnis {
@@ -1365,9 +1412,48 @@ a:focus-visible {
     <div class="ergebnis-label">Punkte</div>
     <div class="ergebnis-ranking" id="ergebnisRanking"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)" style="vertical-align:-2px;margin-right:4px"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><span id="ergebnisRankingLabel"></span></div>
     <div class="ergebnis-breakdown" id="ergebnisBreakdown"></div>
-    <div class="ergebnis-actions">
-      <button class="btn-primary" onclick="neueTour()">Nochmal spielen</button>
+    <div class="ergebnis-actions" id="ergebnisActions">
+      <button class="btn-primary" onclick="startNachspiel()">Nachspiel</button>
       <button class="btn-secondary" onclick="shareTour()">Teilen</button>
+    </div>
+  </section>
+
+  <!-- NACHSPIEL -->
+  <section class="screen screen-nachspiel" id="screenNachspiel">
+    <div class="nachspiel-header">
+      <p class="nachspiel-header__count" id="nachspielCount"></p>
+    </div>
+    <div class="card nachspiel-card animate-card-in" id="nachspielCard">
+      <span class="nachspiel-card__badge" id="nachspielBadge"></span>
+      <p class="nachspiel-card__text" id="nachspielText"></p>
+      <!-- Pool: Tabu -->
+      <div class="nachspiel-card__pool" id="nachspielTabu" style="display:none">
+        <div class="tabu-card">
+          <div class="tabu-card__wort" id="nachspielTabuWort"></div>
+          <div class="tabu-card__sep"></div>
+          <ul class="tabu-card__liste" id="nachspielTabuListe"></ul>
+        </div>
+      </div>
+      <!-- Pool: Spektrum -->
+      <div class="nachspiel-card__pool" id="nachspielSpektrum" style="display:none">
+        <div class="spektrum-scale">
+          <span class="spektrum-scale__left" id="nachspielSpektrumLeft"></span>
+          <div class="spektrum-scale__bar"></div>
+          <span class="spektrum-scale__right" id="nachspielSpektrumRight"></span>
+        </div>
+      </div>
+      <!-- Pool: WYR -->
+      <div class="nachspiel-card__pool" id="nachspielWyr" style="display:none">
+        <div class="wyr-options">
+          <div class="wyr-option" id="nachspielWyrA"></div>
+          <div class="wyr-vs">oder</div>
+          <div class="wyr-option" id="nachspielWyrB"></div>
+        </div>
+      </div>
+    </div>
+    <div class="nachspiel-actions">
+      <button class="btn-primary" onclick="nachspielNext()">N&auml;chste Karte</button>
+      <button class="btn-text" onclick="nachspielEnd()">Beenden</button>
     </div>
   </section>
 

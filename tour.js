@@ -47,6 +47,8 @@ let timerCallback = null;
 let activeTab = 'tour';
 let navStack = [];
 var poolState = { tabu: 0, spektrum: 0, wyr: 0 };
+var nachspielStack = [];
+var nachspielIndex = 0;
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // UTILITIES
@@ -716,6 +718,72 @@ function showErgebnis() {
   breakdown.innerHTML =
     '<p class="ergebnis-breakdown__title">Punkteverteilung</p>' +
     '<div class="ergebnis-breakdown__list">' + listHtml + '</div>';
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SCREEN: NACHSPIEL
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function startNachspiel() {
+  var usedIds = new Set(tour.usedTaskIds || []);
+  nachspielStack = shuffle(
+    AUFGABEN.filter(function(a) { return a.modi && a.modi.includes(tour.mode) && !usedIds.has(a.id); })
+  );
+  // Resolve pools for nachspiel tasks
+  nachspielStack = nachspielStack.map(resolvePoolTask);
+  nachspielIndex = 0;
+
+  hideTabBar();
+  setNavBar('Nachspiel', { back: true });
+  navStack = [function() { showErgebnis(); }];
+  setMainPadding(true, false);
+
+  if (nachspielStack.length === 0) {
+    showToast('<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>', 'Keine Karten mehr verf\u00fcgbar!');
+    showErgebnis();
+    return;
+  }
+
+  showNachspielCard();
+}
+
+function showNachspielCard() {
+  showScreen('screenNachspiel');
+  var task = nachspielStack[nachspielIndex];
+
+  document.getElementById('nachspielCount').textContent =
+    'Karte ' + (nachspielIndex + 1) + ' von ' + nachspielStack.length;
+
+  var mechanik = task.mechanik || 'matze';
+  var color = MECHANIK_COLORS[mechanik] || '#fbbf24';
+  var badge = document.getElementById('nachspielBadge');
+  badge.textContent = MECH_LABELS[mechanik] || mechanik;
+  badge.style.background = color + '22';
+  badge.style.color = color;
+
+  document.getElementById('nachspielText').textContent = task.text || '';
+
+  // Pool displays
+  renderPoolDisplay(task, 'nachspiel');
+
+  // Card animation
+  var card = document.getElementById('nachspielCard');
+  card.classList.remove('animate-card-in');
+  void card.offsetWidth;
+  card.classList.add('animate-card-in');
+}
+
+function nachspielNext() {
+  nachspielIndex++;
+  if (nachspielIndex >= nachspielStack.length) {
+    showToast('<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>', 'Alle Karten gespielt!');
+    nachspielIndex = nachspielStack.length - 1;
+    return;
+  }
+  showNachspielCard();
+}
+
+function nachspielEnd() {
+  showErgebnis();
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
