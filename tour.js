@@ -689,35 +689,60 @@ function showErgebnis() {
   showScreen('screenErgebnis');
   stopGPS();
 
-  // Count-up animation (2s, ease-out)
-  const scoreEl = document.getElementById('ergebnisScore');
-  const target = tour.score;
-  const duration = 2000;
-  const start = performance.now();
+  // Count-up animation
+  var scoreEl = document.getElementById('ergebnisScore');
+  var target = tour.score;
+  var duration = 2000;
+  var start = performance.now();
   function animateScore(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
+    var elapsed = now - start;
+    var progress = Math.min(elapsed / duration, 1);
+    var eased = 1 - Math.pow(1 - progress, 3);
     scoreEl.textContent = Math.round(target * eased);
     if (progress < 1) requestAnimationFrame(animateScore);
   }
   requestAnimationFrame(animateScore);
 
-  document.getElementById('ergebnisRankingLabel').textContent = getRanking(tour.score).label;
+  // Ranking
+  var totalScore = tour.round === 2 ? (tour.round1Score || 0) + tour.score : tour.score;
+  document.getElementById('ergebnisRankingLabel').textContent = getRanking(totalScore).label;
 
   // Breakdown
-  const breakdown = document.getElementById('ergebnisBreakdown');
+  var breakdown = document.getElementById('ergebnisBreakdown');
   var listHtml = '';
+
+  // Runde 2: Gesamt-Score anzeigen
+  if (tour.round === 2 && tour.round1Score != null) {
+    listHtml += '<div class="ergebnis-breakdown__item">' +
+      '<span class="ergebnis-breakdown__station" style="font-weight:600">Runde 1</span>' +
+      '<span class="ergebnis-breakdown__points">' + tour.round1Score + '</span>' +
+    '</div>';
+  }
+
   tour.stations.forEach(function(s, i) {
-    const hintPenalty = tour.hintsUsed[i] ? ' <span style="color:var(--red)">(-' + PTS_HINT + ')</span>' : '';
+    var hintPenalty = tour.hintsUsed[i] ? ' <span style="color:var(--red)">(-' + PTS_HINT + ')</span>' : '';
     listHtml += '<div class="ergebnis-breakdown__item">' +
       '<span class="ergebnis-breakdown__station">' + s.name + '</span>' +
       '<span class="ergebnis-breakdown__points">+' + tour.stationScores[i] + hintPenalty + '</span>' +
     '</div>';
   });
+
+  if (tour.round === 2 && tour.round1Score != null) {
+    listHtml += '<div class="ergebnis-breakdown__item" style="border-top:1px solid var(--separator);padding-top:var(--spacing-sm);margin-top:var(--spacing-sm)">' +
+      '<span class="ergebnis-breakdown__station" style="font-weight:700">Gesamt</span>' +
+      '<span class="ergebnis-breakdown__points" style="font-weight:700">' + totalScore + '</span>' +
+    '</div>';
+  }
+
   breakdown.innerHTML =
     '<p class="ergebnis-breakdown__title">Punkteverteilung</p>' +
     '<div class="ergebnis-breakdown__list">' + listHtml + '</div>';
+
+  // Runde 2 Button verstecken wenn keine Stationen uebrig
+  var btnRound2 = document.getElementById('btnRound2');
+  if (btnRound2) {
+    btnRound2.style.display = (tour.unusedStations && tour.unusedStations.length >= STATION_COUNT) ? '' : 'none';
+  }
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -784,6 +809,35 @@ function nachspielNext() {
 
 function nachspielEnd() {
   showErgebnis();
+}
+
+function startRound2() {
+  if (!tour.unusedStations || tour.unusedStations.length < STATION_COUNT) {
+    showToast('<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>', 'Keine weiteren Stationen verf\u00fcgbar.');
+    return;
+  }
+
+  tour.round1Score = tour.score;
+  var round1UsedIds = (tour.usedTaskIds || []).slice();
+
+  tour.stations = tour.unusedStations;
+  tour.unusedStations = [];
+  tour.round = 2;
+  tour.currentStation = 0;
+  tour.phase = 'ort';
+  tour.score = 0;
+  tour.stationScores = new Array(STATION_COUNT).fill(0);
+  tour.hintsUsed = new Array(STATION_COUNT).fill(false);
+  tour.ortErledigt = new Array(STATION_COUNT).fill(false);
+  tour.completed = false;
+
+  assignTasks(tour, round1UsedIds);
+  saveTour();
+
+  navStack = [];
+  showRoute();
+  showTabBar();
+  setMainPadding(true, true);
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
