@@ -22,6 +22,18 @@ const MECHANIK_COLORS = {
   'stadt': '#a5b4fc'
 };
 
+var PHASE_LABELS = ['Ankommen', '\u00d6ffnen', 'Tiefe', 'Energie', 'Abschluss'];
+
+var MECH_LABELS = {
+  'matze': 'Hotel Matze',
+  'just-one': 'Just One',
+  'activity': 'Activity',
+  'wer-bin-ich': 'Wer bin ich',
+  'challenge': 'Challenge',
+  'ranking': 'Ranking',
+  'stadt': 'Stadtmission'
+};
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // STATE
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -76,8 +88,12 @@ function saveTour() {
 
 function loadTour() {
   try {
-    const d = localStorage.getItem(STORAGE_KEY);
-    return d ? JSON.parse(d) : null;
+    var d = localStorage.getItem(STORAGE_KEY);
+    if (!d) return null;
+    var t = JSON.parse(d);
+    // Migration: alte Tour-Objekte ohne ortaufgaben verwerfen
+    if (!t.ortaufgaben) return null;
+    return t;
   } catch (e) { return null; }
 }
 
@@ -92,18 +108,150 @@ function getRanking(score) {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // TOUR CREATION
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function assignTasks(tourObj, excludeIds) {
+  var mode = tourObj.mode;
+  var usedIds = new Set(excludeIds || []);
+  var lastMechanik = null;
+
+  // Alle passenden Aufgaben (mode-gefiltert, shuffled)
+  var pool = shuffle(AUFGABEN.filter(function(a) {
+    return a.modi && a.modi.includes(mode) && !usedIds.has(a.id);
+  }));
+
+  // 1. ORT-AUFGABEN (5 Stueck, eine pro Station)
+  var ortaufgaben = [];
+  for (var i = 0; i < STATION_COUNT; i++) {
+    var phase = i + 1;
+    var station = tourObj.stations[i];
+    var task = null;
+
+    // a) Ortsgebundene Aufgabe? (ort_bindung === station.id)
+    for (var j = 0; j < pool.length; j++) {
+      if (pool[j].ort_bindung && pool[j].ort_bindung === station.id && !usedIds.has(pool[j].id)) {
+        task = pool[j];
+        break;
+      }
+    }
+
+    // b) Zufaellig aus Phase + Kontext + Mechanik-Variety
+    if (!task) {
+      for (var j = 0; j < pool.length; j++) {
+        var t = pool[j];
+        if (usedIds.has(t.id)) continue;
+        if (t.kontext !== 'ort') continue;
+        if (t.phase !== phase && t.phase !== null) continue;
+        if (t.mechanik === lastMechanik) continue;
+        task = t;
+        break;
+      }
+    }
+
+    // c) Fallback: gleiche Mechanik erlauben
+    if (!task) {
+      for (var j = 0; j < pool.length; j++) {
+        var t = pool[j];
+        if (usedIds.has(t.id)) continue;
+        if (t.kontext !== 'ort') continue;
+        if (t.phase !== phase && t.phase !== null) continue;
+        task = t;
+        break;
+      }
+    }
+
+    // d) Fallback: benachbarte Phase
+    if (!task) {
+      for (var j = 0; j < pool.length; j++) {
+        var t = pool[j];
+        if (usedIds.has(t.id)) continue;
+        if (t.kontext !== 'ort') continue;
+        var diff = Math.abs((t.phase || phase) - phase);
+        if (diff <= 1) { task = t; break; }
+      }
+    }
+
+    // e) Letzter Fallback
+    if (!task) {
+      task = { id: 'fallback_ort_' + phase, kontext: 'ort', phase: phase, mechanik: 'matze',
+        text: 'Erz\u00e4hlt euch: Was war bisher euer Highlight heute Abend?', hint: null, punkte: 10, modi: [mode] };
+    }
+
+    usedIds.add(task.id);
+    lastMechanik = task.mechanik;
+    ortaufgaben.push(task);
+  }
+
+  // 2. WEG-AUFGABEN (4 Stueck, fuer Stationen 2-5)
+  var wegaufgaben = [];
+  for (var i = 1; i < STATION_COUNT; i++) {
+    var phase = i + 1;
+    var task = null;
+
+    // a) Zufaellig aus Phase + Kontext + Mechanik-Variety
+    for (var j = 0; j < pool.length; j++) {
+      var t = pool[j];
+      if (usedIds.has(t.id)) continue;
+      if (t.kontext !== 'weg') continue;
+      if (t.phase !== phase) continue;
+      if (t.mechanik === lastMechanik) continue;
+      task = t;
+      break;
+    }
+
+    // b) Fallback: gleiche Mechanik erlauben
+    if (!task) {
+      for (var j = 0; j < pool.length; j++) {
+        var t = pool[j];
+        if (usedIds.has(t.id)) continue;
+        if (t.kontext !== 'weg') continue;
+        if (t.phase !== phase) continue;
+        task = t;
+        break;
+      }
+    }
+
+    // c) Fallback: benachbarte Phase
+    if (!task) {
+      for (var j = 0; j < pool.length; j++) {
+        var t = pool[j];
+        if (usedIds.has(t.id)) continue;
+        if (t.kontext !== 'weg') continue;
+        var diff = Math.abs((t.phase || phase) - phase);
+        if (diff <= 1) { task = t; break; }
+      }
+    }
+
+    // d) Letzter Fallback
+    if (!task) {
+      task = { id: 'fallback_weg_' + phase, kontext: 'weg', phase: phase, mechanik: 'matze',
+        text: 'Reihum: Was w\u00e4re euer Traum-Reiseziel und warum?', hint: null, punkte: 10, modi: [mode] };
+    }
+
+    usedIds.add(task.id);
+    lastMechanik = task.mechanik;
+    wegaufgaben.push(task);
+  }
+
+  // Pool-Resolution
+  ortaufgaben = ortaufgaben.map(resolvePoolTask);
+  wegaufgaben = wegaufgaben.map(resolvePoolTask);
+
+  tourObj.ortaufgaben = ortaufgaben;
+  tourObj.wegaufgaben = wegaufgaben;
+  tourObj.usedTaskIds = Array.from(usedIds);
+}
+
 function createTour(mode) {
-  // Pick STATION_COUNT spaetis using nearest-neighbor from random start
-  const available = shuffle(SPAETIS);
-  const selected = [available[0]];
-  const remaining = available.slice(1);
+  // 1. Stationen: 5 aus 10 via nearest-neighbor
+  var available = shuffle(SPAETIS.slice());
+  var selected = [available[0]];
+  var remaining = available.slice(1);
 
   while (selected.length < STATION_COUNT && remaining.length > 0) {
-    const last = selected[selected.length - 1];
-    let nearestIdx = 0;
-    let nearestDist = Infinity;
-    for (let i = 0; i < remaining.length; i++) {
-      const d = haversine(last.lat, last.lng, remaining[i].lat, remaining[i].lng);
+    var last = selected[selected.length - 1];
+    var nearestIdx = 0;
+    var nearestDist = Infinity;
+    for (var i = 0; i < remaining.length; i++) {
+      var d = haversine(last.lat, last.lng, remaining[i].lat, remaining[i].lng);
       if (d < nearestDist) {
         nearestDist = d;
         nearestIdx = i;
@@ -112,71 +260,30 @@ function createTour(mode) {
     selected.push(remaining.splice(nearestIdx, 1)[0]);
   }
 
-  // Filter tasks by mode
-  const modeTasks = shuffle(AUFGABEN.filter(a => a.modi && a.modi.includes(mode)));
-
-  // Slot-based assignment: assign tasks by station position (1-5)
-  const wegaufgaben = [];
-  const usedIds = new Set();
-  let lastMechanik = null;
-
-  for (let slot = 1; slot <= STATION_COUNT; slot++) {
-    // Prefer tasks that match this slot AND have a different mechanik
-    let task = null;
-    for (let j = 0; j < modeTasks.length; j++) {
-      const t = modeTasks[j];
-      if (usedIds.has(t.id)) continue;
-      if (t.slots && t.slots.includes(slot) && t.mechanik !== lastMechanik) {
-        task = t;
-        break;
-      }
-    }
-    // Fallback: match slot but allow same mechanik
-    if (!task) {
-      for (let j = 0; j < modeTasks.length; j++) {
-        const t = modeTasks[j];
-        if (usedIds.has(t.id)) continue;
-        if (t.slots && t.slots.includes(slot)) { task = t; break; }
-      }
-    }
-    // Fallback: adjacent slot (+/-1)
-    if (!task) {
-      for (let j = 0; j < modeTasks.length; j++) {
-        const t = modeTasks[j];
-        if (usedIds.has(t.id)) continue;
-        if (t.slots && (t.slots.includes(slot - 1) || t.slots.includes(slot + 1))) { task = t; break; }
-      }
-    }
-    // Last resort: any unused task
-    if (!task) {
-      for (let j = 0; j < modeTasks.length; j++) {
-        if (!usedIds.has(modeTasks[j].id)) { task = modeTasks[j]; break; }
-      }
-    }
-    if (task) {
-      usedIds.add(task.id);
-      lastMechanik = task.mechanik;
-      wegaufgaben.push(task);
-    } else {
-      wegaufgaben.push({ id: 'fallback_' + slot, text: 'Lauft weiter zur n\u00e4chsten Station!', mechanik: 'activity', hint: null, punkte: 10 });
-    }
-  }
-
-  // Resolve pool tasks (draw random entries from pools)
-  var resolvedWeg = wegaufgaben.map(resolvePoolTask);
-
-  return {
-    mode,
+  // 2. Tour-Objekt erstellen
+  var tourObj = {
+    mode: mode,
     stations: selected,
-    wegaufgaben: resolvedWeg,
+    unusedStations: remaining,
+    ortaufgaben: [],
+    wegaufgaben: [],
     currentStation: 0,
-    phase: 'weg',
+    phase: 'ort',  // Station 1 startet direkt mit Ort (kein Weg)
     score: 0,
     stationScores: new Array(STATION_COUNT).fill(0),
     hintsUsed: new Array(STATION_COUNT).fill(false),
+    ortErledigt: new Array(STATION_COUNT).fill(false),
     completed: false,
-    startedAt: Date.now()
+    startedAt: Date.now(),
+    round: 1,
+    round1Score: null,
+    usedTaskIds: []
   };
+
+  // 3. Aufgaben zuweisen
+  assignTasks(tourObj, []);
+
+  return tourObj;
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
