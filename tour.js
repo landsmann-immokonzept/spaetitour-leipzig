@@ -328,7 +328,7 @@ function showRoute() {
   showScreen('screenRoute');
 
   // Summary pill
-  const modeLabels = { freunde: 'Freunde', date: 'Date', trinkspiel: 'Trinkspiel', 'team-duell': 'Team-Duell' };
+  const modeLabels = { freunde: 'Freunde', date: 'Date' };
   document.getElementById('routeSummaryPill').textContent =
     STATION_COUNT + ' Stationen \u00B7 ~45 Min \u00B7 ' + (modeLabels[tour.mode] || tour.mode);
 
@@ -403,24 +403,6 @@ function showWegaufgabe() {
 
   document.getElementById('wegText').textContent = task.text || '';
 
-  // Team-Modus display
-  const teamEl = document.getElementById('wegTeam');
-  if (task.meta && task.meta.team_modus) {
-    teamEl.textContent = 'Teilt euch: ' + task.meta.team_modus;
-    teamEl.style.display = 'block';
-  } else {
-    teamEl.style.display = 'none';
-  }
-
-  // Trinkregel display
-  const trinkEl = document.getElementById('wegTrink');
-  if (task.meta && task.meta.trink_regel) {
-    trinkEl.textContent = task.meta.trink_regel;
-    trinkEl.style.display = 'block';
-  } else {
-    trinkEl.style.display = 'none';
-  }
-
   // Pool displays
   document.getElementById('wegTabu').style.display = 'none';
   document.getElementById('wegSpektrum').style.display = 'none';
@@ -449,20 +431,6 @@ function showWegaufgabe() {
       document.getElementById('wegWyrA').textContent = r.data[0];
       document.getElementById('wegWyrB').textContent = r.data[1];
     }
-  }
-
-  // Non-pool tabu_woerter display
-  if (!task._resolved && task.meta && task.meta.tabu_woerter && task.meta.tabu_woerter.length > 0) {
-    document.getElementById('wegTabu').style.display = 'block';
-    var tabuWort = (task.text.match(/'([^']+)'/) || [])[1] || 'Begriff';
-    document.getElementById('wegTabuWort').textContent = tabuWort;
-    var ul = document.getElementById('wegTabuListe');
-    ul.innerHTML = '';
-    task.meta.tabu_woerter.forEach(function(w) {
-      var li = document.createElement('li');
-      li.textContent = w;
-      ul.appendChild(li);
-    });
   }
 
   // Re-trigger card animation

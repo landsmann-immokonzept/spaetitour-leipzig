@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Die Leipziger Spätitour</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,700;0,9..40,800;1,9..40,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ───────────────────────── VARIABLES ───────────────────────── */
+    :root {
+      --bg: #08080f;
+      --bg2: #0f0f1a;
+      --surface: rgba(255,255,255,0.05);
+      --surface-b: rgba(255,255,255,0.09);
+      --text: #f2f2f5;
+      --text2: #a8a8b8;
+      --muted: #5a5a70;
+      --accent: #f59e0b;
+      --accent-dim: rgba(245,158,11,0.14);
+      --accent-glow: rgba(245,158,11,0.28);
+      --accent-hover: #fbbf24;
+      --success: #10b981;
+      --success-dim: rgba(16,185,129,0.15);
+      --danger: #f87171;
+
+      --cat-gespraech: #a78bfa;
+      --cat-wortspiel: #60a5fa;
+      --cat-action: #f87171;
+      --cat-leipzig: #34d399;
+
+      --r: 14px;
+      --r-sm: 10px;
+      --r-pill: 100px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+    }
+
+    /* subtle bg grain */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 20% 10%, rgba(245,158,11,0.04) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 80% 90%, rgba(96,165,250,0.03) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ───────────────────────── SCREEN LAYOUT ───────────────────────── */
+    .screen {
+      display: none;
+      height: 100vh;
+      height: 100dvh;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .screen.active { display: flex; }
+
+    /* Watermark */
+    .screen::after {
+      content: '__KAEUFER_NAME__';
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) rotate(-25deg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: rgba(255,255,255,0.018);
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 0;
+      user-select: none;
+    }
+
+    /* Content scroll zone */
+    .scroll-zone {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 16px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Fixed bottom zone */
+    .bottom-zone {
+      flex-shrink: 0;
+      padding: 12px 20px 24px;
+      background: linear-gradient(to top, var(--bg) 70%, transparent);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ───────────────────────── ROUTE BAR ───────────────────────── */
+    .route-bar {
+      flex-shrink: 0;
+      background: var(--bg2);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 14px 20px;
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .route-inner {
+      display: flex;
+      align-items: flex-start;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      gap: 0;
+    }
+
+    .route-inner::-webkit-scrollbar { display: none; }
+
+    .route-stop {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .route-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .route-dot.done {
+      background: var(--success);
+      color: #041a11;
+      font-size: 0.9rem;
+    }
+
+    .route-dot.current {
+      background: transparent;
+      border: 2.5px solid var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 0 5px var(--accent-dim), 0 0 16px var(--accent-glow);
+      animation: pulse-dot 2.4s ease-in-out infinite;
+    }
+
+    .route-dot.future {
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      color: var(--muted);
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 0 4px var(--accent-dim), 0 0 12px var(--accent-glow); }
+      50%       { box-shadow: 0 0 0 8px rgba(245,158,11,0.07), 0 0 24px var(--accent-glow); }
+    }
+
+    .route-lbl {
+      margin-top: 5px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--muted);
+      max-width: 52px;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.3s;
+    }
+
+    .route-stop.current .route-lbl { color: var(--accent); }
+    .route-stop.done-stop .route-lbl { color: var(--success); }
+
+    .route-line {
+      width: 28px;
+      height: 2px;
+      flex-shrink: 0;
+      border-radius: 2px;
+      margin-top: 15px; /* align with dot center */
+      transition: background 0.4s;
+    }
+
+    .route-line.done { background: var(--success); }
+    .route-line.future { background: rgba(255,255,255,0.08); }
+
+    /* ───────────────────────── HIDDEN LEGACY ELEMENTS ───────────────────────── */
+    #progress-weg, #progress-spaeti,
+    #progress-label-weg, #progress-label-spaeti,
+    #weg-station-number, #spaeti-station-number,
+    #weg-separator { display: none !important; }
+
+    /* ───────────────────────── TYPOGRAPHY ───────────────────────── */
+    .label-upper {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ───────────────────────── START SCREEN ───────────────────────── */
+    .start-wrap {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .start-hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 32px 24px 16px;
+    }
+
+    .start-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 20px rgba(245,158,11,0.4));
+    }
+
+    .start-hero h1 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 10px;
+    }
+
+    .start-hero h1 span { color: var(--accent); }
+
+    .start-sub {
+      color: var(--text2);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      max-width: 280px;
+    }
+
+    .rules-list {
+      margin: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .rule-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--surface-b);
+      border-radius: var(--r-sm);
+      padding: 14px 16px;
+    }
+
+    .rule-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .rule-text {
+      font-size: 0.9rem;
+      color: var(--text2);
+      line-height: 1.4;
+    }
+
+    .rule-text strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .start-footer {
+      padding: 12px 20px 32px;
+    }
+
+    /* ───────────────────────── DESTINATION BLOCK ───────────────────────── */
+    .dest-block {
+      background: var(--surface);
+      border: 1px solid var(--surface-b);
+      border-radius: var(--r);
+      padding: 18px 20px;
+      margin-bottom: 12px;
+    }
+
+    .dest-eyebrow {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .dest-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+
+    .dest-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .dest-meta-item {
+      font-size: 0.82rem;
+      color: var(--text2);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .dest-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* GPS pill */
+    #gps-row {
+      display: none; /* JS shows/hides */
+    }
+
+    .gps-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: var(--r-pill);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    #gps-distance {
+      background: var(--surface);
+      border: 1px solid var(--surface-b);
+      border-radius: var(--r-pill);
+      padding: 4px 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text2);
+    }
+
+    #gps-arrived {
+      background: var(--success-dim);
+      border: 1px solid rgba(16,185,129,0.35);
+      border-radius: var(--r-pill);
+      padding: 4px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--success);
+      animation: arrived-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes arrived-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.65; }
+    }
+
+    /* Maps button */
+    #btn-nav {
+      display: none; /* JS shows */
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+      width: 100%;
+      padding: 11px 16px;
+      background: transparent;
+      border: 1px solid var(--surface-b);
+      border-radius: var(--r-sm);
+      color: var(--text2);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #btn-nav:active { transform: scale(0.97); background: var(--surface); }
+
+    /* ───────────────────────── TASK CARD ───────────────────────── */
+    .task-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-b);
+      border-radius: var(--r);
+      padding: 20px;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .task-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.2;
+    }
+
+    .task-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .kategorie-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: var(--r-pill);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .kategorie-badge.gespraech { background: rgba(167,139,250,0.12); color: var(--cat-gespraech); border: 1px solid rgba(167,139,250,0.22); }
+    .kategorie-badge.wortspiel  { background: rgba(96,165,250,0.12);  color: var(--cat-wortspiel);  border: 1px solid rgba(96,165,250,0.22); }
+    .kategorie-badge.action     { background: rgba(248,113,113,0.12); color: var(--cat-action);     border: 1px solid rgba(248,113,113,0.22); }
+    .kategorie-badge.leipzig    { background: rgba(52,211,153,0.12);  color: var(--cat-leipzig);    border: 1px solid rgba(52,211,153,0.22); }
+
+    #weg-aufgabe-typ {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .task-text {
+      font-size: 1.22rem;
+      line-height: 1.65;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .task-footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: transparent;
+      border: 1px dashed rgba(255,255,255,0.14);
+      border-radius: var(--r-pill);
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-hint:active { transform: scale(0.97); }
+    .btn-hint:hover { color: var(--text2); border-color: rgba(255,255,255,0.22); }
+
+    .hint-text {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: var(--r-sm);
+      font-size: 0.9rem;
+      color: var(--accent);
+      line-height: 1.55;
+    }
+
+    .task-points-row {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .task-pts-label { font-size: 0.72rem; color: var(--muted); font-weight: 500; }
+    .task-pts-value {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .task-pts-unit { font-size: 0.72rem; color: var(--muted); }
+
+    /* ───────────────────────── TYPE BADGES (Späti / Attraktion) ───────────────────────── */
+    .typ-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: var(--r-pill);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .typ-badge.spaeti {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(245,158,11,0.25);
+    }
+
+    .typ-badge.attraktion {
+      background: rgba(139,92,246,0.12);
+      color: #a78bfa;
+      border: 1px solid rgba(139,92,246,0.22);
+    }
+
+    /* ───────────────────────── ARRIVED BLOCK (Spaeti screen) ───────────────────────── */
+    .arrived-block {
+      text-align: center;
+      padding: 20px 0 16px;
+    }
+
+    .arrived-emoji {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 16px rgba(245,158,11,0.3));
+    }
+
+    .arrived-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      margin: 8px 0 4px;
+    }
+
+    .arrived-address {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* ───────────────────────── ACTION CARD ───────────────────────── */
+    .action-card {
+      background: var(--surface);
+      border: 1px solid var(--accent-dim);
+      border-radius: var(--r);
+      padding: 20px;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .action-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.4;
+    }
+
+    .action-lbl {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .action-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .action-text {
+      font-size: 0.95rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    /* ───────────────────────── POINTS BAR ───────────────────────── */
+    .points-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .points-bar-label { font-size: 0.8rem; color: var(--muted); }
+
+    .points-bar-value {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      transition: transform 0.15s;
+    }
+
+    .points-bar-value.bump {
+      animation: pts-bump 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes pts-bump {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.3); color: var(--accent-hover); }
+      100% { transform: scale(1); }
+    }
+
+    /* ───────────────────────── BUTTONS ───────────────────────── */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      height: 72px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      border: none;
+      border-radius: var(--r);
+      cursor: pointer;
+      transition: all 0.18s cubic-bezier(0.16,1,0.3,1);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 8px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #05040a;
+      box-shadow: 0 4px 24px rgba(245,158,11,0.25), 0 1px 0 rgba(255,255,255,0.15) inset;
+    }
+
+    .btn-primary:active {
+      background: var(--accent-hover);
+      box-shadow: 0 2px 8px rgba(245,158,11,0.2);
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #020f08;
+      box-shadow: 0 4px 24px rgba(16,185,129,0.25);
+    }
+
+    .btn-action:active { box-shadow: 0 2px 8px rgba(16,185,129,0.2); }
+
+    .btn-secondary {
+      background: var(--surface);
+      border: 1px solid var(--surface-b);
+      color: var(--text);
+      height: 60px;
+      font-size: 1.05rem;
+    }
+
+    .btn-secondary:active { background: rgba(255,255,255,0.07); }
+
+    .btn-skip {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-skip:active { color: var(--text2); }
+
+    /* Start button slightly shorter */
+    #screen-start .btn-primary { margin: 0; }
+
+    /* ───────────────────────── RESULTS SCREEN ───────────────────────── */
+    .result-hero {
+      text-align: center;
+      padding: 32px 0 24px;
+    }
+
+    .result-trophy {
+      font-size: 3.5rem;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 24px rgba(245,158,11,0.5));
+    }
+
+    .result-hero h1 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+
+    .result-points-display {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%);
+      border-radius: var(--r);
+      padding: 20px 40px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 32px rgba(245,158,11,0.2);
+    }
+
+    .result-pts-num {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #05040a;
+      line-height: 1;
+    }
+
+    .result-pts-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: rgba(0,0,0,0.45);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .result-ranking {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .station-breakdown { margin-bottom: 16px; }
+
+    .breakdown-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .breakdown-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      border: 1px solid var(--surface-b);
+      border-radius: var(--r-sm);
+      padding: 14px 16px;
+      margin-bottom: 6px;
+    }
+
+    .breakdown-info h4 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .breakdown-info p {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .breakdown-pts {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    /* ───────────────────────── SCREEN TRANSITION ───────────────────────── */
+    @keyframes screen-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .screen.active .scroll-zone,
+    .screen.active .start-wrap { animation: screen-in 0.35s cubic-bezier(0.16,1,0.3,1); }
+
+    /* ───────────────────────── CONFETTI ───────────────────────── */
+    #confetti {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      overflow: hidden;
+      display: none;
+    }
+
+    .cp {
+      position: absolute;
+      top: -20px;
+      animation: cp-fall linear forwards;
+    }
+
+    @keyframes cp-fall {
+      from { transform: translateY(0) rotate(0deg); opacity: 1; }
+      to   { transform: translateY(110vh) rotate(600deg); opacity: 0; }
+    }
+
+    /* ───────────────────────── MISC ───────────────────────── */
+    .spacer-sm { height: 8px; }
+    .spacer { height: 16px; }
+
+    .footer-mark {
+      text-align: center;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.08);
+      padding-top: 4px;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 1 — START
+══════════════════════════════════════════════════════════ -->
+<div id="screen-start" class="screen active">
+  <div class="start-wrap">
+    <div class="start-hero">
+      <div class="start-icon">🗺️</div>
+      <h1>Die Leipziger<br><span>Spätitour</span></h1>
+      <p class="start-sub">5 Stationen · echte Aufgaben · Leipzig erleben</p>
+    </div>
+
+    <div class="rules-list">
+      <div class="rule-item">
+        <span class="rule-icon">🎯</span>
+        <span class="rule-text"><strong>Unterwegs löst ihr Aufgaben</strong> – beantwortet Fragen, macht Pantomime, entdeckt die Stadt</span>
+      </div>
+      <div class="rule-item">
+        <span class="rule-icon">🏪</span>
+        <span class="rule-text"><strong>Am Späti gibt's Bonus-Aktionen</strong> – für extra Punkte als Gruppe</span>
+      </div>
+      <div class="rule-item">
+        <span class="rule-icon">🏆</span>
+        <span class="rule-text"><strong>Gemeinsam Punkte sammeln</strong> – jede Tour ist anders</span>
+      </div>
+    </div>
+
+    <div class="start-footer">
+      <button class="btn btn-primary" onclick="startTour()">
+        Los geht's! →
+      </button>
+      <div class="footer-mark">Tour von __KAEUFER_NAME__</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 2 — WEGAUFGABE (auf dem Weg zur nächsten Station)
+══════════════════════════════════════════════════════════ -->
+<div id="screen-wegaufgabe" class="screen">
+
+  <!-- Route visualization -->
+  <div class="route-bar" id="route-bar-weg"></div>
+
+  <!-- Hidden legacy elements (required by JS) -->
+  <div id="progress-weg" style="display:none"></div>
+  <div id="progress-label-weg" style="display:none"></div>
+  <div id="weg-station-number" style="display:none"></div>
+  <div id="weg-separator" style="display:none"></div>
+
+  <!-- Scrollable content -->
+  <div class="scroll-zone">
+
+    <!-- Destination -->
+    <div class="dest-block">
+      <div class="dest-eyebrow">Nächste Station</div>
+      <div class="dest-name" id="weg-station-name"></div>
+      <div class="dest-meta">
+        <span class="dest-meta-item" id="weg-gehzeit"></span>
+        <span class="dest-meta-item" id="weg-address" style="color:var(--muted)"></span>
+      </div>
+      <div class="dest-badges">
+        <div id="weg-typ-badge" class="typ-badge"></div>
+        <div id="gps-row" style="display:flex;gap:6px;align-items:center;">
+          <div id="gps-distance" style="display:none"></div>
+          <div id="gps-arrived" style="display:none">✓ Ihr seid da!</div>
+        </div>
+      </div>
+      <button id="btn-nav" onclick="openNavigation()">
+        📍 Route anzeigen
+      </button>
+    </div>
+
+    <!-- Task card -->
+    <div class="task-card">
+      <div class="task-header">
+        <div id="weg-kategorie-badge" class="kategorie-badge"></div>
+        <div id="weg-aufgabe-typ" class="aufgabe-typ"></div>
+      </div>
+
+      <p class="task-text" id="weg-aufgabe-text"></p>
+
+      <div class="task-footer-row">
+        <button class="btn-hint" id="btn-hint" onclick="useHint()">💡 Hinweis (–5 Pkt.)</button>
+        <div class="task-points-row">
+          <span class="task-pts-label">Möglich:&nbsp;</span>
+          <span class="task-pts-value" id="weg-punkte-wert"></span>
+          <span class="task-pts-unit">&nbsp;Pkt.</span>
+        </div>
+      </div>
+
+      <p class="hint-text" id="hint-text" style="display:none;"></p>
+    </div>
+
+  </div><!-- /scroll-zone -->
+
+  <!-- Fixed bottom -->
+  <div class="bottom-zone">
+    <button class="btn btn-primary" onclick="onWegErledigt()">✓ Erledigt!</button>
+    <button class="btn-skip" onclick="onWegSkip()">Überspringen (kein Bonus)</button>
+    <div class="footer-mark">Tour von __KAEUFER_NAME__</div>
+  </div>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 3 — SPAETI (angekommen)
+══════════════════════════════════════════════════════════ -->
+<div id="screen-spaeti" class="screen">
+
+  <!-- Route visualization -->
+  <div class="route-bar" id="route-bar-spaeti"></div>
+
+  <!-- Hidden legacy elements -->
+  <div id="progress-spaeti" style="display:none"></div>
+  <div id="progress-label-spaeti" style="display:none"></div>
+  <div id="spaeti-station-number" style="display:none"></div>
+
+  <!-- Scrollable content -->
+  <div class="scroll-zone">
+
+    <!-- Arrived -->
+    <div class="arrived-block">
+      <div class="arrived-emoji" id="arrived-emoji">🏪</div>
+      <div id="spaeti-typ-badge" class="typ-badge" style="margin:0 auto 4px;"></div>
+      <div class="arrived-name" id="spaeti-name"></div>
+      <div class="arrived-address" id="spaeti-address"></div>
+    </div>
+
+    <!-- Bonus action -->
+    <div class="action-card">
+      <div class="action-lbl" id="spaeti-aktion-label">Bonus-Aktion</div>
+      <div class="action-name" id="spaeti-aktion-name"></div>
+      <p class="action-text" id="spaeti-aktion-text"></p>
+    </div>
+
+    <!-- Points -->
+    <div class="points-bar">
+      <span class="points-bar-label">Punkte bisher:</span>
+      <span class="points-bar-value" id="spaeti-punkte-aktuell">0</span>
+      <span class="points-bar-label">Pkt.</span>
+    </div>
+
+  </div><!-- /scroll-zone -->
+
+  <!-- Fixed bottom -->
+  <div class="bottom-zone">
+    <button class="btn btn-action" onclick="onSpaetiAktion()" id="btn-aktion">🎉 Aktion gemacht!</button>
+    <button class="btn btn-secondary" onclick="spaetiWeiter()" id="btn-weiter">Weiter →</button>
+    <div class="footer-mark">Tour von __KAEUFER_NAME__</div>
+  </div>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 4 — ERGEBNIS
+══════════════════════════════════════════════════════════ -->
+<div id="screen-ergebnis" class="screen">
+  <div class="scroll-zone">
+
+    <div class="result-hero">
+      <div class="result-trophy">🏆</div>
+      <h1>Tour beendet!</h1>
+      <div class="result-points-display">
+        <div class="result-pts-num" id="ergebnis-punkte">0</div>
+        <div class="result-pts-label">Punkte</div>
+      </div>
+      <div class="result-ranking" id="ergebnis-ranking"></div>
+    </div>
+
+    <div class="station-breakdown">
+      <div class="breakdown-label">Eure Stationen</div>
+      <div id="station-list"></div>
+    </div>
+
+  </div>
+
+  <div class="bottom-zone">
+    <button class="btn btn-primary" onclick="neueTour()">🎲 Nochmal spielen</button>
+    <div class="footer-mark">Tour von __KAEUFER_NAME__</div>
+  </div>
+</div>
+
+
+<!-- Confetti overlay -->
+<div id="confetti" aria-hidden="true"></div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════════ -->
+<script>
+// ── Data placeholders (replaced by build script) ──
+const SPAETIS   = __SPAETIS_DATA__;
+const AUFGABEN  = __AUFGABEN_DATA__;
+const _k = '__KAEUFER_NAME__';
+
+// ── Constants ──
+const STATION_COUNT          = 5;
+const PUNKTE_STATION_ERREICHT = 20;
+const PUNKTE_AKTION          = 15;
+const HINT_COST              = 5;
+const GPS_THRESHOLD_M        = 40;
+const STORAGE_KEY            = 'spaetitour_state';
+
+const RANKINGS = [
+  { min: 0,   max: 100, label: 'Anfänger-Nachtschwärmer 🌙' },
+  { min: 101, max: 175, label: 'Späti-Kenner ⭐' },
+  { min: 176, max: 999, label: 'Leipzig-Legende 🔥' }
+];
+
+const KAT_LABELS = {
+  gespraech: 'Gespräch',
+  wortspiel: 'Wortspiel',
+  action: 'Action',
+  leipzig: 'Leipzig'
+};
+
+const TYP_LABELS = {
+  spaeti: 'Späti',
+  attraktion: 'Sehenswürdigkeit'
+};
+
+const TYP_EMOJIS = {
+  spaeti: '🏪',
+  attraktion: '🏛️'
+};
+
+// ── State ──
+let tour = null;
+let gpsWatchId = null;
+
+// ── Utils ──
+function haptic(type) {
+  if (!navigator.vibrate) return;
+  if (type === 'success') navigator.vibrate([8, 40, 8]);
+  else if (type === 'light') navigator.vibrate(6);
+  else if (type === 'heavy') navigator.vibrate([15, 60, 15]);
+}
+
+function haversineDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const r = d => d * Math.PI / 180;
+  const dLat = r(lat2 - lat1), dLon = r(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(r(lat1)) * Math.cos(r(lat2)) * Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ── Confetti ──
+function triggerConfetti() {
+  const colors = ['#f59e0b','#10b981','#60a5fa','#f87171','#a78bfa','#fbbf24','#34d399'];
+  const el = document.getElementById('confetti');
+  el.innerHTML = '';
+  for (let i = 0; i < 36; i++) {
+    const p = document.createElement('div');
+    p.className = 'cp';
+    const size = 5 + Math.random() * 9;
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      width: ${size}px;
+      height: ${size}px;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      border-radius: ${Math.random() > 0.4 ? '50%' : '2px'};
+      animation-delay: ${Math.random() * 0.4}s;
+      animation-duration: ${0.9 + Math.random() * 0.6}s;
+    `;
+    el.appendChild(p);
+  }
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 1800);
+}
+
+// ── Points animation ──
+function animatePoints(el, target) {
+  const dur = 900;
+  const start = performance.now();
+  (function step(now) {
+    const p = Math.min((now - start) / dur, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(target * eased);
+    if (p < 1) requestAnimationFrame(step);
+  })(start);
+}
+
+function bumpPoints(elId) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.classList.remove('bump');
+  void el.offsetWidth; // reflow
+  el.classList.add('bump');
+}
+
+// ── Screen management ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── Route bar rendering ──
+function renderRouteBar(barId) {
+  const bar = document.getElementById(barId);
+  if (!bar || !tour) return;
+
+  bar.innerHTML = '';
+  const inner = document.createElement('div');
+  inner.className = 'route-inner';
+
+  tour.stationen.forEach((station, i) => {
+    if (i > 0) {
+      const line = document.createElement('div');
+      line.className = 'route-line ' + (i <= tour.currentIdx ? 'done' : 'future');
+      inner.appendChild(line);
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'route-stop' + (i === tour.currentIdx ? ' current' : '') + (i < tour.currentIdx ? ' done-stop' : '');
+
+    const dot = document.createElement('div');
+    if (i < tour.currentIdx) dot.className = 'route-dot done';
+    else if (i === tour.currentIdx) dot.className = 'route-dot current';
+    else dot.className = 'route-dot future';
+    dot.textContent = i < tour.currentIdx ? '✓' : String(i + 1);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'route-lbl';
+    const words = station.name.split(/\s+/);
+    let short = words[0];
+    if (short.length > 11) short = short.slice(0, 10) + '.';
+    lbl.textContent = short;
+
+    wrap.appendChild(dot);
+    wrap.appendChild(lbl);
+    inner.appendChild(wrap);
+  });
+
+  bar.appendChild(inner);
+
+  // Scroll current into view
+  setTimeout(() => {
+    const cur = inner.querySelector('.current');
+    if (cur) cur.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }, 80);
+}
+
+// ── Progress (called by JS, also updates route bar) ──
+function renderProgress(containerId) {
+  const container = document.getElementById(containerId);
+  if (container) container.innerHTML = '';
+  const barId = containerId === 'progress-weg' ? 'route-bar-weg' : 'route-bar-spaeti';
+  renderRouteBar(barId);
+}
+
+// ── GPS ──
+function startGPS() {
+  if (!navigator.geolocation || !tour) return;
+  const station = tour.stationen[tour.currentIdx];
+  if (!station.lat || !station.lng) return;
+
+  const row = document.getElementById('gps-row');
+  const distEl = document.getElementById('gps-distance');
+  const arriveEl = document.getElementById('gps-arrived');
+
+  row.style.display = 'flex';
+  distEl.style.display = 'block';
+  distEl.textContent = 'GPS …';
+  arriveEl.style.display = 'none';
+
+  gpsWatchId = navigator.geolocation.watchPosition(
+    pos => {
+      const dist = haversineDistance(pos.coords.latitude, pos.coords.longitude, station.lat, station.lng);
+      if (dist < GPS_THRESHOLD_M) {
+        distEl.style.display = 'none';
+        arriveEl.style.display = 'block';
+      } else {
+        distEl.textContent = dist < 1000
+          ? Math.round(dist) + ' m entfernt'
+          : (dist / 1000).toFixed(1) + ' km entfernt';
+        distEl.style.display = 'block';
+        arriveEl.style.display = 'none';
+      }
+    },
+    () => { distEl.textContent = 'GPS nicht verfügbar'; },
+    { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
+  );
+}
+
+function stopGPS() {
+  if (gpsWatchId !== null) {
+    navigator.geolocation.clearWatch(gpsWatchId);
+    gpsWatchId = null;
+  }
+  const row = document.getElementById('gps-row');
+  if (row) row.style.display = 'none';
+}
+
+function openNavigation() {
+  if (!tour) return;
+  const s = tour.stationen[tour.currentIdx];
+  if (s.lat && s.lng) {
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}&travelmode=walking`, '_blank');
+  }
+}
+
+// ── Aufgabe parsen ──
+function parseAufgabe(text) {
+  const m = text.match(/^([A-ZÄÖÜ][A-ZÄÖÜ ]+):\s*/);
+  if (m) return { typ: m[1], text: text.slice(m[0].length) };
+  return { typ: null, text };
+}
+
+// ── Tour-Logik ──
+function selectSpaetis(spaetis, count) {
+  return shuffle(spaetis).slice(0, Math.min(count, spaetis.length));
+}
+
+function optimizeRoute(stationen) {
+  if (stationen.length <= 1) return stationen;
+  const startIdx = Math.floor(Math.random() * stationen.length);
+  const result = [stationen[startIdx]];
+  const remaining = [...stationen];
+  remaining.splice(startIdx, 1);
+  while (remaining.length > 0) {
+    const current = result[result.length - 1];
+    let nearestIdx = 0, minTime = Infinity;
+    for (let i = 0; i < remaining.length; i++) {
+      const time = current.gehzeit_min && current.gehzeit_min[remaining[i].id];
+      if (time && time < minTime) { minTime = time; nearestIdx = i; }
+    }
+    result.push(remaining[nearestIdx]);
+    remaining.splice(nearestIdx, 1);
+  }
+  return result;
+}
+
+function assignAufgaben(spaetis, aufgaben) {
+  const shuffled = shuffle(aufgaben);
+  return spaetis.map((s, i) => ({ ...s, aufgabe: shuffled[i] }));
+}
+
+function createTour(spaetis, aufgaben, count) {
+  const selected  = selectSpaetis(spaetis, count);
+  const optimized = optimizeRoute(selected);
+  const stationen = assignAufgaben(optimized, aufgaben);
+  for (let i = 1; i < stationen.length; i++) {
+    const prev = stationen[i - 1], curr = stationen[i];
+    curr.gehzeit = (prev.gehzeit_min && prev.gehzeit_min[curr.id]) || 15;
+  }
+  return { stationen };
+}
+
+// ── Storage ──
+function saveTour()  { if (tour) localStorage.setItem(STORAGE_KEY, JSON.stringify(tour)); }
+function clearTour() { localStorage.removeItem(STORAGE_KEY); }
+function loadTour()  {
+  const s = localStorage.getItem(STORAGE_KEY);
+  if (s) try { return JSON.parse(s); } catch(e) {}
+  return null;
+}
+
+// ── Screens ──
+function showWegaufgabe() {
+  const station = tour.stationen[tour.currentIdx];
+
+  renderProgress('progress-weg');
+  document.getElementById('progress-label-weg').textContent =
+    'Station ' + (tour.currentIdx + 1) + ' von ' + tour.stationen.length;
+
+  document.getElementById('weg-station-number').textContent = 'Station ' + (tour.currentIdx + 1);
+
+  // Typ badge
+  const wegTyp = station.typ || 'spaeti';
+  const typBadge = document.getElementById('weg-typ-badge');
+  typBadge.className = 'typ-badge ' + wegTyp;
+  typBadge.textContent = TYP_LABELS[wegTyp] || wegTyp;
+
+  document.getElementById('weg-station-name').textContent = station.name;
+  document.getElementById('weg-address').textContent = station.adresse;
+
+  // Gehzeit
+  const gehEl = document.getElementById('weg-gehzeit');
+  if (station.gehzeit) {
+    gehEl.textContent = '🚶 ' + station.gehzeit + ' Min.';
+    gehEl.style.display = 'inline';
+  } else {
+    gehEl.style.display = 'none';
+  }
+
+  // Kategorie-Badge
+  const badge = document.getElementById('weg-kategorie-badge');
+  const kat = station.aufgabe.kategorie;
+  badge.className = 'kategorie-badge ' + kat;
+  badge.textContent = KAT_LABELS[kat] || kat;
+
+  // Aufgabe
+  const parsed = parseAufgabe(station.aufgabe.text);
+  const typEl = document.getElementById('weg-aufgabe-typ');
+  if (parsed.typ) {
+    typEl.textContent = parsed.typ;
+    typEl.style.display = 'block';
+    typEl.style.color = 'var(--cat-' + kat + ')';
+  } else {
+    typEl.style.display = 'none';
+  }
+  document.getElementById('weg-aufgabe-text').textContent = parsed.text;
+
+  const punkte = PUNKTE_STATION_ERREICHT + station.aufgabe.punkte;
+  document.getElementById('weg-punkte-wert').textContent = punkte;
+
+  // Hint
+  const btnHint = document.getElementById('btn-hint');
+  const hintText = document.getElementById('hint-text');
+  if (station.aufgabe.hint) {
+    if (station.hintUsed) {
+      btnHint.style.display = 'none';
+      hintText.textContent = station.aufgabe.hint;
+      hintText.style.display = 'block';
+      document.getElementById('weg-punkte-wert').textContent = punkte - HINT_COST;
+    } else {
+      btnHint.style.display = 'inline-flex';
+      hintText.style.display = 'none';
+    }
+  } else {
+    btnHint.style.display = 'none';
+    hintText.style.display = 'none';
+  }
+
+  // GPS + Nav
+  stopGPS();
+  const btnNav = document.getElementById('btn-nav');
+  if (station.lat && station.lng) {
+    btnNav.style.display = 'flex';
+    startGPS();
+  } else {
+    btnNav.style.display = 'none';
+  }
+
+  showScreen('screen-wegaufgabe');
+}
+
+function showSpaeti() {
+  stopGPS();
+  const station = tour.stationen[tour.currentIdx];
+
+  renderProgress('progress-spaeti');
+  document.getElementById('progress-label-spaeti').textContent =
+    'Station ' + (tour.currentIdx + 1) + ' von ' + tour.stationen.length;
+  document.getElementById('spaeti-station-number').textContent = 'Station ' + (tour.currentIdx + 1);
+
+  const spaetiTyp = station.typ || 'spaeti';
+  const typBadge = document.getElementById('spaeti-typ-badge');
+  typBadge.className = 'typ-badge ' + spaetiTyp;
+  typBadge.textContent = TYP_LABELS[spaetiTyp] || spaetiTyp;
+
+  // Emoji per type
+  document.getElementById('arrived-emoji').textContent = TYP_EMOJIS[spaetiTyp] || '🏪';
+
+  // Aktion label
+  document.getElementById('spaeti-aktion-label').textContent =
+    spaetiTyp === 'attraktion' ? 'Challenge vor Ort' : 'Bonus-Aktion vor Ort';
+
+  document.getElementById('spaeti-name').textContent = station.name;
+  document.getElementById('spaeti-address').textContent = station.adresse;
+  document.getElementById('spaeti-aktion-name').textContent = station.aktion.name;
+  document.getElementById('spaeti-aktion-text').textContent = station.aktion.beschreibung;
+  document.getElementById('spaeti-punkte-aktuell').textContent = tour.punkte;
+
+  const btnAktion = document.getElementById('btn-aktion');
+  btnAktion.style.display = station.aktionErledigt ? 'none' : 'flex';
+
+  const btnWeiter = document.getElementById('btn-weiter');
+  btnWeiter.textContent = (tour.currentIdx === tour.stationen.length - 1) ? 'Tour beenden' : 'Weiter →';
+
+  showScreen('screen-spaeti');
+}
+
+function showErgebnis() {
+  const el = document.getElementById('ergebnis-punkte');
+  el.textContent = '0';
+
+  const ranking = RANKINGS.find(r => tour.punkte >= r.min && tour.punkte <= r.max);
+  document.getElementById('ergebnis-ranking').textContent = ranking ? ranking.label : 'Spätitour-Legende 🌟';
+
+  const listEl = document.getElementById('station-list');
+  listEl.innerHTML = '';
+
+  tour.stationen.forEach(station => {
+    const item = document.createElement('div');
+    item.className = 'breakdown-item';
+
+    const info = document.createElement('div');
+    info.className = 'breakdown-info';
+
+    const name = document.createElement('h4');
+    name.textContent = station.name;
+
+    const parts = [];
+    if (station.aufgabeErledigt) {
+      const ap = Math.max(0, station.aufgabe.punkte - (station.hintUsed ? HINT_COST : 0));
+      parts.push('Aufgabe +' + ap);
+    }
+    if (station.aktionErledigt) parts.push('Aktion +' + station.aktion.bonuspunkte);
+    parts.push('Station +' + PUNKTE_STATION_ERREICHT);
+
+    const det = document.createElement('p');
+    det.textContent = parts.join(' · ');
+
+    info.appendChild(name);
+    info.appendChild(det);
+
+    const pts = document.createElement('div');
+    pts.className = 'breakdown-pts';
+    let total = PUNKTE_STATION_ERREICHT;
+    if (station.aufgabeErledigt) total += Math.max(0, station.aufgabe.punkte - (station.hintUsed ? HINT_COST : 0));
+    if (station.aktionErledigt) total += station.aktion.bonuspunkte;
+    pts.textContent = total;
+
+    item.appendChild(info);
+    item.appendChild(pts);
+    listEl.appendChild(item);
+  });
+
+  showScreen('screen-ergebnis');
+
+  // Animate points counter
+  setTimeout(() => animatePoints(el, tour.punkte), 200);
+  triggerConfetti();
+}
+
+// ── Actions ──
+function startTour() {
+  haptic('light');
+  tour = createTour(SPAETIS, AUFGABEN, STATION_COUNT);
+  tour.currentIdx = 0;
+  tour.punkte = 0;
+  tour.stationen.forEach(s => {
+    s.aufgabeErledigt = false;
+    s.aktionErledigt = false;
+    s.hintUsed = false;
+  });
+  saveTour();
+  showWegaufgabe();
+}
+
+function useHint() {
+  const station = tour.stationen[tour.currentIdx];
+  if (!station.aufgabe.hint || station.hintUsed) return;
+  haptic('light');
+  station.hintUsed = true;
+  saveTour();
+  document.getElementById('btn-hint').style.display = 'none';
+  const ht = document.getElementById('hint-text');
+  ht.textContent = station.aufgabe.hint;
+  ht.style.display = 'block';
+  const punkte = PUNKTE_STATION_ERREICHT + station.aufgabe.punkte - HINT_COST;
+  document.getElementById('weg-punkte-wert').textContent = punkte;
+}
+
+function wegErledigt() {
+  const station = tour.stationen[tour.currentIdx];
+  station.aufgabeErledigt = true;
+  const ap = Math.max(0, station.aufgabe.punkte - (station.hintUsed ? HINT_COST : 0));
+  tour.punkte += ap + PUNKTE_STATION_ERREICHT;
+  saveTour();
+  showSpaeti();
+}
+
+function wegSkip() {
+  tour.stationen[tour.currentIdx].aufgabeErledigt = false;
+  tour.punkte += PUNKTE_STATION_ERREICHT;
+  saveTour();
+  showSpaeti();
+}
+
+// Wrapped versions with haptic + confetti
+function onWegErledigt() {
+  haptic('success');
+  triggerConfetti();
+  setTimeout(wegErledigt, 350);
+}
+
+function onWegSkip() {
+  haptic('light');
+  wegSkip();
+}
+
+function spaetiAktion() {
+  const station = tour.stationen[tour.currentIdx];
+  if (!station.aktionErledigt) {
+    station.aktionErledigt = true;
+    tour.punkte += station.aktion.bonuspunkte;
+    saveTour();
+    document.getElementById('spaeti-punkte-aktuell').textContent = tour.punkte;
+    bumpPoints('spaeti-punkte-aktuell');
+    document.getElementById('btn-aktion').style.display = 'none';
+  }
+}
+
+function onSpaetiAktion() {
+  haptic('success');
+  triggerConfetti();
+  spaetiAktion();
+}
+
+function spaetiWeiter() {
+  haptic('light');
+  tour.currentIdx++;
+  if (tour.currentIdx >= tour.stationen.length) {
+    clearTour();
+    showErgebnis();
+  } else {
+    saveTour();
+    showWegaufgabe();
+  }
+}
+
+function neueTour() {
+  haptic('light');
+  clearTour();
+  showScreen('screen-start');
+}
+
+// ── Init: Fortsetzen falls Tour gespeichert ──
+(function() {
+  const saved = loadTour();
+  if (saved) {
+    tour = saved;
+    const station = tour.stationen[tour.currentIdx];
+    if (station && !station.aufgabeErledigt) showWegaufgabe();
+    else showSpaeti();
+  }
+})();
+</script>
+
+</body>
+</html>
