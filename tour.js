@@ -485,12 +485,15 @@ function showRoute() {
     if (isActive) statusHtml = '<div class="route-timeline__status">Aktuelle Station</div>';
     else if (isCompleted) statusHtml = '<div class="route-timeline__status" style="color:var(--green)">Abgeschlossen</div>';
 
+    var phaseHtml = '<div class="route-timeline__phase">' + PHASE_LABELS[i] + '</div>';
+
     item.innerHTML =
       '<div class="route-timeline__line"></div>' +
       '<div class="route-timeline__number ' + (isCompleted ? 'completed' : '') + ' ' + (isActive ? 'active' : '') + '">' + (i + 1) + '</div>' +
       '<div class="route-timeline__info">' +
         '<div class="route-timeline__name">' + s.name + '</div>' +
         '<div class="route-timeline__address">' + (s.adresse || '') + '</div>' +
+        phaseHtml +
         statusHtml +
       '</div>';
     timeline.appendChild(item);
