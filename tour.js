@@ -105,6 +105,37 @@ function getRanking(score) {
   return RANKINGS.find(r => score >= r.min && score <= r.max) || RANKINGS[0];
 }
 
+function renderPoolDisplay(task, prefix) {
+  document.getElementById(prefix + 'Tabu').style.display = 'none';
+  document.getElementById(prefix + 'Spektrum').style.display = 'none';
+  document.getElementById(prefix + 'Wyr').style.display = 'none';
+
+  if (task._resolved) {
+    var r = task._resolved;
+    if (r.typ === 'tabu') {
+      document.getElementById(prefix + 'Tabu').style.display = 'block';
+      document.getElementById(prefix + 'TabuWort').textContent = r.data.wort;
+      var ul = document.getElementById(prefix + 'TabuListe');
+      ul.innerHTML = '';
+      r.data.verboten.forEach(function(w) {
+        var li = document.createElement('li');
+        li.textContent = w;
+        ul.appendChild(li);
+      });
+    }
+    if (r.typ === 'spektrum') {
+      document.getElementById(prefix + 'Spektrum').style.display = 'block';
+      document.getElementById(prefix + 'SpektrumLeft').textContent = r.data[0];
+      document.getElementById(prefix + 'SpektrumRight').textContent = r.data[1];
+    }
+    if (r.typ === 'wyr') {
+      document.getElementById(prefix + 'Wyr').style.display = 'block';
+      document.getElementById(prefix + 'WyrA').textContent = r.data[0];
+      document.getElementById(prefix + 'WyrB').textContent = r.data[1];
+    }
+  }
+}
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // TOUR CREATION
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -330,15 +361,15 @@ function setMainPadding(nav, tab) {
 
 function switchTab(tab) {
   activeTab = tab;
-  document.querySelectorAll('.tab-bar__item').forEach(t => t.classList.remove('active'));
-
-  const tabId = 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1);
-  const tabEl = document.getElementById(tabId);
+  document.querySelectorAll('.tab-bar__item').forEach(function(t) { t.classList.remove('active'); });
+  var tabId = 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1);
+  var tabEl = document.getElementById(tabId);
   if (tabEl) tabEl.classList.add('active');
 
   if (tab === 'tour') {
     if (tour.phase === 'weg') showWegaufgabe();
-    else showSpaeti();
+    else if (tour.phase === 'ort') showOrtaufgabe();
+    else if (tour.phase === 'bonus') showBonus();
   } else if (tab === 'karte') {
     showRoute();
   } else if (tab === 'score') {
@@ -404,8 +435,10 @@ function resumeTour() {
     showErgebnis();
   } else if (tour.phase === 'weg') {
     showWegaufgabe();
-  } else {
-    showSpaeti();
+  } else if (tour.phase === 'ort') {
+    showOrtaufgabe();
+  } else if (tour.phase === 'bonus') {
+    showBonus();
   }
 }
 
@@ -468,7 +501,7 @@ function showRoute() {
   if (tour.completed) {
     cta.textContent = 'Ergebnis anzeigen';
     cta.onclick = function() { showErgebnis(); };
-  } else if (tour.currentStation === 0 && tour.phase === 'weg') {
+  } else if (tour.currentStation === 0 && tour.phase === 'ort') {
     cta.textContent = 'Tour starten';
     cta.onclick = function() { switchTab('tour'); };
   } else {
@@ -481,29 +514,29 @@ function showRoute() {
 // SCREEN: WEGAUFGABE
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function showWegaufgabe() {
-  const i = tour.currentStation;
+  var i = tour.currentStation;
+  var targetStation = tour.stations[i];
   setNavBar('Station ' + (i + 1) + '/' + STATION_COUNT, { score: true });
   showTabBar();
   setMainPadding(true, true);
   showScreen('screenWeg');
 
   // Progress dots
-  const dotsEl = document.getElementById('wegDots');
+  var dotsEl = document.getElementById('wegDots');
   dotsEl.innerHTML = '';
-  for (let d = 0; d < STATION_COUNT; d++) {
-    const dot = document.createElement('div');
+  for (var d = 0; d < STATION_COUNT; d++) {
+    var dot = document.createElement('div');
     dot.className = 'progress-dots__dot';
     if (d === i) dot.classList.add('active');
     else if (d < i) dot.classList.add('completed');
     dotsEl.appendChild(dot);
   }
 
-  // Task card
-  const task = tour.wegaufgaben[i];
-  const badge = document.getElementById('wegBadge');
-  const mechanik = task.mechanik || 'activity';
-  const MECH_LABELS = { 'matze': 'Hotel Matze', 'just-one': 'Just One', 'activity': 'Activity', 'wer-bin-ich': 'Wer bin ich', 'challenge': 'Challenge', 'ranking': 'Ranking', 'stadt': 'Stadtmission' };
-  const color = MECHANIK_COLORS[mechanik] || '#fbbf24';
+  // Task card (wegaufgaben index = currentStation - 1)
+  var task = tour.wegaufgaben[i - 1];
+  var mechanik = task.mechanik || 'matze';
+  var color = MECHANIK_COLORS[mechanik] || '#fbbf24';
+  var badge = document.getElementById('wegBadge');
   badge.textContent = MECH_LABELS[mechanik] || mechanik;
   badge.style.background = color + '22';
   badge.style.color = color;
@@ -511,71 +544,97 @@ function showWegaufgabe() {
   document.getElementById('wegText').textContent = task.text || '';
 
   // Pool displays
-  document.getElementById('wegTabu').style.display = 'none';
-  document.getElementById('wegSpektrum').style.display = 'none';
-  document.getElementById('wegWyr').style.display = 'none';
+  renderPoolDisplay(task, 'weg');
 
-  if (task._resolved) {
-    var r = task._resolved;
-    if (r.typ === 'tabu') {
-      document.getElementById('wegTabu').style.display = 'block';
-      document.getElementById('wegTabuWort').textContent = r.data.wort;
-      var ul = document.getElementById('wegTabuListe');
-      ul.innerHTML = '';
-      r.data.verboten.forEach(function(w) {
-        var li = document.createElement('li');
-        li.textContent = w;
-        ul.appendChild(li);
-      });
-    }
-    if (r.typ === 'spektrum') {
-      document.getElementById('wegSpektrum').style.display = 'block';
-      document.getElementById('wegSpektrumLeft').textContent = r.data[0];
-      document.getElementById('wegSpektrumRight').textContent = r.data[1];
-    }
-    if (r.typ === 'wyr') {
-      document.getElementById('wegWyr').style.display = 'block';
-      document.getElementById('wegWyrA').textContent = r.data[0];
-      document.getElementById('wegWyrB').textContent = r.data[1];
-    }
-  }
-
-  // Re-trigger card animation
-  const card = document.getElementById('wegCard');
+  // Card animation
+  var card = document.getElementById('wegCard');
   card.classList.remove('animate-card-in');
   void card.offsetWidth;
   card.classList.add('animate-card-in');
 
-  // Timer auto-start
+  // Timer
   cancelTimer();
-  if (task.meta && task.meta.timer_sek && task.meta.timer_sek >= 5) {
-    startTimer(task.meta.timer_sek, null);
+  if (task.timer && task.timer >= 5) {
+    startTimer(task.timer, null);
   }
 
-  // Start GPS tracking
+  // GPS tracking
   startGPS();
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// SCREEN: SPAETI
+// SCREEN: ORT-AUFGABE
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function showSpaeti() {
-  const i = tour.currentStation;
-  const station = tour.stations[i];
+function showOrtaufgabe() {
+  var i = tour.currentStation;
+  var station = tour.stations[i];
   setNavBar(station.name, { score: true });
   showTabBar();
   setMainPadding(true, true);
-  showScreen('screenSpaeti');
+  showScreen('screenOrt');
 
-  document.getElementById('spaetiName').textContent = station.name;
-  document.getElementById('spaetiAddress').textContent = station.adresse || '';
-  const aktion = station.aktion || {};
-  document.getElementById('spaetiAktion').textContent = aktion.beschreibung || aktion.name || 'Kauft euch ein Getr\u00e4nk!';
-  const bonus = aktion.bonuspunkte || PTS_STATION;
-  document.getElementById('spaetiBonus').textContent = '+' + bonus + ' Punkte';
+  // Progress dots
+  var dotsEl = document.getElementById('ortDots');
+  dotsEl.innerHTML = '';
+  for (var d = 0; d < STATION_COUNT; d++) {
+    var dot = document.createElement('div');
+    dot.className = 'progress-dots__dot';
+    if (d === i) dot.classList.add('active');
+    else if (d < i) dot.classList.add('completed');
+    dotsEl.appendChild(dot);
+  }
 
-  // Re-trigger card animation
-  const card = document.getElementById('spaetiCard');
+  // Station label
+  document.getElementById('ortStationLabel').textContent = '@ ' + station.name;
+
+  // Task card
+  var task = tour.ortaufgaben[i];
+  var mechanik = task.mechanik || 'matze';
+  var color = MECHANIK_COLORS[mechanik] || '#fbbf24';
+  var badge = document.getElementById('ortBadge');
+  badge.textContent = MECH_LABELS[mechanik] || mechanik;
+  badge.style.background = color + '22';
+  badge.style.color = color;
+
+  document.getElementById('ortText').textContent = task.text || '';
+
+  // Pool displays
+  renderPoolDisplay(task, 'ort');
+
+  // Card animation
+  var card = document.getElementById('ortCard');
+  card.classList.remove('animate-card-in');
+  void card.offsetWidth;
+  card.classList.add('animate-card-in');
+
+  // Timer
+  cancelTimer();
+  if (task.timer && task.timer >= 5) {
+    startTimer(task.timer, null);
+  }
+
+  stopGPS();
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SCREEN: BONUS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function showBonus() {
+  var i = tour.currentStation;
+  var station = tour.stations[i];
+  setNavBar(station.name, { score: true });
+  showTabBar();
+  setMainPadding(true, true);
+  showScreen('screenBonus');
+
+  var aktion = station.aktion || {};
+  document.getElementById('bonusName').textContent = aktion.name || 'Hausspiel';
+  document.getElementById('bonusDesc').textContent = aktion.beschreibung || 'Fragt den Verk\u00e4ufer nach dem Hausspiel!';
+  var bonus = aktion.bonuspunkte || PTS_STATION;
+  document.getElementById('bonusPoints').textContent = '+' + bonus + ' Punkte';
+
+  // Card animation
+  var card = document.getElementById('bonusCard');
   card.classList.remove('animate-card-in');
   void card.offsetWidth;
   card.classList.add('animate-card-in');
@@ -656,38 +715,69 @@ function showScoreTab() {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function wegErledigt() {
   cancelTimer();
-  const i = tour.currentStation;
-  const task = tour.wegaufgaben[i];
-  const basePts = task.punkte || PTS_STATION;
-  const pts = tour.hintsUsed[i] ? Math.max(basePts - PTS_HINT, 5) : basePts;
+  var i = tour.currentStation;
+  var task = tour.wegaufgaben[i - 1];
+  var basePts = task.punkte || PTS_STATION;
+  var pts = tour.hintsUsed[i] ? Math.max(basePts - PTS_HINT, 5) : basePts;
   tour.stationScores[i] += pts;
   tour.score += pts;
-  tour.phase = 'spaeti';
+  tour.phase = 'ort';
   saveTour();
   floatPoints(pts);
   if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-  showSpaeti();
+  showOrtaufgabe();
 }
 
 function wegSkip() {
   cancelTimer();
-  tour.phase = 'spaeti';
+  tour.phase = 'ort';
   saveTour();
-  showSpaeti();
+  showOrtaufgabe();
 }
 
 function showHintSheet() {
-  const task = tour.wegaufgaben[tour.currentStation];
-  const hint = task.hint || 'Kein Hinweis verf\u00fcgbar.';
+  var task = tour.wegaufgaben[tour.currentStation - 1];
+  var hint = task.hint || 'Kein Hinweis verf\u00fcgbar.';
   tour.hintsUsed[tour.currentStation] = true;
   saveTour();
   openSheet('Hinweis', hint);
 }
 
-function spaetiAktion() {
-  const i = tour.currentStation;
-  const station = tour.stations[i];
-  const bonus = (station.aktion && station.aktion.bonuspunkte) || PTS_STATION;
+function ortErledigt() {
+  cancelTimer();
+  var i = tour.currentStation;
+  var task = tour.ortaufgaben[i];
+  var basePts = task.punkte || PTS_STATION;
+  var pts = tour.hintsUsed[i] ? Math.max(basePts - PTS_HINT, 5) : basePts;
+  tour.stationScores[i] += pts;
+  tour.score += pts;
+  tour.ortErledigt[i] = true;
+  tour.phase = 'bonus';
+  saveTour();
+  floatPoints(pts);
+  if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+  showBonus();
+}
+
+function ortSkip() {
+  cancelTimer();
+  tour.phase = 'bonus';
+  saveTour();
+  showBonus();
+}
+
+function showOrtHint() {
+  var task = tour.ortaufgaben[tour.currentStation];
+  var hint = task.hint || 'Kein Hinweis verf\u00fcgbar.';
+  tour.hintsUsed[tour.currentStation] = true;
+  saveTour();
+  openSheet('Hinweis', hint);
+}
+
+function bonusMitgemacht() {
+  var i = tour.currentStation;
+  var station = tour.stations[i];
+  var bonus = (station.aktion && station.aktion.bonuspunkte) || PTS_STATION;
   tour.stationScores[i] += bonus;
   tour.score += bonus;
   floatPoints(bonus);
@@ -695,7 +785,7 @@ function spaetiAktion() {
   advanceStation();
 }
 
-function spaetiWeiter() {
+function bonusSkip() {
   advanceStation();
 }
 
@@ -753,9 +843,9 @@ function startGPS() {
         setTimeout(function() {
           if (tour && tour.phase === 'weg') {
             cancelTimer();
-            tour.phase = 'spaeti';
+            tour.phase = 'ort';
             saveTour();
-            showSpaeti();
+            showOrtaufgabe();
           }
         }, 1500);
       }
