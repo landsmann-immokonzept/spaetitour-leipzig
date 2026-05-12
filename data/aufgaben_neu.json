@@ -285,9 +285,9 @@
       "freunde",
       "date"
     ],
-    "mechanik": "matze",
-    "text": "Schaut euch die Hinterhöfe an denen ihr vorbeikommt an. Welcher gefällt euch am besten? Was würdet ihr hier machen wenn er euch gehören würde?",
-    "hint": "Garten, Atelier, Hängematte, Grillplatz -- träumt ein bisschen.",
+    "mechanik": "ranking",
+    "text": "Schaut euch die Hinterhöfe an denen ihr vorbeikommt an. Welcher gefällt euch am besten? Einigt euch -- und dann: Was würdet ihr hier machen wenn er euch gehören würde?",
+    "hint": "Garten, Atelier, Hängematte, Grillplatz -- träumt ein bisschen. Die Einigung ist der Spaß.",
     "punkte": 15
   },
   {
@@ -611,9 +611,9 @@
     "modi": [
       "date"
     ],
-    "mechanik": "matze",
-    "text": "Würdest du lieber... Was sagt eure Antwort über euch aus? Geht tiefer als die erste Reaktion.",
-    "hint": "Nicht nur antworten -- erklärt was die Wahl über eure Werte verrät.",
+    "mechanik": "ranking",
+    "text": "Würdest du lieber... Vergleicht eure Antworten und einigt euch: Was sagt die Wahl über eure Werte aus?",
+    "hint": "Nicht nur antworten -- diskutiert was die Wahl über euch verrät. Gemeinsamkeiten und Unterschiede.",
     "punkte": 15,
     "pool": {
       "typ": "wyr"
@@ -638,9 +638,9 @@
     "modi": [
       "freunde"
     ],
-    "mechanik": "matze",
-    "text": "Schaut mal die Fassaden hier an. Schätzt: Wie alt ist das Gebäude rechts von euch? Und dann die eigentliche Frage -- was war vor dem gleichen Zeitraum der wichtigste Moment in eurem Leben?",
-    "hint": "Gründerzeit ist um 1900, Plattenbau 70er/80er, Neubau nach 2000. Was war vor 20, 50, 120 Jahren in eurer Geschichte?",
+    "mechanik": "ranking",
+    "text": "Schaut mal die Fassaden hier an. Schätzt: Wie alt ist das Gebäude rechts von euch? Einigt euch auf eine Jahreszahl. Und dann die eigentliche Frage -- was war vor dem gleichen Zeitraum der wichtigste Moment in eurem Leben?",
+    "hint": "Gründerzeit ist um 1900, Plattenbau 70er/80er, Neubau nach 2000. Erst einigen, dann erzählen.",
     "punkte": 15
   },
   {
@@ -976,7 +976,7 @@
     "modi": [
       "date"
     ],
-    "mechanik": "matze",
+    "mechanik": "challenge",
     "text": "Schickt euch gleichzeitig per Handy ein Emoji das den heutigen Abend beschreibt. Zeigt auf drei -- und dann erklärt warum genau dieses.",
     "hint": "Das erste Emoji das euch einfällt. Die Erklärung ist das eigentlich Spannende.",
     "punkte": 10
@@ -1062,9 +1062,9 @@
       "freunde",
       "date"
     ],
-    "mechanik": "matze",
-    "text": "Schaut euch die Straße an auf der ihr gerade lauft. Wenn sie nach diesem Abend benannt würde -- wie hieße sie?",
-    "hint": "Insider aus der Tour, ein Gefühl, ein Running Gag -- macht es persönlich.",
+    "mechanik": "ranking",
+    "text": "Schaut euch die Straße an auf der ihr gerade lauft. Wenn sie nach diesem Abend benannt würde -- wie hieße sie? Einigt euch auf einen Namen.",
+    "hint": "Insider aus der Tour, ein Gefühl, ein Running Gag -- macht es persönlich. Ihr müsst euch einigen.",
     "punkte": 15
   },
   {
