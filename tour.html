@@ -743,67 +743,94 @@ a:focus-visible {
 }
 
 /* ═══════════════════════════════════════════════
-   SCREEN: SPAETI
+   SCREEN: ORT-AUFGABE
    ═══════════════════════════════════════════════ */
-.screen-spaeti {
+.screen-ort {
   align-items: center;
-  padding-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
 }
 
-.spaeti-card {
+.ort-station-label {
+  font: var(--footnote);
+  color: var(--label-tertiary);
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+}
+
+.ort-card {
   width: 100%;
+  padding: var(--spacing-lg);
   margin-bottom: var(--spacing-xl);
 }
 
-.spaeti-card__name {
-  font: var(--title-1);
-  margin-bottom: 4px;
-}
-
-.spaeti-card__address {
-  font: var(--subheadline);
-  color: var(--label-secondary);
-  margin-bottom: var(--spacing-md);
-}
-
-.spaeti-card__separator {
-  height: 0.5px;
-  background: var(--separator);
-  margin-bottom: var(--spacing-md);
-}
-
-.spaeti-card__aktion-label {
-  font: var(--caption-1);
-  color: var(--label-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: var(--spacing-xs);
-}
-
-.spaeti-card__aktion {
-  font: var(--body);
-  color: var(--label-primary);
-  margin-bottom: var(--spacing-md);
-}
-
-.spaeti-card__bonus {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+.ort-card__badge {
+  font-weight: 600;
+  font-size: 12px;
   padding: 4px 10px;
   border-radius: var(--radius-full);
-  background: var(--accent-dim);
-  color: var(--accent);
-  font: var(--caption-1);
-  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+  display: inline-block;
 }
 
-.spaeti-actions {
+.ort-card__text {
+  font: var(--title-2);
+  color: var(--label-primary);
+  line-height: 1.35;
+}
+
+.ort-actions {
   width: 100%;
   display: flex;
   flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: auto;
+}
+
+/* ═══════════════════════════════════════════════
+   SCREEN: BONUS
+   ═══════════════════════════════════════════════ */
+.screen-bonus {
   align-items: center;
-  gap: var(--spacing-md);
+  justify-content: center;
+}
+
+.bonus-card {
+  width: 100%;
+  padding: var(--spacing-lg);
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.bonus-card__label {
+  font: var(--footnote);
+  color: var(--label-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--spacing-sm);
+}
+
+.bonus-card__name {
+  font: var(--title-1);
+  color: var(--label-primary);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.bonus-card__desc {
+  font: var(--body);
+  color: var(--label-secondary);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.bonus-card__points {
+  font: var(--headline);
+  color: var(--accent);
+}
+
+.bonus-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
   margin-top: auto;
 }
 
@@ -973,6 +1000,14 @@ a:focus-visible {
   font: var(--body);
   color: var(--label-secondary);
   line-height: 1.5;
+}
+
+.sheet__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+  width: 100%;
 }
 
 /* ═══════════════════════════════════════════════
@@ -1261,23 +1296,60 @@ a:focus-visible {
     <div class="weg-actions">
       <button class="btn-primary" onclick="wegErledigt()">Erledigt &#x2713;</button>
       <button class="btn-secondary" onclick="showHintSheet()">Hinweis anzeigen (-5 Pkt)</button>
-      <button class="btn-text" onclick="wegSkip()">&Uuml;berspringen</button>
+      <button class="btn-text" onclick="wegSkip()">Bin da &rarr;</button>
     </div>
   </section>
 
-  <!-- SPAETI -->
-  <section class="screen screen-spaeti" id="screenSpaeti">
-    <div class="card spaeti-card animate-card-in" id="spaetiCard">
-      <h2 class="spaeti-card__name" id="spaetiName"></h2>
-      <p class="spaeti-card__address" id="spaetiAddress"></p>
-      <div class="spaeti-card__separator"></div>
-      <p class="spaeti-card__aktion-label">Aktion an dieser Station</p>
-      <p class="spaeti-card__aktion" id="spaetiAktion"></p>
-      <span class="spaeti-card__bonus" id="spaetiBonus"></span>
+  <!-- ORT-AUFGABE -->
+  <section class="screen screen-ort" id="screenOrt">
+    <div class="progress-dots ort-progress" id="ortDots"></div>
+    <div class="ort-station-label" id="ortStationLabel"></div>
+    <div class="card ort-card animate-card-in" id="ortCard">
+      <span class="ort-card__badge" id="ortBadge"></span>
+      <p class="ort-card__text" id="ortText"></p>
+      <!-- Pool: Tabu -->
+      <div class="ort-card__pool" id="ortTabu" style="display:none">
+        <div class="tabu-card">
+          <div class="tabu-card__wort" id="ortTabuWort"></div>
+          <div class="tabu-card__sep"></div>
+          <ul class="tabu-card__liste" id="ortTabuListe"></ul>
+        </div>
+      </div>
+      <!-- Pool: Spektrum -->
+      <div class="ort-card__pool" id="ortSpektrum" style="display:none">
+        <div class="spektrum-scale">
+          <span class="spektrum-scale__left" id="ortSpektrumLeft"></span>
+          <div class="spektrum-scale__bar"></div>
+          <span class="spektrum-scale__right" id="ortSpektrumRight"></span>
+        </div>
+      </div>
+      <!-- Pool: WYR -->
+      <div class="ort-card__pool" id="ortWyr" style="display:none">
+        <div class="wyr-options">
+          <div class="wyr-option" id="ortWyrA"></div>
+          <div class="wyr-vs">oder</div>
+          <div class="wyr-option" id="ortWyrB"></div>
+        </div>
+      </div>
     </div>
-    <div class="spaeti-actions">
-      <button class="btn-primary" onclick="spaetiAktion()">Aktion mitgemacht</button>
-      <button class="btn-text" onclick="spaetiWeiter()">&Uuml;berspringen</button>
+    <div class="ort-actions">
+      <button class="btn-primary" onclick="ortErledigt()">Erledigt &#x2713;</button>
+      <button class="btn-secondary" onclick="showOrtHint()">Hinweis anzeigen (-5 Pkt)</button>
+      <button class="btn-text" onclick="ortSkip()">&Uuml;berspringen</button>
+    </div>
+  </section>
+
+  <!-- BONUS -->
+  <section class="screen screen-bonus" id="screenBonus">
+    <div class="card bonus-card animate-card-in" id="bonusCard">
+      <p class="bonus-card__label">Bonusspiel</p>
+      <h2 class="bonus-card__name" id="bonusName"></h2>
+      <p class="bonus-card__desc" id="bonusDesc"></p>
+      <span class="bonus-card__points" id="bonusPoints"></span>
+    </div>
+    <div class="bonus-actions">
+      <button class="btn-primary" onclick="bonusMitgemacht()">Mitgemacht</button>
+      <button class="btn-text" onclick="bonusSkip()">Weiter ohne Bonus</button>
     </div>
   </section>
 
@@ -1339,6 +1411,7 @@ a:focus-visible {
   <div class="sheet__handle"></div>
   <div class="sheet__title" id="sheetTitle"></div>
   <div class="sheet__body" id="sheetBody"></div>
+  <div class="sheet__actions" id="sheetActions" style="display:none"></div>
 </div>
 
 <!-- ═══════════════════════════════════════════════
